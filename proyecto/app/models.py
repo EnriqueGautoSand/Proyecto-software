@@ -18,6 +18,8 @@ class TipoClaves(enum.Enum):
     monotributista="Monotributista"
 
     #defino como se representara al ser llamado
+    def __str__(self):
+        return f'{self.value}'
     def __repr__(self):
         return f'{self.value}'
 
@@ -36,6 +38,8 @@ class tiposDocumentos(enum.Enum):
     CertificadodeMigracion="Certificado de Migracion"
 
     # defino como se representara al ser llamado
+    def __str__(self):
+        return f'{self.value}'
     def __repr__(self):
         return f'{self.value}'
 class Clientes(Model,AuditMixin):
@@ -109,7 +113,7 @@ class Venta(Model,AuditMixin):
             #el editar era en caso de que quisiera darle el permiso de editar una venta pero decidi que no.
             editar=f"<td><a  href='http://localhost:8080/renglonventas/edit/{i.id}' class='btn btn-sm btn-default'> <i class='fa fa-edit' ></i></a></td>"
 
-            unrenglon=f"<tr><td>{i.producto}</td> <td>{i.precioVenta}</td><td>{i.cantidad}</td><td>{i.precioVenta*i.cantidad}</td></tr> "
+            unrenglon=f"<tr><td>{i.producto}</td> <td>${i.precioVenta}</td><td>{i.cantidad}</td><td>${i.precioVenta*i.cantidad}</td></tr> "
             renglones+=unrenglon+'\n'
         print(renglones)
         renglones+="</table>"

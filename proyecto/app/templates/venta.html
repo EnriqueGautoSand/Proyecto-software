@@ -11,6 +11,16 @@
     </div>
   {% endif %}
 {% endwith %}
+        {% with messages = get_flashed_messages(category_filter=["warning"], with_categories=true) %}
+  {% if messages %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert" > x </button>
+    {% for category, message in messages %}
+      <li class="{{ category }}">{{ message }}</li>
+    {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
       {% endblock %}
 {% block content %}
 {% import "bootstrap/wtf.html" as wtf %}

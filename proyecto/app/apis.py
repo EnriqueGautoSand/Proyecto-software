@@ -9,17 +9,22 @@ class VentasApi(BaseApi):
 
     @expose('/obtenerprecio/', methods=["GET", "POST"])
     def method2(self):
+        """
+        obtengo el precio de un producto
+        """
         if request.method == "POST":
             data = request.json
             print(data)
             print(db.session.query(Productos).get(data['p']))
             p=db.session.query(Productos).get(data['p'])
             return self.response(200, message=p.precio)
-        return self.response(400, message="Hello")
+        return self.response(400, message="error")
     @expose('/realizarventa/', methods=['POST', 'GET'])
     def greeting2(self):
-        if request.method == 'GET':
-            return self.response(200, message="Hello (GET)")
+        """
+        realizo la venta
+        """
+        
         if request.method == "POST":
             data = request.json
             print(data)
@@ -51,7 +56,7 @@ class VentasApi(BaseApi):
                     return self.response(400, message="error")
 
 
-                return self.response(200, message="sucess")
+                return self.response(200, message={'status':"sucess" ,'idventa':venta.id  })
             except Exception as e:
                 print(e)
                 print(str(e))

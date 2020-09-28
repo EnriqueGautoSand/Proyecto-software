@@ -61,11 +61,13 @@ class CrudProducto(MultipleView):
 class VentaReportes(ModelView):
     datamodel = SQLAInterface(Venta)
 
-    label_columns = {"totalrender":"Total",'formadepago':'Forma de Pago','renglonesrender':'','estadorender':'Estado'}
-    list_columns = ['cliente', "totalrender", 'estadorender', 'formadepago']
-    show_columns = ['cliente', "totalrender", 'estadorender', 'formadepago','renglonesrender']
+    label_columns = {"totalrender":"Total",'formadepago':'Forma de Pago','renglonesrender':'','estadorender':'Estado', 'created_on':'Fecha'}
+    list_columns = ['cliente', "totalrender", 'estadorender', 'formadepago','created_on']
+    show_columns = ['cliente', "totalrender", 'estadorender', 'formadepago','created_on','renglonesrender']
     edit_columns = ['Estado']
     base_permissions = ['can_show','can_list', 'can_edit']
+    list_template = "reportes.html"
+    show_template = "imprimirventa.html"
 
 #creo clase de el manejador de renglones
 class RenglonVentas(ModelView):

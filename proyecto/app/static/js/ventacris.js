@@ -2,7 +2,9 @@ var producto = document.getElementById('producto')
 var cantidad = document.getElementById('cantidad')
 var cliente = document.getElementById('cliente')
 var metododePago= document.getElementById('metodo')
+
 var total = document.getElementById('Total')
+
 cantidad.className="form-inline"
 
 
@@ -81,6 +83,11 @@ function addRowHandlers() {
   }
 	}
 function  cantidadpos(){
+if (parseInt(cantidad.value)>0){
+	return parseInt(cantidad.value)
+}else{
+	return false 
+}
 	console.log(Math.abs(parseInt(cantidad.value)))
 	console.log(Math.sign(parseInt(cantidad.value)))
 return Math.abs(parseInt(cantidad.value))
@@ -99,7 +106,7 @@ function agregarRenglon(element){
 	console.log(cantidad.value)
 	productosel=JSON.parse(producto.value)
 
-	if (! listaProductos.has(productosel.id)  && isNaN(cantidadpos() )== false ){
+	if (! listaProductos.has(productosel.id)  && cantidadpos()){
 		jsonProductos[productosel.representacion]=[producto.value, cantidadpos()]
 
 		var hilera = document.createElement("tr");
@@ -185,8 +192,8 @@ try {
 .catch(error => console.error('Error:', error))
 .then(response =>{
 	console.log('Success:', response)
-	if (response.message== "sucess"){
-		window.location.href = "http://localhost:8080/ventaview/venta/"
+	if (response.message.status== "sucess"){
+		window.location.href = "http://localhost:8080/ventareportes/show/"+response.message.idventa.toString()
 	}else {
 		alert(response.message)
 	}
@@ -201,6 +208,7 @@ try {
 }}
 
 function realizarventa(){
+boton.disabled=true
 		console.log(metododePago.value);
 		jsonventa={};
 	if (metododePago.value==1){
@@ -224,7 +232,7 @@ function realizarventa(){
 	}else {
 		console.log('tarjeta')
 	}
-
+boton.disabled=false
 
 
 }

@@ -1,0 +1,74 @@
+{% extends "appbuilder/general/model/show.html" %}
+{% block head_js %}
+{{ super() }}
+<script src="{{url_for('static',filename='js/jspdf.min.js')}}"></script>
+<script src="https://unpkg.com/jspdf-autotable@3.5.13/dist/jspdf.plugin.autotable.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+{% endblock %}
+     {% block content %}
+             <button onclick="javascript:pruebaDivAPdf()" style='float:right' class="btn  btn-success btn-sm">Imprimir Venta</button>
+        {{ super() }}
+             <button onclick="javascript:pruebaDivAPdf()" style='float:right' class="btn  btn-success btn-sm">Imprimir Venta</button>
+
+      {% endblock %}
+
+{% block tail_js %}
+ {{ super() }}
+<script>
+
+
+(function (api, $) {
+	'use strict';
+	api.writeText = function (x, y, text, options) {
+		options = options || {};
+
+		var defaults = {
+			align: 'left',
+			width: this.internal.pageSize.width
+		}
+
+		var settings = $.extend({}, defaults, options);
+
+		// Get current font size
+		var fontSize = this.internal.getFontSize();
+
+		// Get the actual text's width
+		/* You multiply the unit width of your string by your font size and divide
+		 * by the internal scale factor. The division is necessary
+		 * for the case where you use units other than 'pt' in the constructor
+		 * of jsPDF.
+		*/
+		var txtWidth = this.getStringUnitWidth(text) * fontSize / this.internal.scaleFactor;
+
+		if (settings.align === 'center')
+			x += (settings.width - txtWidth) / 2;
+		else if (settings.align === 'right')
+			x += (settings.width - txtWidth);
+
+		//default is 'left' alignment
+		this.text(text, x-20, y);
+
+	}
+
+})(jsPDF.API, jQuery);
+    function pruebaDivAPdf() {
+
+var doc = new jsPDF()
+doc.text('Kiogestion Venta',20,10)
+doc.setFontSize(9);
+nombreusuario=document.getElementsByClassName("dropdown-toggle")[document.getElementsByClassName("dropdown-toggle").length-1].innerText
+doc.writeText(0,10,'Realizado por: '+nombreusuario,{align:'right'})
+var elem =document.getElementsByClassName("table-responsive")[0].getElementsByClassName("table table-bordered")[0]
+elem.id="tablapdf"
+  doc.autoTable({ html: '#tablapdf' })
+var elem =document.getElementsByClassName("table-responsive")[0].getElementsByClassName("table table-bordered")[1]
+elem.id="tablapdf2"
+doc.autoTable({ html: '#tablapdf2' })
+  doc.save('venta.pdf')
+    }
+
+
+</script>
+     
+      {% endblock %}
