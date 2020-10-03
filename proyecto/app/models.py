@@ -42,6 +42,23 @@ class tiposDocumentos(enum.Enum):
         return f'{self.value}'
     def __repr__(self):
         return f'{self.value}'
+class Proveedor(Model,AuditMixin):
+    """
+    creo clase que sera mapeada como la tabla Proveedor en la base de datos
+    """
+    __tablename__ = 'proveedor'
+    id = Column(Integer, primary_key=True)
+    cuit=Column(String(30),nullable=False,unique=True)
+    nombre = Column(String(30))
+    apellido = Column(String(30))
+    domicilio =Column(String(255))
+    correo = Column(String(100))
+    estado = Column(Boolean,default=True)
+
+    # defino como se representara al ser llamado
+    def __repr__(self):
+        return f"Cuit {self.cuit} {self.apellido} {self.nombre}"
+
 class Clientes(Model,AuditMixin):
     """
     creo clase que sera mapeada como la tabla clientes en la base de datos
@@ -78,9 +95,22 @@ class FormadePago(Model):
     def __repr__(self):
         return self.Metodo
 
+class Compra(Model):
+    """
+    creo clase que sera mapeada como la tabla ventas en la base de datos
+    """
+    __tablename__= 'compras'
+    id=Column(Integer, primary_key=True)
+    Estado=Column(Boolean)
+    total=Column(Float, nullable=False)
+    fecha=Column(Date, nullable=False)
+    cliente_id = Column(Integer, ForeignKey('proveedor.id'), nullable=False)
+    cliente = relationship("Proveedor")
+    formadepago_id = Column(Integer, ForeignKey('formadepago.id'), nullable=False)
+    formadepago = relationship("FormadePago")
 
 
-class Venta(Model,AuditMixin):
+class Venta(Model):
     """
     creo clase que sera mapeada como la tabla ventas en la base de datos
     """
@@ -107,6 +137,7 @@ class Venta(Model,AuditMixin):
         print(self.renglones)
         renglones="</table> <table class='table table-bordered'> <tr><td>Producto</td> <td>Precio</td><td>Cantidad</td><td>Subtotal</td></tr>"
         from .views import RenglonVentas
+        total=0
         for i in  self.renglones:
             print(type(i))
             print(f'{redirect(url_for("RenglonVentas.edit",pk=i.id))}')
@@ -115,6 +146,9 @@ class Venta(Model,AuditMixin):
 
             unrenglon=f"<tr><td>{i.producto}</td> <td>${i.precioVenta}</td><td>{i.cantidad}</td><td>${i.precioVenta*i.cantidad}</td></tr> "
             renglones+=unrenglon+'\n'
+            total+=i.precioVenta*i.cantidad
+
+        renglones+=f"<tr><td></td><td></td><td>Total</td> <td>${total}</td></tr>"
         print(renglones)
         renglones+="</table>"
         return Markup( renglones )
@@ -170,7 +204,21 @@ class Productos(Model,AuditMixin):
     def __repr__(self):
         return f"{self.producto} ${self.precio} {self.marca} {self.medida} {self.unidad}"
 
+class RenglonCompras(Model):
+    """
+    creo clase que sera mapeada como la tabla renglon en la base de datos
+    """
+    id = Column(Integer, primary_key=True)
+    precioCompra = Column(Float)
+    cantidad = Column(Integer)
+    compra_id = Column(Integer, ForeignKey('compras.id'), nullable=False)
+    compra = relationship("Compra", backref='renglones')
+    producto_id = Column(Integer, ForeignKey('productos.id'), nullable=False)
+    producto = relationship("Productos")
 
+    # defino como se representara al ser llamado
+    def __repr__(self):
+        return f"{self.producto} ${self.precioCompra} {self.compra} {self.producto} {self.cantidad} "
 
 class Renglon(Model):
     """

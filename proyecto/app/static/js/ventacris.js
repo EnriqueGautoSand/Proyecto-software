@@ -61,7 +61,7 @@ var totalhtml=document.getElementById("Total")
 var jsonProductos={}
 
 
-
+//esta funcion es la que se enecarga del evento click en las filas
 function addRowHandlers() {
   var table = tabla
   var rows = table.getElementsByTagName("tr");
@@ -71,9 +71,7 @@ function addRowHandlers() {
       return function() {
         var cellProducto = row.getElementsByTagName("td")[0];
         var textoProducto = cellProducto.innerHTML;
-        //alert("producto html:" + textoProducto);
-        //console.log(textoProducto)
-		$("#producto").select2().val(jsonProductos[textoProducto][0]).trigger("change");
+ 		$("#producto").select2().val(jsonProductos[textoProducto][0]).trigger("change");
 		var cellCantidad= row.getElementsByTagName("td")[1];
         cantidad.value=cellCantidad.innerHTML;
 
@@ -107,6 +105,7 @@ function agregarRenglon(element){
 	productosel=JSON.parse(producto.value)
 
 	if (! listaProductos.has(productosel.id)  && cantidadpos()){
+		//jsonproductos guarga el producto y su cantidad basicamente guarda los renglones de la venta
 		jsonProductos[productosel.representacion]=[producto.value, cantidadpos()]
 
 		var hilera = document.createElement("tr");
@@ -237,4 +236,12 @@ boton.disabled=false
 
 }
 
-boton.onclick= function() {return realizarventa()};
+boton.onclick= function() {console.log('largo json ',jQuery.isEmptyObject(jsonProductos))
+						if (jQuery.isEmptyObject(jsonProductos)){
+								alert("No hay poductos asociados a esta venta!!!")
+
+							}else{return realizarventa()
+
+						}
+
+						};

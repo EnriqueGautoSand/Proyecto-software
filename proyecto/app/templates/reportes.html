@@ -53,16 +53,25 @@
 
     function pruebaDivAPdf() {
 
-var doc = new jsPDF()
+ var doc = new jsPDF()
 doc.text('Kiogestion Reporte de Ventas',20,10)
 doc.setFontSize(9);
-nombreusuario=document.getElementsByClassName("fa fa-user")[1].nextSibling.textContent
-doc.writeText(0,10,'Realizado por: '+nombreusuario,{align:'right'})
+//nombreusuario=document.getElementsByClassName("fa fa-user")[1].nextSibling.textContent
+
+fetch('http://localhost:8080/api/v1/ventasapi/obtenerusuario/')
+  .then(response => response.json())
+  .then(data => {console.log(data, data.message.first_name) 
+  	nombreusuario=data.message.first_name+" "+ data.message.last_name
+doc.writeText(0,10,'Realizado para: '+nombreusuario,{align:'right'})
 var elem =document.getElementsByClassName("table-responsive")[1].getElementsByClassName("table table-bordered table-hover")[0]
 elem.id="tablapdf"
 var res = doc.autoTableHtmlToJson(elem,10,30);
 doc.autoTable(res.columns, res.data);
-doc.save("reporte_ventas.pdf")
+doc.save("reporte_ventas.pdf")}
+
+		);
+
+
     }
 
 
