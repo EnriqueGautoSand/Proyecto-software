@@ -8,7 +8,7 @@ from flask_appbuilder.security.sqla.models import User
 from flask import Markup, url_for, redirect
 import enum
 from sqlalchemy import Enum
-
+from datetime import datetime as dt
 class TipoClaves(enum.Enum):
     """
     # creo clase que enumera los tipos de clave
@@ -103,12 +103,14 @@ class Compra(Model):
     id=Column(Integer, primary_key=True)
     Estado=Column(Boolean)
     total=Column(Float, nullable=False)
-    fecha=Column(Date, nullable=False)
-    cliente_id = Column(Integer, ForeignKey('proveedor.id'), nullable=False)
-    cliente = relationship("Proveedor")
+    fecha=Column(Date, nullable=False,default=dt.now())
+    proveedor_id = Column(Integer, ForeignKey('proveedor.id'), nullable=False)
+    proveedor = relationship("Proveedor")
     formadepago_id = Column(Integer, ForeignKey('formadepago.id'), nullable=False)
     formadepago = relationship("FormadePago")
-
+    # defino como se representara al ser llamado
+    def __repr__(self):
+        return f'{self.proveedor} {self.total} {self.Estado} {self.fecha}'
 
 class Venta(Model):
     """
@@ -117,6 +119,7 @@ class Venta(Model):
     __tablename__= 'ventas'
     id=Column(Integer, primary_key=True)
     Estado=Column(Boolean)
+    fecha = Column(Date, nullable=False,default=dt.now())
     total=Column(Float, nullable=False)
     cliente_id = Column(Integer, ForeignKey('clientes.id'), nullable=False)
     cliente = relationship("Clientes")
@@ -155,7 +158,7 @@ class Venta(Model):
 
     # defino como se representara al ser llamado
     def __repr__(self):
-        return f'{self.cliente} {self.total} {self.Estado} {self.changed_on}'
+        return f'{self.cliente} {self.total} {self.Estado} {self.fecha}'
 class UnidadMedida(Model):
 
     """
@@ -180,29 +183,41 @@ class Marcas(Model):
     # defino como se representara al ser llamado
     def __repr__(self):
         return self.marca
+class Categoria(Model):
+    """
+    creo clase que sera mapeada como la tabla marcas en la base de datos
+    """
+    __tablename__='categoria'
+    id = Column(Integer, primary_key=True)
+    categoria = Column(String(50), unique=True, nullable=False)
 
+    # defino como se representara al ser llamado
+    def __repr__(self):
+        return self.categoria
 class Productos(Model,AuditMixin):
     """
     creo clase que sera mapeada como la tabla productos en la base de datos
     """
     id = Column(Integer, primary_key=True)
-    producto=Column(String(30))
+    #producto=Column(String(30))
     precio=Column(Float)
     stock=Column(Integer,default=0)
     unidad_id = Column(Integer, ForeignKey('unidad_medida.id'), nullable=False)
     unidad = relationship("UnidadMedida")
     marcas_id = Column(Integer, ForeignKey('marcas.id'), nullable=False)
     marca = relationship("Marcas")
+    categoria_id = Column(Integer, ForeignKey('categoria.id'), nullable=False)
+    categoria = relationship("Categoria")
     medida = Column(Float)
     detalle=Column(String(255))
     # creo clave compuesta que no se pueden repetir dicha combinacion
     __table_args__ = (
-        UniqueConstraint("producto","marcas_id","unidad_id","medida"),
+        UniqueConstraint("categoria_id","marcas_id","unidad_id","medida"),
     )
 
     # defino como se representara al ser llamado
     def __repr__(self):
-        return f"{self.producto} ${self.precio} {self.marca} {self.medida} {self.unidad}"
+        return f"{self.categoria} ${self.precio} {self.marca} {self.medida} {self.unidad}"
 
 class RenglonCompras(Model):
     """

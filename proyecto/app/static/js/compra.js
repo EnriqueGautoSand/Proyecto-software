@@ -1,6 +1,6 @@
 var producto = document.getElementById('producto')
 var cantidad = document.getElementById('cantidad')
-var cliente = document.getElementById('cliente')
+var proveedor = document.getElementById('proveedor')
 var metododePago= document.getElementById('metodo')
 
 var total = document.getElementById('Total')
@@ -17,7 +17,7 @@ parentNodes=fila.parentNode
 parentNodes.insertBefore(tabla, fila.nextSibling); 
 var boton= document.createElement("button")
 tdboton= document.createElement("td")
-boton.textContent="Finalizar Venta"
+boton.textContent="Finalizar Compra"
 boton.className="btn  btn-success btn-sm"
 //boton.style.float="right "
 var tdfinal=document.getElementById("botonagregar")
@@ -178,7 +178,7 @@ try {
 
 }
 function conectarVentaapi(jsonventa){
-	var url = "http://localhost:8080/api/v1/ventasapi/realizarventa/"
+	var url = "http://localhost:8080/api/v1/comprasapi/realizarcompra/"
 var data = jsonventa;
 try {
 	fetch(url, {
@@ -192,7 +192,7 @@ try {
 .then(response =>{
 	console.log('Success:', response)
 	if (response.message.status== "sucess"){
-		window.location.href = "http://localhost:8080/ventareportes/show/"+response.message.idventa.toString()
+		window.location.href = "http://localhost:8080/comprareportes/show/"+response.message.idventa.toString()
 	}else {
 		alert(response.message)
 	}
@@ -224,7 +224,7 @@ boton.disabled=true
 			  }
 			}
 			jsonventa["metododePago"]=parseInt(metododePago.value);
-			jsonventa["cliente"]=parseInt(cliente.value);
+			jsonventa["proveedor"]=parseInt(proveedor.value);
 			jsonventa["total"]=parseFloat(total.value);
 			conectarVentaapi(jsonventa);
 

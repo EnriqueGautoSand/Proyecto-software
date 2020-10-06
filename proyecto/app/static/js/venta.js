@@ -1,69 +1,134 @@
 var producto = document.getElementById('producto')
 var cantidad = document.getElementById('cantidad')
+var cliente = document.getElementById('cliente')
+var metododePago= document.getElementById('metodo')
 
-function clicktr(element) {
-  usertr=element
-  var x=element.cells
-  console.log(x[0].innerHTML)
- cantidad.innerHTML = x[0].innerHTML
-user=x[0].innerHTML
-}
-var select2 =document.getElementById('s2id_autogen1_search')
-select2.className="select2-selection select2-selection--single form-control input-sm"
+var total = document.getElementById('Total')
+
+cantidad.className="form-inline"
+
 
 var	tabla=document.createElement("table")
+
 var tebody=document.createElement("tbody")
 //var agregar= document.body.getElementsByClassName('row')[0].getElementById('agregar')
 var fila =document.getElementById('agregar')
 parentNodes=fila.parentNode
 parentNodes.insertBefore(tabla, fila.nextSibling); 
-teache= document.createElement("th")
+var boton= document.createElement("button")
+tdboton= document.createElement("td")
+boton.textContent="Finalizar Venta"
+boton.className="btn  btn-success btn-sm"
+//boton.style.float="right "
+var tdfinal=document.getElementById("botonagregar")
+
+tdfinal.appendChild(boton)
+
+//parentNodes=tabla.parentNode
+//parentNodes.insertBefore(boton, tabla.nextSibling); 
+
+var tere=document.createElement("tr")
+
+teache= document.createElement("td")
 
 titulo = document.createTextNode('Producto')
-teache2= document.createElement("th")
+teache2= document.createElement("td")
 titulo2 = document.createTextNode('Cantidad')
-teache3= document.createElement("th")
+teache3= document.createElement("td")
 titulo3 = document.createTextNode('SubTotal')
 teache.appendChild(titulo)
 teache2.appendChild(titulo2)
 teache3.appendChild(titulo3)
+teache2.align="center"
+teache.align="center"
 teache3.align="center"
-tabla.appendChild(teache)
-tabla.appendChild(teache2)
-tabla.appendChild(teache3)
-teache.className="col-md-1 col-lg-1 col-sm-1"
-tabla.className="table table-bordered table-hover"
+tere.appendChild(teache)
+tere.appendChild(teache2)
+tere.appendChild(teache3)
+tebody.appendChild(tere)
+
+tabla.appendChild(tebody)
+//tabla.appendChild(teache2)
+//tabla.appendChild(teache3)
+//teache.className="col-md-1 col-lg-1 col-sm-1"
+tabla.className="table table-bordered table-hover "
+
 var listaProductos = new Set();
 var resp
 var totalFila=0
 var totalColuma=0
 var totalhtml=document.getElementById("Total") 
+var jsonProductos={}
 
-function agregarRenglon(){
+
+//esta funcion es la que se enecarga del evento click en las filas
+function addRowHandlers() {
+  var table = tabla
+  var rows = table.getElementsByTagName("tr");
+  for (i = 1; i < rows.length; i++) {
+    var currentRow = table.rows[i];
+    var createClickHandler = function(row) {
+      return function() {
+        var cellProducto = row.getElementsByTagName("td")[0];
+        var textoProducto = cellProducto.innerHTML;
+ 		$("#producto").select2().val(jsonProductos[textoProducto][0]).trigger("change");
+		var cellCantidad= row.getElementsByTagName("td")[1];
+        cantidad.value=cellCantidad.innerHTML;
+
+      };
+    };
+    currentRow.onclick = createClickHandler(currentRow);
+  }
+	}
+function  cantidadpos(){
+if (parseInt(cantidad.value)>0){
+	return parseInt(cantidad.value)
+}else{
+	return false 
+}
+	console.log(Math.abs(parseInt(cantidad.value)))
+	console.log(Math.sign(parseInt(cantidad.value)))
+return Math.abs(parseInt(cantidad.value))
+}
+
+function agregarRenglon(element){
+	element.disabled=true
+
 	totalFila=0
-	console.log('cliekck')
+
 	
+	//var producto = document.getElementById('producto')
+	//var cantidad = document.getElementById('cantidad')
 
 	console.log(producto.value, producto[producto.selectedIndex].innerHTML)
 	console.log(cantidad.value)
-	if (! listaProductos.has(producto.value)  ){
-	var hilera = document.createElement("tr");
-	hilera.onclick="clicktr(this)"
-	var celda = document.createElement("td");
-	celda.className="col-md-1 col-lg-1 col-sm-1"
-	var textoCelda = document.createTextNode(producto[producto.selectedIndex].innerHTML );
+	productosel=JSON.parse(producto.value)
+
+	if (! listaProductos.has(productosel.id)  && cantidadpos()){
+		//jsonproductos guarga el producto y su cantidad basicamente guarda los renglones de la venta
+		jsonProductos[productosel.representacion]=[producto.value, cantidadpos()]
+
+		var hilera = document.createElement("tr");
+		
+		var celda = document.createElement("td");
+		var textoCelda = document.createTextNode(producto[producto.selectedIndex].innerHTML );
       celda.appendChild(textoCelda);
+      celda.align="center"
+      celda.className="col-md-1 col-lg-1 col-sm-1"
       var celda2 = document.createElement("td");
-      celda2.className="col-md-1 col-lg-1 col-sm-1"
-      var textoCelda2 = document.createTextNode(cantidad.value);
+      var textoCelda2 = document.createTextNode(cantidadpos());
       celda2.appendChild(textoCelda2);
+      celda2.className="col-md-1 col-lg-1 col-sm-1"
       celda2.align="center"
       hilera.appendChild(celda);
       hilera.appendChild(celda2);
 
 
-var url = "http://localhost:8080/api/v1/exampleapi/method2/";
-var data = {p: producto.value};
+
+var url = "http://localhost:8080/api/v1/ventasapi/obtenerprecio/"
+var data = {p: productosel.id};
+try {
+	// statements
 
  fetch(url, {
   method: 'POST', // or 'PUT'
@@ -81,28 +146,102 @@ var data = {p: producto.value};
 
 
 	var celdsa = document.createElement("td");
-	celdsa.className="col-md-1 col-lg-1 col-sm-1"
-	totalFila*=parseFloat(cantidad.value)
+	totalFila*=cantidadpos()
 	var textoCelda3 = document.createTextNode("$" + totalFila );
 	celdsa.appendChild(textoCelda3)
 	celdsa.align="center"
+	celdsa.className="col-md-1 col-lg-1 col-sm-1"
 	hilera.appendChild(celdsa);
-	  tabla.appendChild(hilera);
-      listaProductos.add(producto.value);
+	  tebody.appendChild(hilera);
+      listaProductos.add(productosel.id);
       console.log(listaProductos)
       totalColuma += totalFila
       totalhtml.value=totalColuma
-})
+      addRowHandlers()
+      element.disabled=false
+      
+})} catch(e) {
+	// statements
+	console.log(e);
+	element.disabled=false
+}
 
 
 
 	}else{
-		alert("Prodcto Repetido")
+		alert("Producto Repetido o cantidad incorrecta")
+		element.disabled=false
 	}
 
 
 
 
 }
+function conectarVentaapi(jsonventa){
+	var url = "http://localhost:8080/api/v1/ventasapi/realizarventa/"
+var data = jsonventa;
+try {
+	fetch(url, {
+  method: 'POST', // or 'PUT'
+  body: JSON.stringify(data), // data can be `string` or {object}!
+  headers:{
+    'Content-Type': 'application/json'
+  }
+}).then(res => res.json())
+.catch(error => console.error('Error:', error))
+.then(response =>{
+	console.log('Success:', response)
+	if (response.message.status== "sucess"){
+		window.location.href = "http://localhost:8080/ventareportes/show/"+response.message.idventa.toString()
+	}else {
+		alert(response.message)
+	}
+
+})
+
+} catch(e) {
+	// statements
+	console.log(e);
+	alert(e)
+
+}}
+
+function realizarventa(){
+boton.disabled=true
+		console.log(metododePago.value);
+		jsonventa={};
+	if (metododePago.value==1){
+		
+		jsonventa["productos"]=[]
+			console.log('contado')
+			for (var clave in jsonProductos){
+			  // Controlando que json realmente tenga esa propiedad
+			  if (jsonProductos.hasOwnProperty(clave)) {
+			    // Mostrando en pantalla la clave junto a su valor
+			    
+			    console.log(" Producto  " + JSON.parse(jsonProductos[clave][0])['id'] , " Cantidad: "+ jsonProductos[clave][1])
+				jsonventa["productos"].push([JSON.parse(jsonProductos[clave][0])['id'],jsonProductos[clave][1] ])
+			  }
+			}
+			jsonventa["metododePago"]=parseInt(metododePago.value);
+			jsonventa["cliente"]=parseInt(cliente.value);
+			jsonventa["total"]=parseFloat(total.value);
+			conectarVentaapi(jsonventa);
+
+	}else {
+		console.log('tarjeta')
+	}
+boton.disabled=false
 
 
+}
+
+boton.onclick= function() {console.log('largo json ',jQuery.isEmptyObject(jsonProductos))
+						if (jQuery.isEmptyObject(jsonProductos)){
+								alert("No hay poductos asociados a esta venta!!!")
+
+							}else{return realizarventa()
+
+						}
+
+						};

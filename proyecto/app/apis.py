@@ -7,6 +7,54 @@ from .models import *
 from flask import g
 def get_user():
     return g.user
+class ComprasApi(BaseApi):
+    @expose('/realizarcompra/', methods=['POST', 'GET'])
+    def compra(self):
+        """
+        realizo la venta
+        """
+
+        if request.method == "POST":
+            #paso los datos de la peticion a json
+            data = request.json
+            print(data)
+            try:
+                if "metododePago" in data and "proveedor" in data and "total" in data:
+                    print(data["total"])
+                    # creo la venta
+                    compra=Compra(Estado=True, total=float(data["total"]),proveedor_id=int(data["proveedor"]),formadepago_id=int(data["metododePago"]))
+                    #agrego la venta
+                    db.session.add(compra)
+                    db.session.flush()
+                    if "productos" in data:
+                        #por cada producto me genera un renglon en la compra
+                        for p in data["productos"]:
+                            #solicita el producto a ala base de datos
+                            producto = db.session.query(Productos).get(p[0])
+                            print(producto.stock, p[1])
+
+                            #crea el renglon en la venta sino cancela transaccion y manda error
+
+                            db.session.add(RenglonCompras(precioCompra=producto.precio , cantidad=p[1],compra=compra,  producto=producto))
+                        #Guardamos
+                        db.session.commit()
+                        print("compra Guardada")
+                    else:
+                        db.session.rollback()
+                        return self.response(400, message="error")
+                else:
+                    db.session.rollback()
+                    return self.response(400, message="error")
+
+
+                return self.response(200, message={'status':"sucess" ,'idventa':compra.id  })
+            except Exception as e:
+                print(e)
+                print(str(e))
+                print(repr(e))
+                db.session.rollback()
+                return self.response(400, message="error")
+        return self.response(400, message="error")
 
 class VentasApi(BaseApi):
     @expose('/obtenerusuario/', methods=["GET", "POST"])
@@ -94,4 +142,6 @@ class ProductoApi(ModelRestApi):
 
 appbuilder.add_api(ProductoApi)
 
+
 appbuilder.add_api(VentasApi)
+appbuilder.add_api(ComprasApi)
