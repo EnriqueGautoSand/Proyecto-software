@@ -15,3 +15,22 @@ create trigger updateproductosventa
 	after insert on renglon
 	for each row
 	execute procedure descontarstockenventa()
+
+
+create function sumarstockencompra() returns Trigger
+as
+$$
+begin
+
+update productos set stock=stock+new.cantidad 
+	where productos.id =new.producto_id;
+return new;
+
+end
+$$
+Language plpgsql VOLATILE;
+
+create trigger updateproductoscompra
+	after insert on renglon_compras
+	for each row
+	execute procedure sumarstockencompra()
