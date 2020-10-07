@@ -7,6 +7,15 @@ var total = document.getElementById('Total')
 
 cantidad.className="form-inline"
 
+var condicionfrenteiva = document.getElementById('condicionfrenteiva')
+var cupon= document.getElementById('numeroCupon')
+cupon.className="form-inline"
+var companiaTarjeta= document.getElementById('companiaTarjeta')
+companiaTarjeta.className="form-control"
+var credito= document.getElementById('credito')
+var cuotas= document.getElementById('cuotas')
+
+
 
 var	tabla=document.createElement("table")
 
@@ -192,7 +201,8 @@ try {
 .then(response =>{
 	console.log('Success:', response)
 	if (response.message.status== "sucess"){
-		window.location.href = "http://localhost:8080/comprareportes/show/"+response.message.idventa.toString()
+		window.location.href ="http://localhost:8080/compraview/compra/"
+		//window.location.href = "http://localhost:8080/comprareportes/show/"+response.message.idventa.toString()
 	}else {
 		alert(response.message)
 	}
@@ -210,9 +220,7 @@ function realizarventa(){
 boton.disabled=true
 		console.log(metododePago.value);
 		jsonventa={};
-	if (metododePago.value==1){
-		
-		jsonventa["productos"]=[]
+			jsonventa["productos"]=[]
 			console.log('contado')
 			for (var clave in jsonProductos){
 			  // Controlando que json realmente tenga esa propiedad
@@ -223,14 +231,36 @@ boton.disabled=true
 				jsonventa["productos"].push([JSON.parse(jsonProductos[clave][0])['id'],jsonProductos[clave][1] ])
 			  }
 			}
-			jsonventa["metododePago"]=parseInt(metododePago.value);
+			
 			jsonventa["proveedor"]=parseInt(proveedor.value);
 			jsonventa["total"]=parseFloat(total.value);
+			jsonventa["condicionfrenteiva"]=condicionfrenteiva.value
+	if (metododePago.value=="Contado"){
+			jsonventa["metododePago"]=1;
+
 			conectarVentaapi(jsonventa);
 
 	}else {
-		console.log('tarjeta')
+			jsonventa["metododePago"]=2;
+			if(credito.checked && parseInt(cuotas.value)<=0){
+
+					alert("Completar todos los datos de la Tarjeta")
+			}
+			else{
+				if ( cupon.value!=""  ){
+					
+						jsonventa["numeroCupon"]=cupon.value;
+						jsonventa["companiaTarjeta"]=companiaTarjeta.value;
+						jsonventa["credito"]=credito.checked
+						jsonventa["cuotas"]=parseInt(cuotas.value) 
+						conectarVentaapi(jsonventa);
+				}
+				else{
+					alert("Completar todos los datos de la Tarjeta")
+				}
+
 	}
+}
 boton.disabled=false
 
 
@@ -245,3 +275,15 @@ boton.onclick= function() {console.log('largo json ',jQuery.isEmptyObject(jsonPr
 						}
 
 						};
+
+$("#metodo").click(function() {
+
+						if (metododePago.value=="Tarjeta"){
+								//alert("Cargar Tarjeta")
+								$('#divtarjeta').collapse('show')
+							}
+						else{
+							$('#divtarjeta').collapse('hide')
+						}
+
+						})

@@ -2,55 +2,53 @@ var producto = document.getElementById('producto')
 var cantidad = document.getElementById('cantidad')
 var cliente = document.getElementById('cliente')
 var metododePago= document.getElementById('metodo')
-
+var tablafinalizar= document.getElementById('finalizar')
 var total = document.getElementById('Total')
-
+var condicionfrenteiva = document.getElementById('condicionfrenteiva')
 cantidad.className="form-inline"
+
+var cupon= document.getElementById('numeroCupon')
+cupon.className="form-inline"
+var companiaTarjeta= document.getElementById('companiaTarjeta')
+companiaTarjeta.className="form-control"
+
+var credito= document.getElementById('credito')
+var cuotas= document.getElementById('cuotas')
 
 
 var	tabla=document.createElement("table")
 
 var tebody=document.createElement("tbody")
-//var agregar= document.body.getElementsByClassName('row')[0].getElementById('agregar')
+function agregarTd(tere,texto){
+	titulo =document.createTextNode(texto)
+	tede= document.createElement("td")
+	tede.appendChild(titulo)
+	tede.align="center"
+	tere.appendChild(tede)
+}
 var fila =document.getElementById('agregar')
 parentNodes=fila.parentNode
 parentNodes.insertBefore(tabla, fila.nextSibling); 
 var boton= document.createElement("button")
-tdboton= document.createElement("td")
+
 boton.textContent="Finalizar Venta"
 boton.className="btn  btn-success btn-sm"
-//boton.style.float="right "
+
 var tdfinal=document.getElementById("botonagregar")
 
 tdfinal.appendChild(boton)
 
-//parentNodes=tabla.parentNode
-//parentNodes.insertBefore(boton, tabla.nextSibling); 
 
 var tere=document.createElement("tr")
 
-teache= document.createElement("td")
+agregarTd(tere,'Producto')
+agregarTd(tere,'Cantidad')
+agregarTd(tere,'SubTotal')
 
-titulo = document.createTextNode('Producto')
-teache2= document.createElement("td")
-titulo2 = document.createTextNode('Cantidad')
-teache3= document.createElement("td")
-titulo3 = document.createTextNode('SubTotal')
-teache.appendChild(titulo)
-teache2.appendChild(titulo2)
-teache3.appendChild(titulo3)
-teache2.align="center"
-teache.align="center"
-teache3.align="center"
-tere.appendChild(teache)
-tere.appendChild(teache2)
-tere.appendChild(teache3)
 tebody.appendChild(tere)
 
 tabla.appendChild(tebody)
-//tabla.appendChild(teache2)
-//tabla.appendChild(teache3)
-//teache.className="col-md-1 col-lg-1 col-sm-1"
+
 tabla.className="table table-bordered table-hover "
 
 var listaProductos = new Set();
@@ -61,8 +59,9 @@ var totalhtml=document.getElementById("Total")
 var jsonProductos={}
 
 
-//esta funcion es la que se enecarga del evento click en las filas
+
 function addRowHandlers() {
+//esta funcion es la que se enecarga del evento click en las filas
   var table = tabla
   var rows = table.getElementsByTagName("tr");
   for (i = 1; i < rows.length; i++) {
@@ -86,9 +85,7 @@ if (parseInt(cantidad.value)>0){
 }else{
 	return false 
 }
-	console.log(Math.abs(parseInt(cantidad.value)))
-	console.log(Math.sign(parseInt(cantidad.value)))
-return Math.abs(parseInt(cantidad.value))
+
 }
 
 function agregarRenglon(element){
@@ -105,7 +102,7 @@ function agregarRenglon(element){
 	productosel=JSON.parse(producto.value)
 
 	if (! listaProductos.has(productosel.id)  && cantidadpos()){
-		//jsonproductos guarga el producto y su cantidad basicamente guarda los renglones de la venta
+		//jsonproductos guarda el producto y su cantidad basicamente guarda los renglones de la venta
 		jsonProductos[productosel.representacion]=[producto.value, cantidadpos()]
 
 		var hilera = document.createElement("tr");
@@ -192,7 +189,8 @@ try {
 .then(response =>{
 	console.log('Success:', response)
 	if (response.message.status== "sucess"){
-		window.location.href = "http://localhost:8080/ventareportes/show/"+response.message.idventa.toString()
+		window.location.href ="http://localhost:8080/ventaview/venta/"
+		//window.location.href = "http://localhost:8080/ventareportes/show/"+response.message.idventa.toString()
 	}else {
 		alert(response.message)
 	}
@@ -210,8 +208,6 @@ function realizarventa(){
 boton.disabled=true
 		console.log(metododePago.value);
 		jsonventa={};
-	if (metododePago.value==1){
-		
 		jsonventa["productos"]=[]
 			console.log('contado')
 			for (var clave in jsonProductos){
@@ -223,18 +219,43 @@ boton.disabled=true
 				jsonventa["productos"].push([JSON.parse(jsonProductos[clave][0])['id'],jsonProductos[clave][1] ])
 			  }
 			}
-			jsonventa["metododePago"]=parseInt(metododePago.value);
 			jsonventa["cliente"]=parseInt(cliente.value);
 			jsonventa["total"]=parseFloat(total.value);
+			jsonventa["condicionfrenteiva"]=condicionfrenteiva.value
+	if (metododePago.value=="Contado"){
+			jsonventa["metododePago"]=1;
+			
 			conectarVentaapi(jsonventa);
 
 	}else {
-		console.log('tarjeta')
+			jsonventa["metododePago"]=2;
+			if(credito.checked && parseInt(cuotas.value)<=0){
+
+					alert("Completar todos los datos de la Tarjeta")
+			}
+			else{
+				if ( cupon.value!=""  ){
+					alert("entro1")
+						jsonventa["numeroCupon"]=cupon.value;
+						jsonventa["companiaTarjeta"]=companiaTarjeta.value;
+						jsonventa["credito"]=credito.checked
+						jsonventa["cuotas"]=parseInt(cuotas.value) 
+						conectarVentaapi(jsonventa);
+				}
+				else{
+					alert("Completar todos los datos de la Tarjeta")
+				}
+
 	}
+}
+
 boton.disabled=false
 
+	}
 
-}
+
+
+
 
 boton.onclick= function() {console.log('largo json ',jQuery.isEmptyObject(jsonProductos))
 						if (jQuery.isEmptyObject(jsonProductos)){
@@ -245,3 +266,14 @@ boton.onclick= function() {console.log('largo json ',jQuery.isEmptyObject(jsonPr
 						}
 
 						};
+$("#metodo").click(function() {
+
+						if (metododePago.value=="Tarjeta"){
+								//alert("Cargar Tarjeta")
+								$('#divtarjeta').collapse('show')
+							}
+						else{
+							$('#divtarjeta').collapse('hide')
+						}
+
+						})

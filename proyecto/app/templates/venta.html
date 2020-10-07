@@ -35,28 +35,30 @@
 
    
          <tr>
-        <td>{{ form2.cliente.label }}   </td>
- <td>    {{ form2.cliente}}       <a id="crearCliente" href="{{url_for('ClientesView.add')}}" > Crear Cliente<a /></td>      
+            <td>   {{ form2.condicionfrenteiva.label }}  </td>
+        <td>  {{ form2.condicionfrenteiva}}           </td >
         <td>   {{ form2.Fecha.label }}  </td>
         <td>  {{ form2.Fecha}}           </td >
 
     </tr>
     <tr>
-        <td>{{ form2.producto.label }}</td>
-        <td> {{ form2.producto}}        </td>      
+           <td>{{ form2.cliente.label }}   </td>
+ <td>    {{ form2.cliente}}       <a id="crearCliente" href="{{url_for('ClientesView.add')}}" > Crear Cliente<a /></td>  
         <td> {{ form2.cantidad.label }}</td>
         <td>    {{ form2.cantidad}}     </td >
         
     </tr>
     <tr >
-        <td></td >
-<td></td >
+        <td>{{ form2.producto.label }}</td>
+        <td> {{ form2.producto}}        </td>   
         <td></td >
        <td>  <input id="agregar" class="btn  btn-info btn-sm" type="button" value="Agregar Renglon" onclick="agregarRenglon(this);" align="right" />
        </td >
     </tr>
 </table>
 </form >
+
+
 <table class="table table-bordered" id="finalizar">
 
         <td style="float:right: " align="right"> 
@@ -67,6 +69,33 @@
         <td id="botonagregar"align="center"> </td >
 </table>
 
+<div class = "panel-heading">
+  <h4 class="panel-title" >
+<a id="expancionT" class="accordion-toggle" data-toggle="collapse" parent="#divtarjeta" data-target="#divtarjeta" href="#divtarjeta" data-original-title="" title="" aria-expanded="true"></a>
+    
+  </h4>
+  
+<div id="divtarjeta" class="collapse">
+  <table class="table table-bordered" >
+           <tr>
+        <td>{{ form2.numeroCupon.label }}   </td>
+         <td>   {{ form2.numeroCupon }}  </td>
+       </tr>
+                  <tr>
+        <td>{{ form2.companiaTarjeta.label }}   </td>
+         <td>   {{ form2.companiaTarjeta }}  </td>
+       </tr>
+                  <tr>
+        <td>{{ form2.credito.label }}   </td>
+         <td>   {{ form2.credito }}  </td>
+       </tr>
+                         <tr>
+        <td>{{ form2.cuotas.label }}   </td>
+         <td>   {{ form2.cuotas }}  </td>
+       </tr>
+  </table >
+  </div>
+</div>
 {% endblock %}
 
 {% block tail_js %}
@@ -74,11 +103,14 @@
 
     <script src="{{url_for('static',filename='js/venta.js')}}"></script>
     <link href="{{url_for('static',filename='appbuilder/select2/select2.css')}}"rel="stylesheet"/>
+    <link href="{{url_for('static',filename='css/claseselect.css')}}"rel="stylesheet"/>
     <script src="{{url_for('static',filename='js/select2.js')}}"></script>
     <script>
         $(document).ready(function() { $("#producto").select2(); });
          $(document).ready(function() { $("#cliente").select2(); });
          $(document).ready(function() { $("#metodo").select2(); });
+         $(document).ready(function() { $("#condicionfrenteiva").select2(); });
+         
     </script>
 
 {% endblock %}

@@ -1,19 +1,19 @@
 from app import db
-from app.models import Venta,Clientes,TipoClaves,tiposDocumentos,FormadePago
+from app.models import Venta,Clientes,TipoClaves,tiposDocumentos,FormadePago,MetodosPagos
 from datetime import datetime as dt
 
 
 
 
-datos_test=[ FormadePago(Metodo="Contado"),
-            FormadePago(Metodo="Tarjeta Debito"),
-            Clientes(documento="Consumidor Final", condicionFrenteIva=TipoClaves.consumidorFinal,
+datos_test=[ FormadePago(Metodo=MetodosPagos.contado),
+            FormadePago(Metodo=MetodosPagos.contado),
+            Clientes(documento="Consumidor Final",
                         tipoDocumento=tiposDocumentos.DNI, created_by_fk=1, changed_by_fk=1, estado=True),
-            Clientes(documento="3905508741", condicionFrenteIva=TipoClaves.consumidorFinal,
+            Clientes(documento="3905508741",
                         tipoDocumento=tiposDocumentos.DNI, created_by_fk=1, changed_by_fk=1, estado=True),
-            Clientes(documento="253648741", condicionFrenteIva=TipoClaves.consumidorFinal,
+            Clientes(documento="253648741",
                         tipoDocumento=tiposDocumentos.DNI, created_by_fk=1, changed_by_fk=1, estado=True),
-            Clientes(documento="131618746", condicionFrenteIva=TipoClaves.consumidorFinal,
+            Clientes(documento="131618746",
                         tipoDocumento=tiposDocumentos.DNI, created_by_fk=1, changed_by_fk=1, estado=True)
         ]
 for carga in datos_test:

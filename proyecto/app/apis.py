@@ -22,7 +22,19 @@ class ComprasApi(BaseApi):
                 if "metododePago" in data and "proveedor" in data and "total" in data:
                     print(data["total"])
                     # creo la venta
-                    compra=Compra(Estado=True, total=float(data["total"]),proveedor_id=int(data["proveedor"]),formadepago_id=int(data["metododePago"]))
+                    if int(data["metododePago"]) == 1:
+                        compra=Compra(Estado=True, condicionFrenteIva=TipoClaves(data["condicionfrenteiva"]),total=float(data["total"]),proveedor_id=int(data["proveedor"]),formadepago_id=int(data["metododePago"]))
+                    else:
+                        formapago=FormadePago(Metodo=MetodosPagos.tarjeta,numeroCupon=data["numeroCupon"],
+                                              companiaTarjeta=CompaniaTarjeta(data["companiaTarjeta"]),
+                                              credito=data["credito"],
+                                              cuotas=data["cuotas"]
+                                              )
+
+                        compra = Compra(Estado=True, condicionFrenteIva=TipoClaves(data["condicionfrenteiva"]),
+                                      total=float(data["total"]), proveedor_id=int(data["proveedor"]),
+                                      formadepago=formapago)
+
                     #agrego la venta
                     db.session.add(compra)
                     db.session.flush()
@@ -97,7 +109,18 @@ class VentasApi(BaseApi):
                 if "metododePago" in data and "cliente" in data and "total" in data:
                     print(data["total"])
                     # creo la venta
-                    venta=Venta(Estado=True, total=float(data["total"]),cliente_id=int(data["cliente"]),formadepago_id=int(data["metododePago"]))
+                    if int(data["metododePago"])==1:
+                        venta=Venta(Estado=True, condicionFrenteIva=TipoClaves(data["condicionfrenteiva"]), total=float(data["total"]),cliente_id=int(data["cliente"]),formadepago_id=int(data["metododePago"]))
+                    else:
+                        formapago=FormadePago(Metodo=MetodosPagos.tarjeta,numeroCupon=data["numeroCupon"],
+                                              companiaTarjeta=CompaniaTarjeta(data["companiaTarjeta"]),
+                                              credito=data["credito"],
+                                              cuotas=data["cuotas"]
+                                              )
+
+                        venta = Venta(Estado=True, condicionFrenteIva=TipoClaves(data["condicionfrenteiva"]),
+                                      total=float(data["total"]), cliente_id=int(data["cliente"]),
+                                      formadepago=formapago)
                     #agrego la venta
                     db.session.add(venta)
                     db.session.flush()

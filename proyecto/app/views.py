@@ -37,8 +37,11 @@ def page_not_found(e):
 from flask_appbuilder.widgets import ListWidget
 
 
-class ListDownloadWidget(ListWidget):
+class ListDownloadWidgetventa(ListWidget):
     template = 'reporteventa.html'
+class ListDownloadWidgetcompra(ListWidget):
+    template = 'reportecompras.html'
+
 
 #creo y configuro la clase de manejador de  vista de productos
 class ProductoModelview(ModelView):
@@ -56,6 +59,13 @@ class MarcasModelview(ModelView):
 
 class CategoriaModelview(ModelView):
     datamodel = SQLAInterface(Categoria)
+
+    def post_add_redirect(self):
+        self.update_redirect()
+        return redirect(url_for("CategoriaModelview.add"))
+
+
+
 
 class unidadesModelView(ModelView):
     datamodel = SQLAInterface(UnidadMedida)
@@ -86,7 +96,7 @@ class VentaReportes(ModelView):
     base_permissions = ['can_show','can_list', 'can_edit']
     list_template = "reportes.html"
     show_template = "imprimirventa.html"
-    list_widget = ListDownloadWidget
+    list_widget = ListDownloadWidgetventa
 
     @expose('/csv', methods=['GET'])
     def download_csv(self):
@@ -99,57 +109,45 @@ class VentaReportes(ModelView):
            order_column, order_direction = self.base_order
 
            count, lst = self.datamodel.query(self._filters, order_column, order_direction)
+        print(lst)
         print(self._filters)
         cabecera = (
-            ("cliente", "Cliente"),
+            ("cliente", "Cliente"),("condicionFrenteIva", "Cond. Frente Iva"),("fecha", "Fecha"),
             ("formadepago", "Forma de Pago"),("total", "Total"),
         )
 
         generarReporte(titulo="Listado de ventas",cabecera=cabecera,buscar=Venta,nombre="Listado de ventas",datos=lst)
         return redirect(url_for('ReportesView.show_static_pdf',var="Listado de ventas" ))
 
-    @action("down_excel", "Download to xlsx", "", "fa-file-excel-o", single=False)
-    def down_excel(self, items):
 
-        get_filter_args(self._filters)
-        print(self.base_order)
-        order_column, order_direction = self.base_order
-
-        count, lst = self.datamodel.query(self._filters, order_column, order_direction)
-        print(lst)
-        csv = ''
-        suma=0
-        for las in self.datamodel.get_values(lst, self.list_columns):
-            suma+=1
-            print( str(las),suma)
-
-        from io import BytesIO
-        import pandas as pd
-        print(items)
-        output = BytesIO()
-        list_items = list()
-        print(len(items))
-        for item in items:
-            row = dict()
-            for col, colname in self.label_columns.items():
-                row[colname] = str(getattr(item, col))
-            list_items.append(row)
-
-        df = pd.DataFrame(list_items)
-        writer = pd.ExcelWriter(output, engine='xlsxwriter')
-        df.to_excel(writer, 'data', index=False)
-        writer.save()
-        output.seek(0)
-
-        return send_file(output, attachment_filename='list.xlsx', as_attachment=True)
 class CompraReportes(ModelView):
     datamodel = SQLAInterface(Compra)
+    list_widget =ListDownloadWidgetcompra
 
-
+    label_columns = {'renglonesrender':'', 'estadorender':'Estado'}
     list_columns = ['proveedor', "total", 'estadorender', 'formadepago','fecha']
-    show_columns = ['proveedor', 'total', 'formadepago','fecha']
+    show_columns = ['proveedor', 'total', 'estadorender','formadepago','fecha','renglonesrender']
     edit_columns = ['Estado']
     base_permissions = ['can_show','can_list', 'can_edit']
+    @expose('/pdf', methods=['GET'])
+    def download_pdf(self):
+
+        get_filter_args(self._filters)
+        if self.base_order==None:
+            count, lst = self.datamodel.query(self._filters)
+        else:
+           order_column, order_direction = self.base_order
+
+           count, lst = self.datamodel.query(self._filters, order_column, order_direction)
+        print(lst)
+        print(self._filters)
+        cabecera = (
+            ("proveedor", "Proveedor"),("condicionFrenteIva", "Cond. Frente Iva"),("fecha", "Fecha"),
+            ("formadepago", "Forma de Pago"),("total", "Total"),
+        )
+
+        generarReporte(titulo="Listado de Compras",cabecera=cabecera,buscar=Venta,nombre="Listado de Compras",datos=lst)
+        return redirect(url_for('ReportesView.show_static_pdf',var="Listado de Compras" ))
 
 #creo clase de el manejador de renglones
 class RenglonVentas(ModelView):
@@ -167,9 +165,15 @@ class RenglonVenta(Form):
                       validators=[DataRequired()])
     producto = SelectField('Producto', coerce=str, choices=[(p.id, p) for p in db.session.query(Productos)])
     cantidad = IntegerField('Cantidad', widget=BS3TextFieldWidget())
-    metodo = SelectField('Metodo de Pago', coerce=str, choices=[(m.id, m) for m in db.session.query(FormadePago)])
+    metodo = SelectField('Metodo de Pago', coerce=MetodosPagos.coerce, choices=MetodosPagos.choices())
+    condicionfrenteiva= SelectField('Condicion Frente Iva', coerce=TipoClaves.coerce, choices=TipoClaves.choices() )
     Total = FloatField('Total', render_kw={'disabled': ''},
                        validators=[DataRequired()], default=0)
+    numeroCupon = IntegerField('Numero de cupon', widget=BS3TextFieldWidget())
+    companiaTarjeta = SelectField('Compania de la Tarjeta', coerce=CompaniaTarjeta.coerce, choices=CompaniaTarjeta.choices() )
+    credito = BooleanField("Credito", default=False)
+    cuotas = IntegerField("Cuotas", default=0)
+
 #creo clase manejadora de la vista de realizar venta
 class VentaView(BaseView):
     default_view = 'venta'
@@ -187,7 +191,7 @@ class VentaView(BaseView):
         # cargo las elecciones de cliente
         form2.cliente.choices = [(c.id, c) for c in db.session.query(Clientes)]
         # cargo las elecciones de metodo de pago
-        form2.metodo.choices = [(c.id, c) for c in db.session.query(FormadePago)]
+        #form2.metodo.choices = [(c.id, c) for c in db.session.query(FormadePago)]
         # le digo que guarde la url actual en el historial
         #esto sirve para cuando creas un cliente que te redirija despues a la venta
         self.update_redirect()
@@ -205,9 +209,15 @@ class RenglonCompra(Form):
                       validators=[DataRequired()])
     producto = SelectField('Producto', coerce=str, choices=[(p.id, p) for p in db.session.query(Productos)])
     cantidad = IntegerField('Cantidad', widget=BS3TextFieldWidget())
-    metodo = SelectField('Metodo de Pago', coerce=str, choices=[(m.id, m) for m in db.session.query(FormadePago)])
+    metodo = SelectField('Metodo de Pago', coerce=MetodosPagos.coerce, choices=MetodosPagos.choices())
     Total = FloatField('Total', render_kw={'disabled': ''},
                        validators=[DataRequired()], default=0)
+    condicionfrenteiva = SelectField('Condicion Frente Iva', coerce=TipoClaves.coerce, choices=TipoClaves.choices())
+    numeroCupon = IntegerField('Numero de cupon', widget=BS3TextFieldWidget())
+    companiaTarjeta = SelectField('Compania de la Tarjeta', coerce=CompaniaTarjeta.coerce, choices=CompaniaTarjeta.choices() )
+    credito = BooleanField("Credito", default=False)
+    cuotas = IntegerField("Cuotas", default=0)
+
 #creo clase manejadora de la vista de realizar compra
 class CompraView(BaseView):
     default_view = 'compra'
@@ -230,7 +240,7 @@ class CompraView(BaseView):
         # cargo las elecciones de cliente
         form2.proveedor.choices = [(c.id, c) for c in db.session.query(Proveedor)]
         # cargo las elecciones de metodo de pago
-        form2.metodo.choices = [(c.id, c) for c in db.session.query(FormadePago)]
+        #form2.metodo.choices = [(c.id, c) for c in db.session.query(FormadePago)]
         # le digo que guarde la url actual en el historial
         #esto sirve para cuando creas un cliente que te redirija despues a la venta
         self.update_redirect()
@@ -256,13 +266,13 @@ class ClientesView(ModelView):
     base_permissions =['can_list','can_add','can_edit', 'can_delete' ]
     message="cliente creado"
     #presonalizando las etiquetas de las columnas
-    label_columns = {'condicionFrenteIva': 'condicion Frente al Iva','tipoDocumento':'tipo de Documento' }
+    label_columns = {'tipoDocumento':'tipo de Documento' }
     #filtrando los valores
     #base_filters = [['estado', FilterEqual, True]]#descomentar para que filtre solo los activos
     #configurando las columnas de las vistas crear listar y editar
-    add_columns = ['documento', 'nombre', 'apellido', 'condicionFrenteIva','tipoDocumento']
-    list_columns = ['documento', 'nombre', 'apellido', 'condicionFrenteIva','tipoDocumento']
-    edit_columns = ['documento', 'nombre', 'apellido', 'condicionFrenteIva','tipoDocumento','estado']
+    add_columns = ['documento', 'nombre', 'apellido','tipoDocumento']
+    list_columns = ['documento', 'nombre', 'apellido','tipoDocumento']
+    edit_columns = ['documento', 'nombre', 'apellido','tipoDocumento','estado']
     #me devuelve la url previa
     def get_redirect_anterior(self):
         """
