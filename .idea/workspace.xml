@@ -2,19 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e6f9fc09-d089-4896-be04-4879e7efe7f0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/proyecto/app/templates/reportecompras.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proyecto/ModeloProyectoFinal.DM1" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/ModeloProyectoFinal.DM1" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/apis.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/apis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/static/css/claseselect.css" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/static/css/claseselect.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proyecto/app/static/docs/Listado de Compras.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/static/docs/Listado de Compras.pdf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proyecto/app/static/docs/Listado de ventas.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/static/docs/Listado de ventas.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/static/js/compra.js" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/static/js/compra.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/static/js/venta.js" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/static/js/venta.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/templates/compra.html" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/templates/compra.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/templates/venta.html" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/templates/venta.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/testdata.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/testdata.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proyecto/app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/views.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -40,8 +31,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/proyecto/app/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="196" column="8" selection-start-line="196" selection-start-column="8" selection-end-line="196" selection-end-column="8" />
+            <state relative-caret-position="187">
+              <caret line="41" column="43" selection-start-line="41" selection-start-column="43" selection-end-line="41" selection-end-column="43" />
               <folding>
                 <element signature="e#0#95#0" expanded="true" />
               </folding>
@@ -141,6 +132,7 @@
       <find>pre_add</find>
       <find>def pre_add</find>
       <find>compra</find>
+      <find>compr</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -162,7 +154,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="584" />
+    <option name="x" value="226" />
+    <option name="y" value="153" />
     <option name="width" value="789" />
     <option name="height" value="735" />
   </component>
@@ -171,6 +164,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -200,7 +194,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -261,12 +254,12 @@
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.11309524" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.10565476" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3289689" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.049099836" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.38297874" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.33060557" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -408,8 +401,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/proyecto/app/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="196" column="8" selection-start-line="196" selection-start-column="8" selection-end-line="196" selection-end-column="8" />
+        <state relative-caret-position="187">
+          <caret line="41" column="43" selection-start-line="41" selection-start-column="43" selection-end-line="41" selection-end-column="43" />
           <folding>
             <element signature="e#0#95#0" expanded="true" />
           </folding>

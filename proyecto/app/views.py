@@ -47,6 +47,7 @@ class ListDownloadWidgetcompra(ListWidget):
 class ProductoModelview(ModelView):
     datamodel = SQLAInterface(Productos)
     #configuro vistas de crear, listar y editar
+    list_title = "Listado de Productos"
     add_columns = ['categoria', 'marca','unidad', 'medida', 'precio', 'stock', 'detalle']
     list_columns = ['categoria', 'marca', 'medida','unidad', 'precio', 'stock', 'detalle']
     edit_columns = ['categoria','medida','unidad','marca','precio','stock','detalle']
@@ -55,9 +56,11 @@ class ProductoModelview(ModelView):
 
 #creo clase de manejador de vistas de marcas y unidad de medida
 class MarcasModelview(ModelView):
+    list_title = "Listado de Marcas"
     datamodel = SQLAInterface(Marcas)
 
 class CategoriaModelview(ModelView):
+    list_title = "Listado de Categorias"
     datamodel = SQLAInterface(Categoria)
 
     def post_add_redirect(self):
@@ -88,7 +91,7 @@ class ReportesView(BaseView):
 #creo clase de manejador de la vista de ventas
 class VentaReportes(ModelView):
     datamodel = SQLAInterface(Venta)
-
+    list_title = "Listado de Ventas"
     label_columns = {"totalrender":"Total",'formadepago':'Forma de Pago','renglonesrender':'','estadorender':'Estado'}
     list_columns = ['cliente', "totalrender", 'estadorender', 'formadepago','fecha']
     show_columns = ['cliente', 'estadorender', 'formadepago','fecha','renglonesrender']
@@ -123,7 +126,7 @@ class VentaReportes(ModelView):
 class CompraReportes(ModelView):
     datamodel = SQLAInterface(Compra)
     list_widget =ListDownloadWidgetcompra
-
+    list_title = "Listado de Compras"
     label_columns = {'renglonesrender':'', 'estadorender':'Estado'}
     list_columns = ['proveedor', "total", 'estadorender', 'formadepago','fecha']
     show_columns = ['proveedor', 'total', 'estadorender','formadepago','fecha','renglonesrender']
