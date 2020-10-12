@@ -32,18 +32,18 @@
 
 <form class="form-group ">
 <table class="table table-bordered" id="agregar">
+<tr>
+              <td>{{ form2.cliente.label }}   </td>
+ <td>    {{ form2.cliente}}       <a id="crearCliente" href="{{url_for('ClientesView.add')}}" > Crear Cliente<a /></td>  
+         
 
-   
-         <tr>
-            <td>   {{ form2.condicionfrenteiva.label }}  </td>
-        <td>  {{ form2.condicionfrenteiva}}           </td >
         <td>   {{ form2.Fecha.label }}  </td>
         <td>  {{ form2.Fecha}}           </td >
 
     </tr>
     <tr>
-           <td>{{ form2.cliente.label }}   </td>
- <td>    {{ form2.cliente}}       <a id="crearCliente" href="{{url_for('ClientesView.add')}}" > Crear Cliente<a /></td>  
+            <td>   {{ form2.condicionfrenteiva.label }}  </td>
+        <td>  {{ form2.condicionfrenteiva}}           </td >
         <td> {{ form2.cantidad.label }}</td>
         <td>    {{ form2.cantidad}}     </td >
         
@@ -53,6 +53,7 @@
         <td> {{ form2.producto}}        </td>   
         <td></td >
        <td>  <input id="agregar" class="btn  btn-info btn-sm" type="button" value="Agregar Renglon" onclick="agregarRenglon(this);" align="right" />
+        <input id="borrar" class="btn  btn-danger btn-sm" type="button" value="Borrar Renglon" disabled="true" onclick="borrarRenglon(this);" align="right" />
        </td >
     </tr>
 </table>

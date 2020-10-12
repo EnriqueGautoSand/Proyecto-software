@@ -1,12 +1,15 @@
 from app import db
-from app.models import Venta,Clientes,TipoClaves,tiposDocumentos,FormadePago,MetodosPagos
+from app.models import Venta,Clientes,TipoClaves,tiposDocumentos,FormadePago,CompaniaTarjeta,EmpresaDatos
 from datetime import datetime as dt
 
 
 
 
-datos_test=[ FormadePago(Metodo=MetodosPagos.contado),
-            FormadePago(Metodo=MetodosPagos.contado),
+datos_test=[EmpresaDatos(compania="Kiogestion",direccion="Avenida Roque Perez, 1522"),
+    CompaniaTarjeta(compania="Visa"),
+            CompaniaTarjeta(compania="Mastercard"),
+            FormadePago(Metodo="Contado"),
+            FormadePago(Metodo="Tarjeta"),
             Clientes(documento="Consumidor Final",
                         tipoDocumento=tiposDocumentos.DNI, created_by_fk=1, changed_by_fk=1, estado=True),
             Clientes(documento="3905508741",

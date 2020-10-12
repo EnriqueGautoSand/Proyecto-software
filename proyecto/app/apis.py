@@ -23,17 +23,17 @@ class ComprasApi(BaseApi):
                     print(data["total"])
                     # creo la venta
                     if int(data["metododePago"]) == 1:
-                        compra=Compra(Estado=True, condicionFrenteIva=TipoClaves(data["condicionfrenteiva"]),total=float(data["total"]),proveedor_id=int(data["proveedor"]),formadepago_id=int(data["metododePago"]))
+                        compra=Compra(Estado=True, condicionFrenteIva=TipoClaves(data["condicionfrenteiva"]),total=float(data["total"]),proveedor_id=data["proveedor"],formadepago_id=data["metododePago"])
                     else:
-                        formapago=FormadePago(Metodo=MetodosPagos.tarjeta,numeroCupon=data["numeroCupon"],
-                                              companiaTarjeta=CompaniaTarjeta(data["companiaTarjeta"]),
+                        datosFormaPagos=DatosFormaPagos(numeroCupon=data["numeroCupon"],
+                                              companiaTarjeta_id=data["companiaTarjeta"],
                                               credito=data["credito"],
                                               cuotas=data["cuotas"]
                                               )
 
                         compra = Compra(Estado=True, condicionFrenteIva=TipoClaves(data["condicionfrenteiva"]),
-                                      total=float(data["total"]), proveedor_id=int(data["proveedor"]),
-                                      formadepago=formapago)
+                                      total=float(data["total"]), proveedor_id=data["proveedor"],formadepago_id=data["metododePago"],
+                                      datosFormaPagos=datosFormaPagos)
 
                     #agrego la venta
                     db.session.add(compra)
@@ -43,11 +43,12 @@ class ComprasApi(BaseApi):
                         for p in data["productos"]:
                             #solicita el producto a ala base de datos
                             producto = db.session.query(Productos).get(p[0])
-                            print(producto.stock, p[1])
+                            print(producto,'\n', producto.stock, p[1])
 
-                            #crea el renglon en la venta sino cancela transaccion y manda error
+                            #crea el renglon en la compra sino cancela transaccion y manda error
 
                             db.session.add(RenglonCompras(precioCompra=producto.precio , cantidad=p[1],compra=compra,  producto=producto))
+
                         #Guardamos
                         db.session.commit()
                         print("compra Guardada")
@@ -110,17 +111,18 @@ class VentasApi(BaseApi):
                     print(data["total"])
                     # creo la venta
                     if int(data["metododePago"])==1:
-                        venta=Venta(Estado=True, condicionFrenteIva=TipoClaves(data["condicionfrenteiva"]), total=float(data["total"]),cliente_id=int(data["cliente"]),formadepago_id=int(data["metododePago"]))
+                        venta=Venta(Estado=True, condicionFrenteIva=TipoClaves(data["condicionfrenteiva"]), total=float(data["total"]),cliente_id=int(data["cliente"]),formadepago_id=data["metododePago"])
                     else:
-                        formapago=FormadePago(Metodo=MetodosPagos.tarjeta,numeroCupon=data["numeroCupon"],
-                                              companiaTarjeta=CompaniaTarjeta(data["companiaTarjeta"]),
+                        datosFormaPagos=DatosFormaPagos(numeroCupon=data["numeroCupon"],
+                                              companiaTarjeta_id=data["companiaTarjeta"],
                                               credito=data["credito"],
                                               cuotas=data["cuotas"]
                                               )
 
+
                         venta = Venta(Estado=True, condicionFrenteIva=TipoClaves(data["condicionfrenteiva"]),
-                                      total=float(data["total"]), cliente_id=int(data["cliente"]),
-                                      formadepago=formapago)
+                                      total=float(data["total"]), cliente_id=int(data["cliente"]),formadepago_id=data["metododePago"],
+                                      datosFormaPagos=datosFormaPagos)
                     #agrego la venta
                     db.session.add(venta)
                     db.session.flush()
@@ -130,10 +132,13 @@ class VentasApi(BaseApi):
                            #solicita el producto a ala base de datos
                            producto = db.session.query(Productos).get(p[0])
                            print(producto.stock, p[1])
+                           print(producto)
                            #aca verifica si el stock es mayor a la cantidad a comprar
                            #crea el renglon en la venta sino cancela transaccion y manda error
                            if producto.stock>p[1]:
                                 db.session.add(Renglon(precioVenta=producto.precio , cantidad=p[1],venta=venta,  producto=producto))
+
+
                                 #producto.stock=producto.stock-p[1]
                                 #db.session.add(producto)
                            else:

@@ -4,6 +4,7 @@ var cliente = document.getElementById('cliente')
 var metododePago= document.getElementById('metodo')
 var tablafinalizar= document.getElementById('finalizar')
 var total = document.getElementById('Total')
+var botonborrar=document.getElementById('borrar')
 var condicionfrenteiva = document.getElementById('condicionfrenteiva')
 cantidad.className="form-inline"
 
@@ -57,7 +58,7 @@ var totalFila=0
 var totalColuma=0
 var totalhtml=document.getElementById("Total") 
 var jsonProductos={}
-
+var renglonseleccionado=undefined
 
 
 function addRowHandlers() {
@@ -73,6 +74,9 @@ function addRowHandlers() {
  		$("#producto").select2().val(jsonProductos[textoProducto][0]).trigger("change");
 		var cellCantidad= row.getElementsByTagName("td")[1];
         cantidad.value=cellCantidad.innerHTML;
+        renglonseleccionado=row
+        botonborrar.disabled=false
+
 
       };
     };
@@ -87,8 +91,28 @@ if (parseInt(cantidad.value)>0){
 }
 
 }
+function borrarRenglon(element){
+	 var cellProducto = renglonseleccionado.getElementsByTagName("td")[0];
+     var textoProducto = cellProducto.innerHTML;
+     var totalfi= renglonseleccionado.getElementsByTagName("td")[2];
+    console.log('totalfila',totalfi)
+     totalfi=totalfi.innerHTML
+	totalColuma-=parseInt( totalfi.split('$')[1])
+	totalhtml.value=totalColuma
 
+     listaProductos.delete(JSON.parse(jsonProductos[textoProducto][0]).id)
+     jsonProductos[textoProducto] = undefined;
+	jsonProductos=JSON.parse(JSON.stringify(jsonProductos))
+	console.log(renglonseleccionado.id)
+	$("#" + renglonseleccionado.id).remove();
+
+	element.disabled=true
+}
+var contadorfilas=0
 function agregarRenglon(element){
+	renglonseleccionado=NaN
+	botonborrar.disabled=true
+
 	element.disabled=true
 
 	totalFila=0
@@ -106,6 +130,9 @@ function agregarRenglon(element){
 		jsonProductos[productosel.representacion]=[producto.value, cantidadpos()]
 
 		var hilera = document.createElement("tr");
+		//configuro id de la fila
+		contadorfilas+=1
+		hilera.id="fila"+contadorfilas.toString()
 		
 		var celda = document.createElement("td");
 		var textoCelda = document.createTextNode(producto[producto.selectedIndex].innerHTML );
@@ -189,6 +216,7 @@ try {
 .then(response =>{
 	console.log('Success:', response)
 	if (response.message.status== "sucess"){
+		alert("Venta Realizada Satisfactoriamente")
 		window.location.href ="http://localhost:8080/ventaview/venta/"
 		//window.location.href = "http://localhost:8080/ventareportes/show/"+response.message.idventa.toString()
 	}else {
@@ -214,28 +242,29 @@ boton.disabled=true
 			  // Controlando que json realmente tenga esa propiedad
 			  if (jsonProductos.hasOwnProperty(clave)) {
 			    // Mostrando en pantalla la clave junto a su valor
-			    
-			    console.log(" Producto  " + JSON.parse(jsonProductos[clave][0])['id'] , " Cantidad: "+ jsonProductos[clave][1])
-				jsonventa["productos"].push([JSON.parse(jsonProductos[clave][0])['id'],jsonProductos[clave][1] ])
+			    if(jsonProductos[clave]!= undefined && jsonProductos[clave]!=null ){
+			    	console.log(" Producto  " + JSON.parse(jsonProductos[clave][0])['id'] , " Cantidad: "+ jsonProductos[clave][1])
+					jsonventa["productos"].push([JSON.parse(jsonProductos[clave][0])['id'],jsonProductos[clave][1] ])
+				}
 			  }
 			}
 			jsonventa["cliente"]=parseInt(cliente.value);
 			jsonventa["total"]=parseFloat(total.value);
 			jsonventa["condicionfrenteiva"]=condicionfrenteiva.value
-	if (metododePago.value=="Contado"){
-			jsonventa["metododePago"]=1;
+	if (metododePago.value==1){
+			jsonventa["metododePago"]=metododePago.value;
 			
 			conectarVentaapi(jsonventa);
 
 	}else {
-			jsonventa["metododePago"]=2;
+			jsonventa["metododePago"]=metododePago.value;
 			if(credito.checked && parseInt(cuotas.value)<=0){
 
 					alert("Completar todos los datos de la Tarjeta")
 			}
 			else{
 				if ( cupon.value!=""  ){
-					alert("entro1")
+					//alert("entro1")
 						jsonventa["numeroCupon"]=cupon.value;
 						jsonventa["companiaTarjeta"]=companiaTarjeta.value;
 						jsonventa["credito"]=credito.checked
@@ -268,7 +297,7 @@ boton.onclick= function() {console.log('largo json ',jQuery.isEmptyObject(jsonPr
 						};
 $("#metodo").click(function() {
 
-						if (metododePago.value=="Tarjeta"){
+						if (metododePago.value==2){
 								//alert("Cargar Tarjeta")
 								$('#divtarjeta').collapse('show')
 							}

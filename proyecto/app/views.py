@@ -3,25 +3,21 @@ from flask_appbuilder.models.sqla.interface import SQLAInterface
 from flask_appbuilder import ModelView, ModelRestApi, BaseView, expose, has_access, MultipleView, SimpleFormView
 from flask_appbuilder.views import ModelView, CompactCRUDMixin, MasterDetailView
 from flask import flash
-from . import appbuilder, db
-from .models import *
-import flask_appbuilder
-from datetime import datetime as dt
-import json
+
+
+
 from .apis import *
 from flask_appbuilder.models.sqla.filters import FilterEqualFunction,FilterEqual
 
 from flask_appbuilder.actions import action
 from flask_appbuilder.urltools import  Stack
-from flask_appbuilder.models.decorators import renders
+
 
 from wtforms import Form, BooleanField, StringField, validators, DateField, FloatField, IntegerField, FieldList, \
     SelectField, SubmitField
 from wtforms.validators import DataRequired
 from flask_appbuilder.fieldwidgets import BS3TextFieldWidget, Select2Widget
-from flask_appbuilder.forms import DynamicForm
-from wtforms.ext.sqlalchemy.fields import QuerySelectField
-from flask import make_response
+
 from flask_appbuilder.urltools import get_filter_args
 from .reportes import generarReporte
 #manejador en caso de que no se encuentre la pagina
@@ -35,6 +31,22 @@ def page_not_found(e):
     )
 
 from flask_appbuilder.widgets import ListWidget
+
+
+class Empresaview(ModelView):
+    datamodel = SQLAInterface(EmpresaDatos)
+
+    list_title = "Datos de La Empresa"
+    list_columns = ['compania','direccion']
+    base_permissions = ['can_show', 'can_list', 'can_edit']
+
+class CompaniaTarjetaview(ModelView):
+    datamodel = SQLAInterface(CompaniaTarjeta)
+    list_title = "Lista de companias de Tarjeta"
+
+class Sistemaview(MultipleView):
+    views =[Empresaview,CompaniaTarjetaview]
+
 
 
 class ListDownloadWidgetventa(ListWidget):
@@ -83,7 +95,6 @@ class ReportesView(BaseView):
     @has_access
     def show_static_pdf(self,var):
         from flask import send_from_directory, g
-        from app import app
         import os
         print(os.getcwd())
         return send_from_directory(os.getcwd()+"/app/static/docs/", f'{var}.pdf')
@@ -168,12 +179,12 @@ class RenglonVenta(Form):
                       validators=[DataRequired()])
     producto = SelectField('Producto', coerce=str, choices=[(p.id, p) for p in db.session.query(Productos)])
     cantidad = IntegerField('Cantidad', widget=BS3TextFieldWidget())
-    metodo = SelectField('Metodo de Pago', coerce=MetodosPagos.coerce, choices=MetodosPagos.choices())
+    metodo = SelectField('Forma de Pago', coerce=str, choices=[(p.id, p) for p in db.session.query(FormadePago)])
     condicionfrenteiva= SelectField('Condicion Frente Iva', coerce=TipoClaves.coerce, choices=TipoClaves.choices() )
     Total = FloatField('Total', render_kw={'disabled': ''},
                        validators=[DataRequired()], default=0)
     numeroCupon = IntegerField('Numero de cupon', widget=BS3TextFieldWidget())
-    companiaTarjeta = SelectField('Compania de la Tarjeta', coerce=CompaniaTarjeta.coerce, choices=CompaniaTarjeta.choices() )
+    companiaTarjeta = SelectField('Compania de la Tarjeta', coerce=str, choices=[(p.id, p) for p in db.session.query(CompaniaTarjeta)] )
     credito = BooleanField("Credito", default=False)
     cuotas = IntegerField("Cuotas", default=0)
 
@@ -194,7 +205,10 @@ class VentaView(BaseView):
         # cargo las elecciones de cliente
         form2.cliente.choices = [(c.id, c) for c in db.session.query(Clientes)]
         # cargo las elecciones de metodo de pago
-        #form2.metodo.choices = [(c.id, c) for c in db.session.query(FormadePago)]
+        form2.metodo.choices = [(c.id, c) for c in db.session.query(FormadePago)]
+        form2.condicionfrenteiva.coerce=TipoClaves.coerce
+        form2.condicionfrenteiva.choices=TipoClaves.choices()
+        form2.companiaTarjeta.choices = [(c.id, c) for c in db.session.query(CompaniaTarjeta)]
         # le digo que guarde la url actual en el historial
         #esto sirve para cuando creas un cliente que te redirija despues a la venta
         self.update_redirect()
@@ -212,12 +226,12 @@ class RenglonCompra(Form):
                       validators=[DataRequired()])
     producto = SelectField('Producto', coerce=str, choices=[(p.id, p) for p in db.session.query(Productos)])
     cantidad = IntegerField('Cantidad', widget=BS3TextFieldWidget())
-    metodo = SelectField('Metodo de Pago', coerce=MetodosPagos.coerce, choices=MetodosPagos.choices())
+    metodo = SelectField('Metodo de Pago', coerce=str, choices=[(p.id, p) for p in db.session.query(FormadePago)])
     Total = FloatField('Total', render_kw={'disabled': ''},
                        validators=[DataRequired()], default=0)
     condicionfrenteiva = SelectField('Condicion Frente Iva', coerce=TipoClaves.coerce, choices=TipoClaves.choices())
     numeroCupon = IntegerField('Numero de cupon', widget=BS3TextFieldWidget())
-    companiaTarjeta = SelectField('Compania de la Tarjeta', coerce=CompaniaTarjeta.coerce, choices=CompaniaTarjeta.choices() )
+    companiaTarjeta = SelectField('Compania de la Tarjeta', coerce=str, choices=[(p.id, p) for p in db.session.query(CompaniaTarjeta)] )
     credito = BooleanField("Credito", default=False)
     cuotas = IntegerField("Cuotas", default=0)
 
@@ -243,7 +257,8 @@ class CompraView(BaseView):
         # cargo las elecciones de cliente
         form2.proveedor.choices = [(c.id, c) for c in db.session.query(Proveedor)]
         # cargo las elecciones de metodo de pago
-        #form2.metodo.choices = [(c.id, c) for c in db.session.query(FormadePago)]
+        form2.metodo.choices = [(c.id, c) for c in db.session.query(FormadePago)]
+        form2.companiaTarjeta.choices = [(c.id, c) for c in db.session.query(CompaniaTarjeta)]
         # le digo que guarde la url actual en el historial
         #esto sirve para cuando creas un cliente que te redirija despues a la venta
         self.update_redirect()
@@ -332,6 +347,12 @@ appbuilder.add_view_no_menu(CategoriaModelview)
 appbuilder.add_view_no_menu(ReportesView)
 appbuilder.add_view(VentaReportes, "Reporte Ventas",icon="fa-save", category='Ventas' )
 appbuilder.add_view(CompraReportes, "Reporte Compras",icon="fa-save", category='Compras' )
+
+
+appbuilder.add_view(Sistemaview,'Datos Empresa',category='Security')
+
+appbuilder.add_view_no_menu(Empresaview)
+appbuilder.add_view_no_menu(CompaniaTarjetaview)
 
 appbuilder.add_view_no_menu(RenglonVentas)
 

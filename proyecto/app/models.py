@@ -1,4 +1,5 @@
 from flask_appbuilder import Model
+import flask_appbuilder
 from sqlalchemy import Column, Integer, String, ForeignKey,Float,Date, Boolean, UniqueConstraint
 from sqlalchemy.orm import relationship
 from flask_appbuilder.models.decorators import renders
@@ -9,6 +10,23 @@ from flask import Markup, url_for, redirect
 import enum
 from sqlalchemy import Enum
 from datetime import datetime as dt
+print(flask_appbuilder.security.sqla.models)
+class EmpresaDatos(Model):
+    """
+    # creo clase que sera mapeada como la tabla companiaTarjeta
+    """
+    __tablename__ = 'datosEmpresa'
+    id = Column(Integer, primary_key=True)
+    compania = Column(String(50), unique=True)
+    direccion = Column(String(255), unique=True)
+    __table_args__ = (
+        UniqueConstraint("compania","direccion"),
+    )
+
+
+    def __repr__(self):
+        return f'{self.compania}'
+
 class TipoClaves(enum.Enum):
     """
     # creo clase que enumera los tipos de clave
@@ -16,7 +34,7 @@ class TipoClaves(enum.Enum):
     consumidorFinal="Consumidor Final"
     responsableInscripto="Responsable Inscripto"
     monotributista="Monotributista"
-    exento = "exento"
+    exento = "Exento"
 
     #defino como se representara al ser llamado
     def __str__(self):
@@ -89,62 +107,46 @@ class Clientes(Model,AuditMixin):
             return "Consumidor Final"
 
         return f"{self.nombre} {self.apellido} {self.tipoDocumento} {self.documento} "
-class MetodosPagos(enum.Enum):
-    """
-    # creo clase que enumera los tipos de clave
-    """
-    contado = "Contado"
-    tarjeta="Tarjeta"
 
 
-    #defino como se representara al ser llamado
-    def __str__(self):
-        return f'{self.value}'
+
+class CompaniaTarjeta(Model):
+    """
+    # creo clase que sera mapeada como la tabla companiaTarjeta
+    """
+    __tablename__ = 'companiaTarjeta'
+    id = Column(Integer, primary_key=True)
+    compania = Column(String(50), unique=True)
+
     def __repr__(self):
-        return f'{self.value}'
-    @classmethod
-    def choices(cls):
-        return [(choice, str(choice)) for choice in cls]
+        return f'{self.compania}'
 
-    @classmethod
-    def coerce(cls, item):
-        return [(name.title(), member.value) for name, member in cls.__members__.items()]
-class CompaniaTarjeta(enum.Enum):
+class DatosFormaPagos(Model):
     """
-    # creo clase que enumera los tipos de clave
+    # creo clase que sera mapeada como la tabla  de los datos de forma de pago tarjeta
     """
-    visa="Visa"
-    mastercard="Mastercard"
-    naranja = "Naranja"
-    @classmethod
-    def choices(cls):
-        return [(choice, str(choice)) for choice in cls]
-
-    @classmethod
-    def coerce(cls, item):
-        return [(name.title(), member.value) for name, member in cls.__members__.items()]
-    #defino como se representara al ser llamado
-    def __str__(self):
-        return f'{self.value}'
+    __tablename__ = 'datosFormaPagos'
+    id = Column(Integer, primary_key=True)
+    numeroCupon = Column(String(50), unique=True)
+    credito = Column(Boolean, default=False)
+    cuotas = Column(Integer)
+    companiaTarjeta_id = Column(Integer, ForeignKey('companiaTarjeta.id'), nullable=False)
+    companiaTarjeta = relationship("CompaniaTarjeta")
     def __repr__(self):
-        return f'{self.value}'
+        return f'{self.numeroCupon}'
+
 class FormadePago(Model):
     """
     creo clase que sera mapeada como la tabla formadepago en la base de datos
     """
     __tablename__= 'formadepago'
     id=Column(Integer, primary_key=True)
-    Metodo=Column(Enum(MetodosPagos))
-    numeroCupon = Column(String(50), unique=True)
-    companiaTarjeta = Column(Enum(CompaniaTarjeta))
-    credito = Column(Boolean, default=False)
-    cuotas = Column(Integer)
+    Metodo=Column(String(50), unique=True)
+
     # defino como se representara al ser llamado esto es util para las ver tablas foraneas
     def __repr__(self):
-        if str(self.Metodo)=="Contado":
-            return str(self.Metodo)
-        else:
-            return f"{self.Metodo} \n cupon {self.numeroCupon}"
+           return str(self.Metodo)
+
 
 
 
@@ -164,6 +166,8 @@ class Compra(Model):
     proveedor = relationship("Proveedor")
     formadepago_id = Column(Integer, ForeignKey('formadepago.id'), nullable=False)
     formadepago = relationship("FormadePago")
+    datosFormaPagos_id = Column(Integer, ForeignKey('datosFormaPagos.id'), nullable=True)
+    datosFormaPagos = relationship("DatosFormaPagos")
     # defino como se representara al ser llamado
     def __repr__(self):
         return f'{self.proveedor} {self.total} {self.Estado} {self.fecha}'
@@ -179,9 +183,12 @@ class Compra(Model):
         renglones="</table> <table class='table table-bordered'> <tr><td>Producto</td> <td>Precio</td><td>Cantidad</td><td>Subtotal</td></tr>"
         total=0
         for i in  self.renglones:
-            unrenglon=f"<tr><td>{i.producto}</td> <td>${i.precioCompra}</td><td>{i.cantidad}</td><td>${i.precioCompra*i.cantidad}</td></tr> "
-            renglones+=unrenglon+'\n'
-            total+=i.precioCompra*i.cantidad
+            if i.compra_id == self.id:
+                unrenglon=f"<tr><td>{i.producto}</td> <td>${i.precioCompra}</td><td>{i.cantidad}</td><td>${i.precioCompra*i.cantidad}</td></tr> "
+                renglones+=unrenglon+'\n'
+                total+=i.precioCompra*i.cantidad
+            else:
+                print('equibocado',i)
 
         renglones+=f"<tr><td></td><td></td><td>Total</td> <td>${total}</td></tr>"
         print(renglones)
@@ -201,7 +208,8 @@ class Venta(Model):
     cliente = relationship("Clientes")
     formadepago_id = Column(Integer, ForeignKey('formadepago.id'), nullable=False)
     formadepago = relationship("FormadePago")
-
+    datosFormaPagos_id = Column(Integer, ForeignKey('datosFormaPagos.id'), nullable=True)
+    datosFormaPagos = relationship("DatosFormaPagos")
     @renders('total')
     def totalrender(self):
          return Markup('<b> $' + str(self.total) + '</b>')
