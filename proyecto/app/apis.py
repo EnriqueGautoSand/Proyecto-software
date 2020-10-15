@@ -28,7 +28,7 @@ class ComprasApi(BaseApi):
                         datosFormaPagos=DatosFormaPagos(numeroCupon=data["numeroCupon"],
                                               companiaTarjeta_id=data["companiaTarjeta"],
                                               credito=data["credito"],
-                                              cuotas=data["cuotas"]
+                                              cuotas=data["cuotas"],formadepago_id=data["metododePago"]
                                               )
 
                         compra = Compra(Estado=True, condicionFrenteIva=TipoClaves(data["condicionfrenteiva"]),
@@ -116,7 +116,7 @@ class VentasApi(BaseApi):
                         datosFormaPagos=DatosFormaPagos(numeroCupon=data["numeroCupon"],
                                               companiaTarjeta_id=data["companiaTarjeta"],
                                               credito=data["credito"],
-                                              cuotas=data["cuotas"]
+                                              cuotas=data["cuotas"],formadepago_id=data["metododePago"]
                                               )
 
 

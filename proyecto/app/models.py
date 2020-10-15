@@ -19,6 +19,7 @@ class EmpresaDatos(Model):
     id = Column(Integer, primary_key=True)
     compania = Column(String(50), unique=True)
     direccion = Column(String(255), unique=True)
+    cuit = Column(String(30), unique=True,nullable=True)
     __table_args__ = (
         UniqueConstraint("compania","direccion"),
     )
@@ -121,19 +122,7 @@ class CompaniaTarjeta(Model):
     def __repr__(self):
         return f'{self.compania}'
 
-class DatosFormaPagos(Model):
-    """
-    # creo clase que sera mapeada como la tabla  de los datos de forma de pago tarjeta
-    """
-    __tablename__ = 'datosFormaPagos'
-    id = Column(Integer, primary_key=True)
-    numeroCupon = Column(String(50), unique=True)
-    credito = Column(Boolean, default=False)
-    cuotas = Column(Integer)
-    companiaTarjeta_id = Column(Integer, ForeignKey('companiaTarjeta.id'), nullable=False)
-    companiaTarjeta = relationship("CompaniaTarjeta")
-    def __repr__(self):
-        return f'{self.numeroCupon}'
+
 
 class FormadePago(Model):
     """
@@ -148,7 +137,21 @@ class FormadePago(Model):
            return str(self.Metodo)
 
 
-
+class DatosFormaPagos(Model):
+    """
+    # creo clase que sera mapeada como la tabla  de los datos de forma de pago tarjeta
+    """
+    __tablename__ = 'datosFormaPagos'
+    id = Column(Integer, primary_key=True)
+    numeroCupon = Column(String(50), unique=True)
+    credito = Column(Boolean, default=False)
+    cuotas = Column(Integer)
+    companiaTarjeta_id = Column(Integer, ForeignKey('companiaTarjeta.id'), nullable=False)
+    companiaTarjeta = relationship("CompaniaTarjeta")
+    formadepago_id = Column(Integer, ForeignKey('formadepago.id'), nullable=False)
+    formadepago = relationship("FormadePago")
+    def __repr__(self):
+        return f'{self.numeroCupon}'
 
 
 
