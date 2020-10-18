@@ -3,7 +3,7 @@
 
 {% block list_header scoped %}
    {{ super() }}
-    <a href="{{url_for('VentaReportes' + '.download_csv', **request.args)}}" class="btn btn-sm btn-default">
+    <a href="{{url_for('VentaReportes' + '.download_csv', **request.args)}}" data-original-title="Imprimir" class="btn btn-sm btn-default">
        <i class="fa fa-save"></i>
     </a>
 {% endblock %}

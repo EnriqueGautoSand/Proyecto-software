@@ -6,7 +6,7 @@ from flask_appbuilder import AppBuilder, SQLA
 """
  Logging configuration
 """
-from .security import MySecurityManager
+from .sec import MySecurityManager
 from flask_appbuilder.menu import Menu
 logging.basicConfig(format="%(asctime)s:%(levelname)s:%(name)s:%(message)s")
 logging.getLogger().setLevel(logging.DEBUG)

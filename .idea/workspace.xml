@@ -2,16 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e6f9fc09-d089-4896-be04-4879e7efe7f0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/proyecto/app/sec.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/proyecto/app/sec_models.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/proyecto/app/sec_view.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto/app/static/js/validaCuit.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto/app/validadores/validadores.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Proyecto-software.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Proyecto-software.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ModeloProyectoFinal.DM1" beforeDir="false" afterPath="$PROJECT_DIR$/ModeloProyectoFinal.DM1" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proyecto/app/DB_USUARIOS.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/proyecto/app/Listado de usuarios.pdf" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/proyecto/app/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/apis.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/apis.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proyecto/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proyecto/app/static/docs/Listado de ventas.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/static/docs/Listado de ventas.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/sqlTriggers.txt" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/sqlTriggers.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proyecto/app/templates/addcliente.html" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/templates/addproveedor.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proyecto/app/templates/reporteventa.html" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/templates/reporteventa.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proyecto/app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proyecto/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/config.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -22,22 +25,10 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/proyecto/app/models.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="478">
-              <caret line="346" column="38" selection-start-line="346" selection-start-column="38" selection-end-line="346" selection-end-column="38" />
-              <folding>
-                <element signature="e#0#34#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/proyecto/app/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="250">
-              <caret line="358" selection-start-line="358" selection-end-line="358" />
+            <state relative-caret-position="152">
+              <caret line="340" column="73" lean-forward="true" selection-start-line="340" selection-start-column="73" selection-end-line="340" selection-end-column="73" />
               <folding>
                 <element signature="e#0#95#0" expanded="true" />
               </folding>
@@ -46,12 +37,24 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/proyecto/app/apis.py">
+        <entry file="file://$PROJECT_DIR$/proyecto/app/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="199">
-              <caret line="30" column="103" selection-start-line="30" selection-start-column="103" selection-end-line="30" selection-end-column="103" />
+            <state relative-caret-position="4148">
+              <caret line="344" selection-start-line="344" selection-end-line="344" />
               <folding>
-                <element signature="e#0#48#0" expanded="true" />
+                <element signature="e#0#34#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/proyecto/config.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret line="38" column="25" selection-start-line="38" selection-start-column="25" selection-end-line="38" selection-end-column="25" />
+              <folding>
+                <element signature="e#0#9#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -70,63 +73,36 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/proyecto/config.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="17" column="74" selection-start-line="17" selection-start-column="74" selection-end-line="17" selection-end-column="74" />
-              <folding>
-                <element signature="e#0#9#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/proyecto/run.py">
           <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/proyecto/app/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
-              <caret line="15" column="32" lean-forward="true" selection-start-line="15" selection-start-column="32" selection-end-line="15" selection-end-column="32" />
+            <state relative-caret-position="187">
+              <caret line="14" selection-start-line="14" selection-end-line="14" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/proyecto/app/sec_view.py">
+        <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/wtforms/validators.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="51">
-              <caret line="3" column="23" selection-start-line="3" selection-start-column="6" selection-end-line="3" selection-end-column="23" />
+            <state relative-caret-position="459">
+              <caret line="67" column="31" selection-start-line="67" selection-start-column="31" selection-end-line="67" selection-end-column="31" />
               <folding>
-                <element signature="e#0#59#0" expanded="true" />
+                <element signature="e#0#39#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/proyecto/app/sec.py">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/proyecto/app/validadores/validadores.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="6" column="39" lean-forward="true" selection-start-line="6" selection-start-column="39" selection-end-line="6" selection-end-column="39" />
-              <folding>
-                <element signature="e#0#66#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/proyecto/app/sec_models.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="34">
-              <caret line="2" selection-start-line="2" selection-end-line="2" />
-              <folding>
-                <element signature="e#0#54#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="251">
+              <caret line="17" selection-start-line="17" selection-end-line="17" />
             </state>
           </provider>
         </entry>
@@ -152,18 +128,25 @@
       <find>for</find>
       <find>renglon</find>
       <find>venta</find>
-      <find>cliente</find>
       <find>self.update_redirect()</find>
       <find>pre_add</find>
       <find>def pre_add</find>
       <find>compr</find>
       <find>forma</find>
-      <find>compra</find>
       <find>producto</find>
       <find>preci</find>
       <find>menu</find>
       <find>myuser</find>
+      <find>compra</find>
+      <find>comprarepo</find>
       <find>datosF</find>
+      <find>relationship</find>
+      <find>provee</find>
+      <find>bo</find>
+      <find>validat</find>
+      <find>val</find>
+      <find>reporte</find>
+      <find>cliente</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -172,19 +155,22 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/proyecto/config.py" />
         <option value="$PROJECT_DIR$/proyecto/app/templates/reporteventa.html" />
         <option value="$PROJECT_DIR$/proyecto/app/templates/repotecompras.html" />
         <option value="$PROJECT_DIR$/proyecto/app/templates/reportecompras.html" />
         <option value="$PROJECT_DIR$/proyecto/app/security.py" />
         <option value="$PROJECT_DIR$/proyecto/app/testdata.py" />
         <option value="$PROJECT_DIR$/proyecto/app/apis.py" />
-        <option value="$PROJECT_DIR$/proyecto/app/models.py" />
-        <option value="$PROJECT_DIR$/proyecto/app/sec_view.py" />
         <option value="$PROJECT_DIR$/proyecto/app/sec_models.py" />
         <option value="$PROJECT_DIR$/proyecto/app/sec.py" />
-        <option value="$PROJECT_DIR$/proyecto/app/views.py" />
         <option value="$PROJECT_DIR$/proyecto/app/__init__.py" />
+        <option value="$PROJECT_DIR$/proyecto/config.py" />
+        <option value="$PROJECT_DIR$/proyecto/app/templates/addproveedor.html" />
+        <option value="$PROJECT_DIR$/proyecto/app/sec_view.py" />
+        <option value="$PROJECT_DIR$/proyecto/app/models.py" />
+        <option value="$PROJECT_DIR$/proyecto/app/validadores" />
+        <option value="$PROJECT_DIR$/proyecto/app/views.py" />
+        <option value="$PROJECT_DIR$/proyecto/app/validadores/validadores.py" />
       </list>
     </option>
   </component>
@@ -221,7 +207,7 @@
               <item name="Proyecto-software" type="462c0819:PsiDirectoryNode" />
               <item name="proyecto" type="462c0819:PsiDirectoryNode" />
               <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="static" type="462c0819:PsiDirectoryNode" />
+              <item name="validadores" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -248,7 +234,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.run git">
     <configuration name="run git" type="PythonConfigurationType" factoryName="Python">
       <module name="Proyecto-software" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -270,6 +256,32 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="validadores" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Proyecto-software" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/proyecto/app" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/proyecto/app/validadores" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.validadores" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -297,12 +309,31 @@
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49756098" visible="true" weight="0.18229167" />
+      <window_info id="Structure" order="1" sideWeight="0.502439" side_tool="true" weight="0.18229167" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3289689" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.31587562" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.33060557" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.3289689" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Event Log" order="8" side_tool="true" />
+      <window_info anchor="bottom" id="Terminal" order="9" weight="0.3289689" />
+      <window_info anchor="bottom" id="Python Console" order="10" weight="0.049099836" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+    <layout-to-restore>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.18229167" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3289689" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.31260228" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.31260228" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.33060557" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -314,7 +345,7 @@
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-    </layout>
+    </layout-to-restore>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/proyecto/app/templates/reportes.html">
@@ -343,24 +374,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/flask_appbuilder/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="109">
-          <caret line="153" column="25" lean-forward="true" selection-start-line="153" selection-start-column="25" selection-end-line="153" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/sqlalchemy/sql/schema.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="25619">
           <caret line="1532" selection-start-line="1532" selection-end-line="1532" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/flask_appbuilder/baseviews.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="423">
-          <caret line="1377" column="15" selection-start-line="1377" selection-start-column="4" selection-end-line="1377" selection-end-column="15" />
         </state>
       </provider>
     </entry>
@@ -402,9 +419,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/run.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/flask_appbuilder/menu.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
@@ -417,31 +431,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/proyecto/app/apis.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="199">
-          <caret line="30" column="103" selection-start-line="30" selection-start-column="103" selection-end-line="30" selection-end-column="103" />
+        <state relative-caret-position="2839">
+          <caret line="173" column="29" selection-start-line="173" selection-start-column="29" selection-end-line="173" selection-end-column="29" />
           <folding>
             <element signature="e#0#48#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/security.py">
+    <entry file="file://$PROJECT_DIR$/proyecto/app/templates/doc.html">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/templates/compra.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="17" selection-start-line="17" selection-end-line="17" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="188">
+          <caret line="100" selection-start-line="100" selection-end-line="101" selection-end-column="17" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/config.py">
+    <entry file="file://$PROJECT_DIR$/proyecto/app/templates/venta.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="17" column="74" selection-start-line="17" selection-start-column="74" selection-end-line="17" selection-end-column="74" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="188">
+          <caret line="107" column="64" selection-start-line="107" selection-start-column="12" selection-end-line="107" selection-end-column="64" />
         </state>
       </provider>
     </entry>
@@ -451,16 +462,6 @@
           <caret line="6" column="39" lean-forward="true" selection-start-line="6" selection-start-column="39" selection-end-line="6" selection-end-column="39" />
           <folding>
             <element signature="e#0#66#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/sec_view.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" column="23" selection-start-line="3" selection-start-column="6" selection-end-line="3" selection-end-column="23" />
-          <folding>
-            <element signature="e#0#59#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -475,10 +476,102 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/run.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/sec_view.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" selection-start-line="1" selection-end-line="1" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/templates/addproveedor.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" column="24" lean-forward="true" selection-start-line="6" selection-start-column="24" selection-end-line="6" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/flask_appbuilder/baseviews.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="97">
+          <caret line="723" column="22" selection-start-line="723" selection-start-column="4" selection-end-line="723" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/flask_appbuilder/models/sqla/filters.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="131">
+          <caret line="206" column="6" selection-start-line="206" selection-start-column="6" selection-end-line="206" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/flask_appbuilder/urltools.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="93" column="4" selection-start-line="93" selection-start-column="4" selection-end-line="93" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/flask_appbuilder/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="522" column="8" selection-start-line="522" selection-start-column="8" selection-end-line="522" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="14" selection-start-line="14" selection-end-line="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/validadores">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="8" column="28" lean-forward="true" selection-end-line="28" selection-end-column="107" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/validadores/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret line="38" column="25" selection-start-line="38" selection-start-column="25" selection-end-line="38" selection-end-column="25" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/security.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="17" selection-start-line="17" selection-end-line="17" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/wtforms/validators.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="459">
+          <caret line="67" column="31" selection-start-line="67" selection-start-column="31" selection-end-line="67" selection-end-column="31" />
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/proyecto/app/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="478">
-          <caret line="346" column="38" selection-start-line="346" selection-start-column="38" selection-end-line="346" selection-end-column="38" />
+        <state relative-caret-position="4148">
+          <caret line="344" selection-start-line="344" selection-end-line="344" />
           <folding>
             <element signature="e#0#34#0" expanded="true" />
           </folding>
@@ -487,18 +580,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/proyecto/app/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-          <caret line="358" selection-start-line="358" selection-end-line="358" />
+        <state relative-caret-position="152">
+          <caret line="340" column="73" lean-forward="true" selection-start-line="340" selection-start-column="73" selection-end-line="340" selection-end-column="73" />
           <folding>
             <element signature="e#0#95#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/__init__.py">
+    <entry file="file://$PROJECT_DIR$/proyecto/app/validadores/validadores.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="15" column="32" lean-forward="true" selection-start-line="15" selection-start-column="32" selection-end-line="15" selection-end-column="32" />
+        <state relative-caret-position="251">
+          <caret line="17" selection-start-line="17" selection-end-line="17" />
         </state>
       </provider>
     </entry>

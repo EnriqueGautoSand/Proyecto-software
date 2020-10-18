@@ -7,7 +7,7 @@ from flask import flash
 
 
 from .apis import *
-from flask_appbuilder.models.sqla.filters import FilterEqualFunction,FilterEqual
+from flask_appbuilder.models.sqla.filters import FilterEqualFunction,FilterEqual,FilterInFunction
 
 from flask_appbuilder.actions import action
 from flask_appbuilder.urltools import  Stack
@@ -15,9 +15,12 @@ from flask_appbuilder.urltools import  Stack
 
 from wtforms import Form, BooleanField, StringField, validators, DateField, FloatField, IntegerField, FieldList, \
     SelectField, SubmitField
-from wtforms.validators import DataRequired
-from flask_appbuilder.fieldwidgets import BS3TextFieldWidget, Select2Widget
+from validadores import cuitvalidator, cuitvalidatorProveedores
 
+
+from wtforms.validators import DataRequired,InputRequired
+from flask_appbuilder.fieldwidgets import BS3TextFieldWidget, Select2Widget
+from flask_babelpkg import gettext
 from flask_appbuilder.urltools import get_filter_args
 from .reportes import generarReporte
 #manejador en caso de que no se encuentre la pagina
@@ -87,6 +90,26 @@ class unidadesModelView(ModelView):
 #creo clases de manejador de una vista que incluya las vistas de marcas y unidad de medidas
 class CrudProducto(MultipleView):
     views = [MarcasModelview, unidadesModelView, ProductoModelview,CategoriaModelview]
+    class_permission_name = "productocrud"
+    method_permission_name = {
+        'add': 'access',
+        'delete': 'access',
+        'download': 'access',
+        'edit': 'access',
+        'list': 'access',
+        'muldelete': 'access',
+        'show': 'access',
+        'api': 'access',
+        'api_column_add': 'access',
+        'api_column_edit': 'access',
+        'api_create': 'access',
+        'api_delete': 'access',
+        'api_get': 'access',
+        'api_read': 'access',
+        'api_readvalues': 'access',
+        'api_update': 'access'
+    }
+
 class ReportesView(BaseView):
     default_view = 'reportes'
 
@@ -108,7 +131,7 @@ class VentaReportes(ModelView):
     show_columns = ['cliente', 'estadorender', 'formadepago','fecha','renglonesrender']
     edit_columns = ['Estado']
     base_permissions = ['can_show','can_list', 'can_edit']
-    list_template = "reportes.html"
+    #list_template = "reportes.html"
     show_template = "imprimirventa.html"
     list_widget = ListDownloadWidgetventa
 
@@ -142,7 +165,12 @@ class CompraReportes(ModelView):
     list_columns = ['proveedor', "total", 'estadorender', 'formadepago','fecha']
     show_columns = ['proveedor', 'total', 'estadorender','formadepago','fecha','renglonesrender']
     edit_columns = ['Estado']
+
     base_permissions = ['can_show','can_list', 'can_edit']
+
+
+
+
     @expose('/pdf', methods=['GET'])
     def download_pdf(self):
 
@@ -162,6 +190,7 @@ class CompraReportes(ModelView):
 
         generarReporte(titulo="Listado de Compras",cabecera=cabecera,buscar=Venta,nombre="Listado de Compras",datos=lst)
         return redirect(url_for('ReportesView.show_static_pdf',var="Listado de Compras" ))
+
 
 #creo clase de el manejador de renglones
 class RenglonVentas(ModelView):
@@ -264,8 +293,20 @@ class CompraView(BaseView):
         self.update_redirect()
         #renderizo el html y le paso el formulario
         return render_template('compra.html', base_template=appbuilder.base_template, appbuilder=appbuilder, form2=form2)
-#creo clase de el manejador de proveedor
+    class_permission_name = "compraclass"
+    method_permission_name = {
+        'compra': 'access'
+    }
+
+
+
+
+
+
 class ProveedorView(ModelView):
+    """
+    #creo clase de el manejador de proveedor
+    """
     datamodel = SQLAInterface(Proveedor)
     related_views = [Compra]
     #le digo los permisos
@@ -274,7 +315,11 @@ class ProveedorView(ModelView):
     add_columns = ['cuit', 'nombre', 'apellido', 'correo']
     list_columns = ['cuit', 'nombre', 'apellido','correo' ]
     edit_columns = ['cuit', 'nombre', 'apellido', 'correo']
-    add_template = "addcliente.html"
+    add_template = "addproveedor.html"
+
+    validators_columns ={
+        'cuit':[InputRequired(),cuitvalidatorProveedores]
+    }
 
 #creo clase de el manejador de clientes
 class ClientesView(ModelView):
@@ -287,14 +332,18 @@ class ClientesView(ModelView):
     label_columns = {'tipoDocumento':'tipo de Documento' }
     #filtrando los valores
     #base_filters = [['estado', FilterEqual, True]]#descomentar para que filtre solo los activos
+    add_template = "agregarcliente.html"
     #configurando las columnas de las vistas crear listar y editar
     add_columns = ['documento', 'nombre', 'apellido','tipoDocumento']
     list_columns = ['documento', 'nombre', 'apellido','tipoDocumento']
     edit_columns = ['documento', 'nombre', 'apellido','tipoDocumento','estado']
-    #me devuelve la url previa
+    validators_columns ={
+        'documento':[InputRequired(),cuitvalidator(dato='tipoDocumento')]
+    }
+
     def get_redirect_anterior(self):
         """
-            Returns the previous url.
+        me devuelve la url previa
             simplemente le edite para que guarde bien la url y no afecte al historial
         """
         index_url = self.appbuilder.get_url_for_index
@@ -330,10 +379,12 @@ class ClientesView(ModelView):
 
 
 #aca simplemente agrego los manejadores de las vistas al appbuilder para que sean visuales
+#appbuilder.security_cleanup()
 
 appbuilder.add_view(VentaView, "Realizar Ventas", category='Ventas', category_icon='fa-tag' )
 
-appbuilder.add_view(CrudProducto, "Poductos",icon="fa-archive")
+appbuilder.add_view(CrudProducto, "Productos",icon="fa-archive")
+
 appbuilder.add_view(CompraView, "Compra", category='Compras', category_icon="fa-cart-plus" )
 appbuilder.add_view(ClientesView, "Clientes")
 appbuilder.add_view(ProveedorView, "Proveedor")

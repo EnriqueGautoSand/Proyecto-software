@@ -37,6 +37,7 @@ APP_NAME = "Kiogestion"
 # AUTH_DB : Is for database (username/password()
 # AUTH_LDAP : Is for LDAP
 # AUTH_REMOTE_USER : Is for using REMOTE_USER from web server
+FAB_UPDATE_PERMS = True
 AUTH_TYPE = AUTH_DB
 
 # Uncomment to setup Full admin role name
@@ -44,6 +45,19 @@ AUTH_ROLE_ADMIN = 'Admin'
 
 # Uncomment to setup Public role name, no authentication needed
 AUTH_ROLE_PUBLIC = 'Public'
+FAB_ROLES = {
+    "Gerente": [
+        ["CompraReportes",'can_show'],["CompraReportes",'can_list'],
+        ["CompraReportes", 'can_edit'],
+        ["compraclass","can_access"],
+        ["productocrud", "can_access"],["comprarepo","can_access"],
+        ["Productos", "menu_access"],
+    ["Reporte Compras", "menu_access"],
+    ["Compra", "menu_access"]
+
+    ]
+
+}
 
 # Will allow user self registration
 # AUTH_USER_REGISTRATION = True

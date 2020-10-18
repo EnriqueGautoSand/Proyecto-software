@@ -1,0 +1,38 @@
+{% extends "appbuilder/general/model/add.html" %}
+{% block head_js %}
+    {{ super() }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
+<script src="{{url_for('static',filename='js/validaCuit.js')}}"></script>
+{% endblock %}
+
+    {% block add_form %}
+This Text is before the add form widget
+        {{ super() }}
+<script>
+
+	selectdocumento=document.getElementById("tipoDocumento")
+
+	if (selectdocumento.value=="CUIT"){
+				    $(document).ready(function(){
+    	  		$('#documento').mask('00-00000000-0');
+    	}	);
+		}else{
+			$('#documento').unmask();
+		}
+
+	selectdocumento.onchange=function(){
+		
+		if (selectdocumento.value=="CUIT"){
+				    $(document).ready(function(){
+    	  		$('#documento').mask('00-00000000-0');
+    	}	);
+		}else{
+			$('#documento').unmask();
+		}
+
+
+	}
+
+</script>
+
+    {% endblock %}

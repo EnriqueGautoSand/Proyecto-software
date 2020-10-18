@@ -342,7 +342,4 @@ class Renglon(Model):
     def __repr__(self):
         return f"{self.producto} ${self.precioVenta} {self.venta} {self.producto} {self.cantidad} "
 
-class Ususarios(User):
-    __tablename__ = "ab_user"
-    extra = Column(String(50), unique=True, nullable=False)
 db.create_all()
