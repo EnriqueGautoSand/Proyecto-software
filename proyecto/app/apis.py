@@ -23,7 +23,7 @@ class ComprasApi(BaseApi):
                     print(data["total"])
                     # creo la venta
                     if int(data["metododePago"]) == 1:
-                        compra=Compra(Estado=True, condicionFrenteIva=TipoClaves(data["condicionfrenteiva"]),total=float(data["total"]),proveedor_id=data["proveedor"],formadepago_id=data["metododePago"])
+                        compra=Compra(Estado=True,total=float(data["total"]),proveedor_id=data["proveedor"],formadepago_id=data["metododePago"])
                     else:
                         datosFormaPagos=DatosFormaPagos(numeroCupon=data["numeroCupon"],
                                               companiaTarjeta_id=data["companiaTarjeta"],
@@ -31,7 +31,7 @@ class ComprasApi(BaseApi):
                                               cuotas=data["cuotas"],formadepago_id=data["metododePago"]
                                               )
 
-                        compra = Compra(Estado=True, condicionFrenteIva=TipoClaves(data["condicionfrenteiva"]),
+                        compra = Compra(Estado=True,
                                       total=float(data["total"]), proveedor_id=data["proveedor"],formadepago_id=data["metododePago"],
                                       datosFormaPagos=datosFormaPagos)
 
@@ -107,25 +107,28 @@ class VentasApi(BaseApi):
             data = request.json
             print(data)
             try:
-                if "metododePago" in data and "cliente" in data and "total" in data:
+                if  "cliente" in data and "total" in data:
                     print(data["total"])
                     # creo la venta
-                    if int(data["metododePago"])==1:
-                        venta=Venta(Estado=True, condicionFrenteIva=TipoClaves(data["condicionfrenteiva"]), total=float(data["total"]),cliente_id=int(data["cliente"]),formadepago_id=data["metododePago"])
-                    else:
-                        datosFormaPagos=DatosFormaPagos(numeroCupon=data["numeroCupon"],
-                                              companiaTarjeta_id=data["companiaTarjeta"],
-                                              credito=data["credito"],
-                                              cuotas=data["cuotas"],formadepago_id=data["metododePago"]
-                                              )
 
-
-                        venta = Venta(Estado=True, condicionFrenteIva=TipoClaves(data["condicionfrenteiva"]),
-                                      total=float(data["total"]), cliente_id=int(data["cliente"]),formadepago_id=data["metododePago"],
-                                      datosFormaPagos=datosFormaPagos)
-                    #agrego la venta
+                    venta=Venta(Estado=True, total=float(data["total"]),cliente_id=int(data["cliente"]))
                     db.session.add(venta)
                     db.session.flush()
+                    for i in data["metodos"]:
+                        db.session.add(FormadePagoxVenta(monto=i["monto"],venta=venta,formadepago_id=  int(i["metododePago"])))
+                        print(db.session.query( FormadePago).get( int(i["metododePago"])),type(db.session.query( FormadePago).get( int(i["metododePago"])).Metodo))
+                        if db.session.query( FormadePago).get( int(i["metododePago"])).Metodo == "Tarjeta":
+                            datosFormaPagos=DatosFormaPagos(numeroCupon=i["numeroCupon"],
+                                                  companiaTarjeta_id=i["companiaTarjeta"],
+                                                  credito=i["credito"],
+                                                  cuotas=i["cuotas"],formadepago_id=int(i["metododePago"])
+                                                  )
+                            db.session.add(datosFormaPagos)
+
+
+
+                    #agrego la venta
+
                     if "productos" in data:
                         #por cada producto me genera un renglon en la venta
                         for p in data["productos"]:

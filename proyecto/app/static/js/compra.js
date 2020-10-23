@@ -7,7 +7,7 @@ var total = document.getElementById('Total')
 
 cantidad.className="form-inline"
 var botonborrar=document.getElementById('borrar')
-var condicionfrenteiva = document.getElementById('condicionfrenteiva')
+//var condicionfrenteiva = document.getElementById('condicionfrenteiva')
 var cupon= document.getElementById('numeroCupon')
 cupon.className="form-inline"
 var companiaTarjeta= document.getElementById('companiaTarjeta')
@@ -259,7 +259,7 @@ boton.disabled=true
 			
 			jsonventa["proveedor"]=parseInt(proveedor.value);
 			jsonventa["total"]=parseFloat(total.value);
-			jsonventa["condicionfrenteiva"]=condicionfrenteiva.value
+			//jsonventa["condicionfrenteiva"]=condicionfrenteiva.value
 	if (metododePago.value==1){
 			jsonventa["metododePago"]=metododePago.value;
 

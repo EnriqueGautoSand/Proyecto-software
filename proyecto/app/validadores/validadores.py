@@ -7,8 +7,8 @@ def cuitvalidator(dato):
         sCUIT=""
         for i in arrsinguion:
             sCUIT+=i
-        print(type(form[dato].data),form[dato].data )
-        if form[dato].data.name == "CUIT":
+        print(type(form[dato].data),form[dato].data,type(form[dato].data))
+        if str(form[dato].data) == "CUIT":
             if len(sCUIT)==11 :
                 aMult = '5432765432'
                 aMult = list(aMult)

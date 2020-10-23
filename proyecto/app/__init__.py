@@ -31,5 +31,6 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor.close()
 """
 
+from .models import *
 from . import testdata
 from . import views

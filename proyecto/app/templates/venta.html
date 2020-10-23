@@ -35,22 +35,18 @@
 <tr>
               <td>{{ form2.cliente.label }}   </td>
  <td>    {{ form2.cliente}}       <a id="crearCliente" href="{{url_for('ClientesView.add')}}" > Crear Cliente<a /></td>  
-         
+                 <td>{{ form2.producto.label }}</td>
+        <td> {{ form2.producto}}        </td>   
 
-        <td>   {{ form2.Fecha.label }}  </td>
-        <td>  {{ form2.Fecha}}           </td >
 
     </tr>
     <tr>
-            <td>   {{ form2.condicionfrenteiva.label }}  </td>
-        <td>  {{ form2.condicionfrenteiva}}           </td >
+       
         <td> {{ form2.cantidad.label }}</td>
         <td>    {{ form2.cantidad}}     </td >
         
-    </tr>
-    <tr >
-        <td>{{ form2.producto.label }}</td>
-        <td> {{ form2.producto}}        </td>   
+
+
         <td></td >
        <td>  <input id="agregar" class="btn  btn-info btn-sm" type="button" value="Agregar Renglon" onclick="agregarRenglon(this);" align="right" />
         <input id="borrar" class="btn  btn-danger btn-sm" type="button" value="Borrar Renglon" disabled="true" onclick="borrarRenglon(this);" align="right" />
@@ -59,15 +55,20 @@
 </table>
 </form >
 
-
+<div id="unmetodo" >
 <table class="table table-bordered" id="finalizar">
 
         <td style="float:right: " align="right"> 
             {{ form2.metodo.label }}
-            {{ form2.metodo}}     
-        {{ form2.Total.label }}
-            {{ form2.Total}}     </td >
-        <td id="botonagregar"align="center"> </td >
+            {{ form2.metodo}}  
+            <b>Monto $</b>  
+            <input id="monto"  type="entry" value=""   /> 
+             <input id="agregarFormadePago" onclick="crearFormadePago(this);"  class="btn  btn-info btn-sm" type="button" value="Agregar Forma de Pago"  />
+             <input id="borrarFormadePago" onclick="borrarFormadePago();"  class="btn  btn-danger btn-sm" type="button" value="Borrar"  />
+
+           </td>
+        </td >
+        
 </table>
 
 <div class = "panel-heading">
@@ -97,6 +98,24 @@
   </table >
   </div>
 </div>
+</div>
+
+<table class="table table-bordered" >
+<tr >
+  <td align="right" >
+    Faltante
+    <input id="faltante" title="Faltante" disabled=true type="entry" value=""  />
+<input id="nuevaFormadePago" class="btn  btn-info btn-sm" type="button" onclick="agregarFormadePago();" value="Nueva Formade Pago"  />
+  </td>
+  <td align="right" >
+         {{ form2.Total.label }}
+            {{ form2.Total}}
+    <input id="finalizarVenta" class="btn  btn-info btn-sm" type="button" value="Finalizar Venta"  />
+<input id="cancelarVenta" onclick="cancelar();"  class="btn  btn-danger btn-sm" type="button" value="Cancelar Venta"  />
+  </td>
+
+</tr>
+  </table >
 {% endblock %}
 
 {% block tail_js %}
@@ -110,7 +129,6 @@
         $(document).ready(function() { $("#producto").select2(); });
          $(document).ready(function() { $("#cliente").select2(); });
          $(document).ready(function() { $("#metodo").select2(); });
-         $(document).ready(function() { $("#condicionfrenteiva").select2(); });
          
     </script>
 

@@ -6,13 +6,12 @@
 {% endblock %}
 
     {% block add_form %}
-This Text is before the add form widget
         {{ super() }}
 <script>
 
 	selectdocumento=document.getElementById("tipoDocumento")
 
-	if (selectdocumento.value=="CUIT"){
+	if (selectdocumento.options[selectdocumento.selectedIndex].text=="CUIT"){
 				    $(document).ready(function(){
     	  		$('#documento').mask('00-00000000-0');
     	}	);
@@ -22,7 +21,7 @@ This Text is before the add form widget
 
 	selectdocumento.onchange=function(){
 		
-		if (selectdocumento.value=="CUIT"){
+		if (selectdocumento.options[selectdocumento.selectedIndex].text=="CUIT"){
 				    $(document).ready(function(){
     	  		$('#documento').mask('00-00000000-0');
     	}	);

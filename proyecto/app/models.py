@@ -23,37 +23,32 @@ class EmpresaDatos(Model):
     __table_args__ = (
         UniqueConstraint("compania","direccion"),
     )
-
-
     def __repr__(self):
         return f'{self.compania}'
 
-class TipoClaves(enum.Enum):
+class TipoClaves(Model):
     """
     # creo clase que enumera los tipos de clave
-    """
+
     consumidorFinal="Consumidor Final"
     responsableInscripto="Responsable Inscripto"
     monotributista="Monotributista"
     exento = "Exento"
+    """
+    __tablename__ = 'tiposClave'
+    id = Column(Integer, primary_key=True)
+    tipoClave = Column(String(30), nullable=False, unique=True)
+
 
     #defino como se representara al ser llamado
-    def __str__(self):
-        return f'{self.value}'
     def __repr__(self):
-        return f'{self.value}'
-    @classmethod
-    def choices(cls):
-        return [(choice, str(choice)) for choice in cls]
+        return f'{self.tipoClave}'
 
-    @classmethod
-    def coerce(cls, item):
-        return [(name.title(), member.value) for name, member in cls.__members__.items()]
 
-class tiposDocumentos(enum.Enum):
+class TiposDocumentos(Model):
     """
     creo clase que enumera los tipos de documento
-    """
+
     DNI="DNI"
     CUIT="CUIT"
     CDI="CDI"
@@ -63,13 +58,14 @@ class tiposDocumentos(enum.Enum):
     Pasaporte="Pasaporte"
     CI_PoliciaFederal="CI PoliciaFederal"
     CertificadodeMigracion="Certificado de Migracion"
-
+    """
+    __tablename__ = 'tiposDocumentos'
+    id = Column(Integer, primary_key=True)
+    tipoDocumento = Column(String(30), nullable=False, unique=True)
     # defino como se representara al ser llamado
-    def __str__(self):
-        return f'{self.value}'
     def __repr__(self):
-        return f'{self.value}'
-class Proveedor(Model,AuditMixin):
+        return f'{self.tipoDocumento}'
+class Proveedor(Model):
     """
     creo clase que sera mapeada como la tabla Proveedor en la base de datos
     """
@@ -86,7 +82,7 @@ class Proveedor(Model,AuditMixin):
     def __repr__(self):
         return f"Cuit {self.cuit} {self.apellido} {self.nombre}"
 
-class Clientes(Model,AuditMixin):
+class Clientes(Model):
     """
     creo clase que sera mapeada como la tabla clientes en la base de datos
     """
@@ -95,11 +91,15 @@ class Clientes(Model,AuditMixin):
     documento=Column(String(30),nullable=False)
     nombre = Column(String(30))
     apellido = Column(String(30))
-    tipoDocumento=Column(Enum(tiposDocumentos))
+    tipoDocumento_id = Column(Integer, ForeignKey('tiposDocumentos.id'), nullable=False)
+    tipoDocumento = relationship("TiposDocumentos")
+    tipoClave_id = Column(Integer, ForeignKey('tiposClave.id'), nullable=False)
+    tipoClave = relationship("TipoClaves")
     estado = Column(Boolean,default=True)
+
     #creo clave compuesta que no se pueden repetir dicha combinacion
     __table_args__ = (
-        UniqueConstraint("tipoDocumento","documento"),
+        UniqueConstraint("documento","tipoDocumento_id"),
     )
 
     # defino como se representara al ser llamado
@@ -137,21 +137,7 @@ class FormadePago(Model):
            return str(self.Metodo)
 
 
-class DatosFormaPagos(Model):
-    """
-    # creo clase que sera mapeada como la tabla  de los datos de forma de pago tarjeta
-    """
-    __tablename__ = 'datosFormaPagos'
-    id = Column(Integer, primary_key=True)
-    numeroCupon = Column(String(50), unique=True)
-    credito = Column(Boolean, default=False)
-    cuotas = Column(Integer)
-    companiaTarjeta_id = Column(Integer, ForeignKey('companiaTarjeta.id'), nullable=False)
-    companiaTarjeta = relationship("CompaniaTarjeta")
-    formadepago_id = Column(Integer, ForeignKey('formadepago.id'), nullable=False)
-    formadepago = relationship("FormadePago")
-    def __repr__(self):
-        return f'{self.numeroCupon}'
+
 
 
 
@@ -164,7 +150,6 @@ class Compra(Model):
     Estado=Column(Boolean)
     total=Column(Float, nullable=False)
     fecha=Column(Date, nullable=False,default=dt.now())
-    condicionFrenteIva = Column(Enum(TipoClaves))
     proveedor_id = Column(Integer, ForeignKey('proveedor.id'), nullable=False)
     proveedor = relationship("Proveedor")
     formadepago_id = Column(Integer, ForeignKey('formadepago.id'), nullable=False)
@@ -205,14 +190,14 @@ class Venta(Model):
     id=Column(Integer, primary_key=True)
     Estado=Column(Boolean)
     fecha = Column(Date, nullable=False,default=dt.now())
-    condicionFrenteIva = Column(Enum(TipoClaves))
+    #condicionFrenteIva = Column(Enum(TipoClaves))
     total=Column(Float, nullable=False)
     cliente_id = Column(Integer, ForeignKey('clientes.id'), nullable=False)
     cliente = relationship("Clientes")
-    formadepago_id = Column(Integer, ForeignKey('formadepago.id'), nullable=False)
-    formadepago = relationship("FormadePago")
-    datosFormaPagos_id = Column(Integer, ForeignKey('datosFormaPagos.id'), nullable=True)
-    datosFormaPagos = relationship("DatosFormaPagos")
+    #formadepago_id = Column(Integer, ForeignKey('formadepago.id'), nullable=False)
+    #formadepago = relationship("FormadePago")
+    #datosFormaPagos_id = Column(Integer, ForeignKey('datosFormaPagos.id'), nullable=True)
+    #datosFormaPagos = relationship("DatosFormaPagos")
     @renders('total')
     def totalrender(self):
          return Markup('<b> $' + str(self.total) + '</b>')
@@ -247,6 +232,31 @@ class Venta(Model):
     def __repr__(self):
         return f'{self.cliente} {self.total} {self.Estado} {self.fecha}'
 
+class FormadePagoxVenta(Model):
+    __tablename__ = 'FormadePago_Venta'
+    id = Column(Integer, primary_key=True)
+    monto = Column(Float, nullable=False)
+    venta_id = Column(Integer, ForeignKey('ventas.id'), nullable=False)
+    venta = relationship("Venta", backref='formadepagos')
+    formadepago_id = Column(Integer, ForeignKey('formadepago.id'), nullable=False)
+    formadepago = relationship("FormadePago")
+
+
+class DatosFormaPagos(Model):
+    """
+    # creo clase que sera mapeada como la tabla  de los datos de forma de pago tarjeta
+    """
+    __tablename__ = 'datosFormaPagos'
+    id = Column(Integer, primary_key=True)
+    numeroCupon = Column(String(50), unique=True)
+    credito = Column(Boolean, default=False)
+    cuotas = Column(Integer)
+    companiaTarjeta_id = Column(Integer, ForeignKey('companiaTarjeta.id'), nullable=False)
+    companiaTarjeta = relationship("CompaniaTarjeta")
+    formadepago_id = Column(Integer, ForeignKey('FormadePago_Venta.id'), nullable=False)
+    formadepago = relationship("FormadePagoxVenta")
+    def __repr__(self):
+        return f'{self.numeroCupon}'
 
 
 

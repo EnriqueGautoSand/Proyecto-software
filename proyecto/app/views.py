@@ -40,7 +40,7 @@ class Empresaview(ModelView):
     datamodel = SQLAInterface(EmpresaDatos)
 
     list_title = "Datos de La Empresa"
-    list_columns = ['compania','direccion']
+    list_columns = ['compania','direccion','cuit']
     base_permissions = ['can_show', 'can_list', 'can_edit']
 
 class CompaniaTarjetaview(ModelView):
@@ -63,7 +63,7 @@ class ProductoModelview(ModelView):
     datamodel = SQLAInterface(Productos)
     #configuro vistas de crear, listar y editar
     list_title = "Listado de Productos"
-    add_columns = ['categoria', 'marca','unidad', 'medida', 'precio', 'stock', 'detalle']
+    add_columns = ['categoria', 'marca','unidad', 'medida', 'precio', 'detalle']
     list_columns = ['categoria', 'marca', 'medida','unidad', 'precio', 'stock', 'detalle']
     edit_columns = ['categoria','medida','unidad','marca','precio','stock','detalle']
     # search_columns = ['producto','unidad','medida','marca','precio','stock']
@@ -127,8 +127,8 @@ class VentaReportes(ModelView):
     datamodel = SQLAInterface(Venta)
     list_title = "Listado de Ventas"
     label_columns = {"totalrender":"Total",'formadepago':'Forma de Pago','renglonesrender':'','estadorender':'Estado'}
-    list_columns = ['cliente', "totalrender", 'estadorender', 'formadepago','fecha']
-    show_columns = ['cliente', 'estadorender', 'formadepago','fecha','renglonesrender']
+    list_columns = ['cliente', "totalrender", 'estadorender','fecha']
+    show_columns = ['cliente', 'estadorender','fecha','renglonesrender']
     edit_columns = ['Estado']
     base_permissions = ['can_show','can_list', 'can_edit']
     #list_template = "reportes.html"
@@ -209,8 +209,8 @@ class RenglonVenta(Form):
     producto = SelectField('Producto', coerce=str, choices=[(p.id, p) for p in db.session.query(Productos)])
     cantidad = IntegerField('Cantidad', widget=BS3TextFieldWidget())
     metodo = SelectField('Forma de Pago', coerce=str, choices=[(p.id, p) for p in db.session.query(FormadePago)])
-    condicionfrenteiva= SelectField('Condicion Frente Iva', coerce=TipoClaves.coerce, choices=TipoClaves.choices() )
-    Total = FloatField('Total', render_kw={'disabled': ''},
+    #condicionfrenteiva= SelectField('Condicion Frente Iva', coerce=TipoClaves.coerce, choices=TipoClaves.choices() )
+    Total = FloatField('Total $', render_kw={'disabled': ''},
                        validators=[DataRequired()], default=0)
     numeroCupon = IntegerField('Numero de cupon', widget=BS3TextFieldWidget())
     companiaTarjeta = SelectField('Compania de la Tarjeta', coerce=str, choices=[(p.id, p) for p in db.session.query(CompaniaTarjeta)] )
@@ -235,8 +235,7 @@ class VentaView(BaseView):
         form2.cliente.choices = [(c.id, c) for c in db.session.query(Clientes)]
         # cargo las elecciones de metodo de pago
         form2.metodo.choices = [(c.id, c) for c in db.session.query(FormadePago)]
-        form2.condicionfrenteiva.coerce=TipoClaves.coerce
-        form2.condicionfrenteiva.choices=TipoClaves.choices()
+
         form2.companiaTarjeta.choices = [(c.id, c) for c in db.session.query(CompaniaTarjeta)]
         # le digo que guarde la url actual en el historial
         #esto sirve para cuando creas un cliente que te redirija despues a la venta
@@ -251,14 +250,12 @@ class VentaView(BaseView):
 #creo clase de formulario de renglon compra
 class RenglonCompra(Form):
     proveedor=SelectField('Proveedor', coerce=str, choices=[(c.id, c) for c in db.session.query(Proveedor)])
-    Fecha = DateField('Fecha', format='%d-%m-%Y %H:%M:%S', default=dt.now(), render_kw={'disabled': ''},
-                      validators=[DataRequired()])
     producto = SelectField('Producto', coerce=str, choices=[(p.id, p) for p in db.session.query(Productos)])
     cantidad = IntegerField('Cantidad', widget=BS3TextFieldWidget())
     metodo = SelectField('Metodo de Pago', coerce=str, choices=[(p.id, p) for p in db.session.query(FormadePago)])
     Total = FloatField('Total', render_kw={'disabled': ''},
                        validators=[DataRequired()], default=0)
-    condicionfrenteiva = SelectField('Condicion Frente Iva', coerce=TipoClaves.coerce, choices=TipoClaves.choices())
+    #condicionfrenteiva = SelectField('Condicion Frente Iva', coerce=TipoClaves.coerce, choices=TipoClaves.choices())
     numeroCupon = IntegerField('Numero de cupon', widget=BS3TextFieldWidget())
     companiaTarjeta = SelectField('Compania de la Tarjeta', coerce=str, choices=[(p.id, p) for p in db.session.query(CompaniaTarjeta)] )
     credito = BooleanField("Credito", default=False)
@@ -282,7 +279,7 @@ class CompraView(BaseView):
         #cargo las elecciones de producto
         form2.producto.choices = [('{"id": ' + f'{p.id}' + ', "representacion":' + f'"{p.__repr__()}"' + '}', p) for p
                                   in db.session.query(Productos)]
-        form2.Fecha.data = dt.now()
+
         # cargo las elecciones de cliente
         form2.proveedor.choices = [(c.id, c) for c in db.session.query(Proveedor)]
         # cargo las elecciones de metodo de pago
@@ -329,12 +326,12 @@ class ClientesView(ModelView):
     base_permissions =['can_list','can_add','can_edit', 'can_delete' ]
     message="cliente creado"
     #presonalizando las etiquetas de las columnas
-    label_columns = {'tipoDocumento':'tipo de Documento' }
+    label_columns = {'tipoDocumento':'Tipo de Documento' ,'tipoClave':'Tipo de Clave'}
     #filtrando los valores
     #base_filters = [['estado', FilterEqual, True]]#descomentar para que filtre solo los activos
     add_template = "agregarcliente.html"
     #configurando las columnas de las vistas crear listar y editar
-    add_columns = ['documento', 'nombre', 'apellido','tipoDocumento']
+    add_columns = ['tipoDocumento','documento','tipoClave', 'nombre', 'apellido']
     list_columns = ['documento', 'nombre', 'apellido','tipoDocumento']
     edit_columns = ['documento', 'nombre', 'apellido','tipoDocumento','estado']
     validators_columns ={
