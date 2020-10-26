@@ -28,6 +28,8 @@ from reportlab.lib.colors import black, purple, white,cyan,gray
 from reportlab.pdfgen import canvas
 from flask import g
 from datetime import datetime as dt
+from .models import EmpresaDatos
+from . import appbuilder, db
 def get_user():
     return g.user.first_name+" "+g.user.last_name
 
@@ -37,13 +39,14 @@ class reportePDF(object):
        archivo PDF."""
 
 
-    def __init__(self, titulo, cabecera, datos, nombrePDF,nombreautor):
+    def __init__(self, titulo, cabecera, datos, nombrePDF,nombreautor,filtros):
         super(reportePDF, self).__init__()
         self.titulo = titulo
         self.cabecera = cabecera
         self.datos = datos
         self.nombrePDF = nombrePDF
         self.nombreautor=nombreautor
+        self.filtros = filtros
         self.estilos = getSampleStyleSheet()
 
 
@@ -61,9 +64,14 @@ class reportePDF(object):
         encabezadoNombre = Paragraph(self.nombreautor, estilos["Heading1"])
         anchura, altura = encabezadoNombre.wrap(archivoPDF.width, archivoPDF.topMargin)
         encabezadoNombre.drawOn(canvas, archivoPDF.leftMargin, 736)
+        if self.filtros != None:
+            escribirfiltros = Paragraph(self.filtros.__repr__(), estilos["Normal"])
+            anchura, altura = escribirfiltros.wrap(archivoPDF.width, archivoPDF.topMargin)
+            escribirfiltros.drawOn(canvas, archivoPDF.leftMargin, 715)
 
-        fecha = utcnow().to("local").format("dddd, DD - MMMM - YYYY", locale="es")
-        fechaReporte = "Fecha: "+dt.now().strftime("%d-%m-%Y-%H:%M")#fecha.replace("-", "de")
+
+        fecha = utcnow().to("local").format("dddd, DD / MMMM / YYYY", locale="es")
+        fechaReporte = "Fecha: "+dt.now().strftime("%d/%m/%Y-%H:%M")#fecha.replace("-", "de")
 
         encabezadoFecha = Paragraph(fechaReporte, alineacion)
         anchura, altura = encabezadoFecha.wrap(archivoPDF.width, archivoPDF.topMargin)
@@ -169,7 +177,7 @@ class numeracionPaginas(canvas.Canvas):
                              "Página {} de {}".format(self._pageNumber, conteoPaginas))
 
     # ===================== FUNCIÓN generarReporte =====================
-def generarReporte(titulo,cabecera,buscar,nombre,datos=None):
+def generarReporte(titulo,cabecera,buscar,nombre,datos=None,filtros=None):
     """Ejecutar consulta a la base de datos (DB_USUARIOS) y llamar la función Exportar, la
        cuál esta en la clase reportePDF, a esta clase le pasamos el título de la tabla, la
        cabecera y los datos que llevará."""
@@ -187,6 +195,8 @@ def generarReporte(titulo,cabecera,buscar,nombre,datos=None):
         for titulo in claves:
             if titulo == "total":
                 d[titulo] = "$"+str(getattr(row,titulo))
+            elif titulo == "condicionFrenteIva" or titulo== "formadepago" :
+                d[titulo] = getattr(row, titulo)()
             else:
                 d[titulo]=getattr(row,titulo)
         return d
@@ -220,8 +230,9 @@ def generarReporte(titulo,cabecera,buscar,nombre,datos=None):
     # )
 
     nombrePDF = "./app/static/docs/"+ nombre +".pdf"
-    nombreautor="Kiogestion"
-    reporte = reportePDF(titulo, cabecera, lista, nombrePDF,nombreautor).Exportar()
+
+    nombreautor=db.session.query(EmpresaDatos).first().compania
+    reporte = reportePDF(titulo, cabecera, lista, nombrePDF,nombreautor,filtros).Exportar()
     print(reporte)
 
 

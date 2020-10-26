@@ -123,6 +123,17 @@ class ReportesView(BaseView):
         return send_from_directory(os.getcwd()+"/app/static/docs/", f'{var}.pdf')
 
 #creo clase de manejador de la vista de ventas
+def repre(self):
+    retstr = "FILTROS:"
+    if len(self.get_filters_values())>0:
+        for flt, value in self.get_filters_values():
+            retstr = retstr + "%s:%s\n" % (
+                str(flt.column_name).capitalize(),
+                str(value),
+            )
+        return retstr
+    else:
+        return ""
 class VentaReportes(ModelView):
     datamodel = SQLAInterface(Venta)
     list_title = "Listado de Ventas"
@@ -146,14 +157,23 @@ class VentaReportes(ModelView):
            order_column, order_direction = self.base_order
 
            count, lst = self.datamodel.query(self._filters, order_column, order_direction)
+           print(count , self.base_order)
         print(lst)
-        print(self._filters)
+        print(self._filters, type(self._filters))
+
+
+        import types
+        filtros=self._filters
+        filtros.__repr__ = types.MethodType(repre, filtros)
+        filtros.__str__ = types.MethodType(repre, filtros)
+        print(filtros, filtros.__repr__())
+
         cabecera = (
             ("cliente", "Cliente"),("condicionFrenteIva", "Cond. Frente Iva"),("fecha", "Fecha"),
             ("formadepago", "Forma de Pago"),("total", "Total"),
         )
 
-        generarReporte(titulo="Listado de ventas",cabecera=cabecera,buscar=Venta,nombre="Listado de ventas",datos=lst)
+        generarReporte(titulo="Listado de ventas",cabecera=cabecera,buscar=Venta,nombre="Listado de ventas",datos=lst,filtros=self._filters)
         return redirect(url_for('ReportesView.show_static_pdf',var="Listado de ventas" ))
 
 
@@ -309,9 +329,9 @@ class ProveedorView(ModelView):
     #le digo los permisos
     base_permissions =['can_list','can_add','can_edit', 'can_delete' ]
 
-    add_columns = ['cuit', 'nombre', 'apellido', 'correo']
-    list_columns = ['cuit', 'nombre', 'apellido','correo' ]
-    edit_columns = ['cuit', 'nombre', 'apellido', 'correo']
+    add_columns = ['cuit', 'nombre', 'apellido', 'correo','tipoClave']
+    list_columns = ['cuit', 'nombre', 'apellido','correo' ,'tipoClave']
+    edit_columns = ['cuit', 'nombre', 'apellido', 'correo','tipoClave']
     add_template = "addproveedor.html"
 
     validators_columns ={

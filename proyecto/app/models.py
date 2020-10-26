@@ -77,7 +77,8 @@ class Proveedor(Model):
     domicilio =Column(String(255))
     correo = Column(String(100))
     estado = Column(Boolean,default=True)
-
+    tipoClave_id = Column(Integer, ForeignKey('tiposClave.id'), nullable=False)
+    tipoClave = relationship("TipoClaves")
     # defino como se representara al ser llamado
     def __repr__(self):
         return f"Cuit {self.cuit} {self.apellido} {self.nombre}"
@@ -159,6 +160,8 @@ class Compra(Model):
     # defino como se representara al ser llamado
     def __repr__(self):
         return f'{self.proveedor} {self.total} {self.Estado} {self.fecha}'
+    def condicionFrenteIva(self):
+        return self.cliente.tipoClave
     @renders('estado')
     def estadorender(self):
             if self.Estado:
@@ -182,6 +185,7 @@ class Compra(Model):
         print(renglones)
         renglones+="</table>"
         return Markup( renglones )
+
 class Venta(Model):
     """
     creo clase que sera mapeada como la tabla ventas en la base de datos
@@ -197,7 +201,11 @@ class Venta(Model):
     #formadepago_id = Column(Integer, ForeignKey('formadepago.id'), nullable=False)
     #formadepago = relationship("FormadePago")
     #datosFormaPagos_id = Column(Integer, ForeignKey('datosFormaPagos.id'), nullable=True)
-    #datosFormaPagos = relationship("DatosFormaPagos")
+    #datosFormaPagos = relationship("DatosFormaPagos").
+    def condicionFrenteIva(self):
+        return self.cliente.tipoClave
+    def formadepago(self):
+        return str(self.formadepagos)
     @renders('total')
     def totalrender(self):
          return Markup('<b> $' + str(self.total) + '</b>')
@@ -240,7 +248,8 @@ class FormadePagoxVenta(Model):
     venta = relationship("Venta", backref='formadepagos')
     formadepago_id = Column(Integer, ForeignKey('formadepago.id'), nullable=False)
     formadepago = relationship("FormadePago")
-
+    def __repr__(self):
+        return str(self.formadepago)
 
 class DatosFormaPagos(Model):
     """
