@@ -8,6 +8,8 @@ from flask_appbuilder.security.manager import (
 )
 
 basedir = os.path.abspath(os.path.dirname(__file__))
+#addon de auditoria
+ADDON_MANAGERS = ['fab_addon_audit.manager.AuditAddOnManager']
 
 # Your App secret key
 SECRET_KEY = "\2\1thisismyscretkey\1\2\e\y\y\h"
@@ -53,7 +55,23 @@ FAB_ROLES = {
         ["productocrud", "can_access"],["comprarepo","can_access"],
         ["Productos", "menu_access"],
     ["Reporte Compras", "menu_access"],
-    ["Compra", "menu_access"]
+    ["Compra", "menu_access"],
+        ["Security","menu_access"],
+        ["UserInfoEditView","can_access" ],
+["UserInfoEditView","can_list" ],["ResetMyPasswordView","can_this_form_post"],["ResetMyPasswordView","can_this_form_get"],
+
+["MyUserDBModelView",'can_add']
+        ,["MyUserDBModelView",'can_list']
+        ,["MyUserDBModelView",'can_show'],
+["List Users","menu_access"],
+["Proveedor","menu_access"],
+["Datos Empresa","menu_access"],["tarjeta","can_access"],
+        ["Empresaview",'can_show'],["Empresaview",'can_list'],
+        ["Empresaview", 'can_edit'],
+["crudempresa","can_access"]
+
+
+
 
     ]
 

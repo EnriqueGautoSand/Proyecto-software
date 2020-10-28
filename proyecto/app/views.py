@@ -18,6 +18,7 @@ from wtforms import Form, BooleanField, StringField, validators, DateField, Floa
 from validadores import cuitvalidator, cuitvalidatorProveedores
 
 
+
 from wtforms.validators import DataRequired,InputRequired
 from flask_appbuilder.fieldwidgets import BS3TextFieldWidget, Select2Widget
 from flask_babelpkg import gettext
@@ -38,18 +39,58 @@ from flask_appbuilder.widgets import ListWidget
 
 class Empresaview(ModelView):
     datamodel = SQLAInterface(EmpresaDatos)
-
+    label_columns ={'photo_img':'logo', 'photo_img_thumbnail':'logo'}
     list_title = "Datos de La Empresa"
-    list_columns = ['compania','direccion','cuit']
+    list_columns = ['compania','direccion','cuit','photo_img_thumbnail']
+    show_columns = ['compania','direccion','cuit','photo_img']
     base_permissions = ['can_show', 'can_list', 'can_edit']
+
+
 
 class CompaniaTarjetaview(ModelView):
     datamodel = SQLAInterface(CompaniaTarjeta)
     list_title = "Lista de companias de Tarjeta"
+    class_permission_name = "tarjeta"
+    method_permission_name = {
+        'add': 'access',
+        'delete': 'access',
+        'download': 'access',
+        'edit': 'access',
+        'list': 'access',
+        'muldelete': 'access',
+        'show': 'access',
+        'api': 'access',
+        'api_column_add': 'access',
+        'api_column_edit': 'access',
+        'api_create': 'access',
+        'api_delete': 'access',
+        'api_get': 'access',
+        'api_read': 'access',
+        'api_readvalues': 'access',
+        'api_update': 'access'
+    }
 
 class Sistemaview(MultipleView):
     views =[Empresaview,CompaniaTarjetaview]
-
+    class_permission_name = "crudempresa"
+    method_permission_name = {
+        'add': 'access',
+        'delete': 'access',
+        'download': 'access',
+        'edit': 'access',
+        'list': 'access',
+        'muldelete': 'access',
+        'show': 'access',
+        'api': 'access',
+        'api_column_add': 'access',
+        'api_column_edit': 'access',
+        'api_create': 'access',
+        'api_delete': 'access',
+        'api_get': 'access',
+        'api_read': 'access',
+        'api_readvalues': 'access',
+        'api_update': 'access'
+    }
 
 
 class ListDownloadWidgetventa(ListWidget):
@@ -318,17 +359,21 @@ class CompraView(BaseView):
 
 
 
-
+def tipoClave_query():
+    print(g.user.__dict__.keys(), g.user.roles)
+    return db.session.query(TipoClaves).filter(TipoClaves.tipoClave != "Consumidor Final" ).all()
 
 class ProveedorView(ModelView):
     """
     #creo clase de el manejador de proveedor
     """
+    from wtforms.ext.sqlalchemy.fields import QuerySelectField
     datamodel = SQLAInterface(Proveedor)
     related_views = [Compra]
     #le digo los permisos
-    base_permissions =['can_list','can_add','can_edit', 'can_delete' ]
 
+    base_permissions =['can_list','can_add','can_edit', 'can_delete' ]
+    label_columns = {'tipoClave': 'Cond. Frente Iva'}
     add_columns = ['cuit', 'nombre', 'apellido', 'correo','tipoClave']
     list_columns = ['cuit', 'nombre', 'apellido','correo' ,'tipoClave']
     edit_columns = ['cuit', 'nombre', 'apellido', 'correo','tipoClave']
@@ -336,6 +381,22 @@ class ProveedorView(ModelView):
 
     validators_columns ={
         'cuit':[InputRequired(),cuitvalidatorProveedores]
+    }
+
+    add_form_extra_fields = {
+        'tipoClave':  QuerySelectField(
+                            'Cond. Frente Iva',
+                            query_factory=tipoClave_query,
+                            widget=Select2Widget("readonly")
+                       )
+    }
+
+    edit_form_extra_fields = {
+        'tipoClave':  QuerySelectField(
+                            'Cond. Frente Iva',
+                            query_factory=tipoClave_query,
+                            widget=Select2Widget("readonly")
+                       )
     }
 
 #creo clase de el manejador de clientes
@@ -395,8 +456,8 @@ class ClientesView(ModelView):
 
 
 
-#aca simplemente agrego los manejadores de las vistas al appbuilder para que sean visuales
-#appbuilder.security_cleanup()
+#aca agrego los manejadores de las vistas al appbuilder para que sean visuales
+
 
 appbuilder.add_view(VentaView, "Realizar Ventas", category='Ventas', category_icon='fa-tag' )
 
@@ -421,7 +482,7 @@ appbuilder.add_view(Sistemaview,'Datos Empresa',category='Security')
 
 appbuilder.add_view_no_menu(Empresaview)
 appbuilder.add_view_no_menu(CompaniaTarjetaview)
-
+from .auditoria import *
 appbuilder.add_view_no_menu(RenglonVentas)
 
 

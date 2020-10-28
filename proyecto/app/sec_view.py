@@ -1,6 +1,23 @@
 from flask_appbuilder.security.views import UserDBModelView
 from flask_babelpkg import lazy_gettext
+from wtforms.validators import InputRequired
+from wtforms import validators,PasswordField
+from validadores import  cuitvalidatorProveedores
+from wtforms.ext.sqlalchemy.fields import QuerySelectMultipleField
+from flask_appbuilder.fieldwidgets import  Select2ManyWidget,BS3PasswordFieldWidget
+from wtforms.validators import EqualTo
+def cuil_query():
 
+    from . import appbuilder, db
+    from .sec_models import Ususarios
+    from flask import g
+    print(g.user.__dict__.keys(), g.user.roles)
+    from flask_appbuilder.security.sqla.models import Role
+    for i in g.user.roles:
+        if i.name=="Admin":
+            return db.session.query(Role).all()
+        else:
+            return db.session.query(Role).filter(Role.name  != "Admin" ).all()
 class MyUserDBModelView(UserDBModelView):
     """
         View that add DB specifics to User view.
@@ -53,3 +70,39 @@ class MyUserDBModelView(UserDBModelView):
         'roles',
         'cuil'
     ]
+
+    validators_columns ={
+        'cuil':[InputRequired(),cuitvalidatorProveedores]
+    }
+    add_form_extra_fields = {
+
+        'roles':  QuerySelectMultipleField(
+                            'Rol',
+                            query_factory=cuil_query,
+                            widget=Select2ManyWidget()
+                       ),
+        "password": PasswordField(
+            lazy_gettext("Password"),
+            description=lazy_gettext(
+                "Utilice una buena política de contraseñas, esta aplicación no verifica esto por usted"
+            ),
+            validators=[validators.DataRequired()],
+            widget=BS3PasswordFieldWidget(),
+        ),
+        "conf_password": PasswordField(
+            lazy_gettext("Confirmar Password"),
+            description=lazy_gettext("Vuelva a escribir la contraseña del usuario para confirmar"),
+            validators=[
+                EqualTo("password", message=lazy_gettext("Passwords deben coincidir"))
+            ],
+            widget=BS3PasswordFieldWidget(),
+        ),
+    }
+
+    edit_form_extra_fields = {
+        'roles':  QuerySelectMultipleField(
+                            'Rol',
+                            query_factory=cuil_query,
+                            widget=Select2ManyWidget()
+                       )
+    }

@@ -3,13 +3,14 @@ import flask_appbuilder
 from sqlalchemy import Column, Integer, String, ForeignKey,Float,Date, Boolean, UniqueConstraint
 from sqlalchemy.orm import relationship
 from flask_appbuilder.models.decorators import renders
-from flask_appbuilder.models.mixins import AuditMixin
+from flask_appbuilder.models.mixins import AuditMixin, ImageColumn
 from . import appbuilder, db
 from flask_appbuilder.security.sqla.models import User
 from flask import Markup, url_for, redirect
 import enum
 from sqlalchemy import Enum
 from datetime import datetime as dt
+from flask_appbuilder.filemanager import  ImageManager
 print(flask_appbuilder.security.sqla.models)
 class EmpresaDatos(Model):
     """
@@ -20,11 +21,31 @@ class EmpresaDatos(Model):
     compania = Column(String(50), unique=True)
     direccion = Column(String(255), unique=True)
     cuit = Column(String(30), unique=True,nullable=True)
+    logo = Column(ImageColumn(size=(300, 300, True), thumbnail_size=(30, 30, True)))
     __table_args__ = (
         UniqueConstraint("compania","direccion"),
     )
     def __repr__(self):
         return f'{self.compania}'
+    def photo_img(self):
+        im = ImageManager()
+        if self.logo:
+            return Markup('<a href="' + url_for('Empresaview.show',pk=str(self.id)) +\
+             '" class="thumbnail"><img src="' + im.get_url(self.logo) +\
+              '" alt="logo" class="img-rounded img-responsive"></a>')
+        else:
+            return Markup('<a href="' + url_for('Empresaview.show',pk=str(self.id)) +\
+             '" class="thumbnail"><img src="//:0" alt="logo" class="img-responsive"></a>')
+
+    def photo_img_thumbnail(self):
+        im = ImageManager()
+        if self.logo:
+            return Markup('<a href="' + url_for('Empresaview.show',pk=str(self.id)) +\
+             '" class="thumbnail"><img src="' + im.get_url_thumbnail(self.logo) +\
+              '" alt="logo" class="img-rounded img-responsive"></a>')
+        else:
+            return Markup('<a href="' + url_for('Empresaview.show',pk=str(self.id)) +\
+             '" class="thumbnail"><img src="//:0" alt="logo" class="img-responsive"></a>')
 
 class TipoClaves(Model):
     """
@@ -72,16 +93,17 @@ class Proveedor(Model):
     __tablename__ = 'proveedor'
     id = Column(Integer, primary_key=True)
     cuit=Column(String(30),nullable=False,unique=True)
-    nombre = Column(String(30))
-    apellido = Column(String(30))
+    nombre = Column(String(30),nullable=False)
+    apellido = Column(String(30),nullable=False)
     domicilio =Column(String(255))
-    correo = Column(String(100))
+    correo = Column(String(100),unique=False)
     estado = Column(Boolean,default=True)
     tipoClave_id = Column(Integer, ForeignKey('tiposClave.id'), nullable=False)
     tipoClave = relationship("TipoClaves")
     # defino como se representara al ser llamado
     def __repr__(self):
         return f"Cuit {self.cuit} {self.apellido} {self.nombre}"
+
 
 class Clientes(Model):
     """
@@ -144,7 +166,7 @@ class FormadePago(Model):
 
 class Compra(Model):
     """
-    creo clase que sera mapeada como la tabla ventas en la base de datos
+    creo clase que sera mapeada como la tabla Compra en la base de datos
     """
     __tablename__= 'compras'
     id=Column(Integer, primary_key=True)

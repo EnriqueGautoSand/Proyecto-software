@@ -336,7 +336,39 @@ if (parseFloat(numero.value)>0){
 }}
 
 var numerodepago=0
+var formadepagosborrados=0
 var arrayMetodos=[]
+
+function borrarFormadePago(element){
+formadepagosborrados+=1
+	ache3=document.createElement("h3")
+	titulo =document.createTextNode("Borrado")
+ache3.align='center';ache3.style.color="red"
+	ache3.appendChild(titulo)
+ache3.id="borrar"+element.id.split("borrarFormadePago")[1].toString()
+element.parentNode.parentNode.appendChild(ache3)
+console.log(element.id.split("borrarFormadePago")[1].toString());
+for( i in arrayMetodos){
+
+
+	try {
+			if(arrayMetodos[i]["idpago"]==element.id.split("borrarFormadePago")[1].toString()){
+		console.log(arrayMetodos[i]);
+		arrayMetodos.splice(i, 1);
+		//arrayMetodos.pop(i)
+	}
+	
+	} catch(e) {
+	
+		console.log(e);
+	}
+
+
+}
+$('#'+ element.parentNode.parentNode.parentNode.parentNode.parentNode.id +' *').prop('disabled',true);
+//element.parentNode.parentNode.parentNode.parentNode.parentNode.disabled=true
+}
+
 function crearFormadePago(element){
 	element.disabled=true
 	let contado=false;
@@ -464,12 +496,14 @@ function crearFormadePago(element){
 			}
 
 	}
+
 arrayMetodos.push(jsonMetodo)
 console.log(arrayMetodos)
-
+jsonMetodo["idpago"]=""
 
 alert("Forma de pago Creada Correctamente")
 if (numerodepago>0){
+	jsonMetodo["idpago"]=numerodepago
 	unmetodo=document.getElementById('unmetodo'+ numerodepago.toString())
 	let borrar=document.getElementById('borrarFormadePago'+ numerodepago.toString())
 					$('#'+ unmetodo.id +' *').prop('disabled',true);
@@ -480,14 +514,16 @@ if (numerodepago>0){
 
 }
 
+
 function agregarFormadePago(){
+
 	faltante=document.getElementById('faltante')
 	function sumaridclon(padre,id){
 		let clonacion=padre.querySelector("#"+ id)
 		clonacion.id=clonacion.id+numerodepago.toString()
 	}
 	motototal=0
-	if(arrayMetodos.length<numerodepago+1){
+	if(arrayMetodos.length + formadepagosborrados<numerodepago+1){
 			alert("Para agregar una nueva forma de pago primero complete las anteriores")
 			return;
 		}
@@ -503,15 +539,23 @@ function agregarFormadePago(){
 		}
 	}
 	numerodepago+=1
-	aclonar=document.getElementById("unmetodo").cloneNode(true);
+
+aclonar=document.getElementById("unmetodo").cloneNode(true);
 metodoviejo=document.getElementById("unmetodo");
 parentNodes=metodoviejo.parentNode
+
 aclonar.id= aclonar.id+numerodepago.toString();
 let collapse=aclonar.querySelector("#metodo")
 collapse.id=collapse.id+numerodepago.toString()
 let borrar=aclonar.querySelector(".select2-container")
 parentNodes.insertBefore(aclonar, ultimoElemento.nextSibling);
 borrar.remove()
+
+
+if(aclonar.querySelector("#borrar")!=null){
+aclonar.querySelector("#borrar").remove()
+
+}
 
 sumaridclon(aclonar,"numeroCupon")
 sumaridclon(aclonar,"companiaTarjeta")
@@ -530,6 +574,8 @@ $('#'+ aclonar.id +' *').prop('disabled',false);
 $(document).ready(function() { $("#"+ collapse.id).select2(); });
 $(document).ready(function() { $("#"+ collapse.id).select2(); });
 $('#'+ divtarjeta.id).collapse('hide')
+$("#"+collapse.id).select2().val(1).trigger("change");
+$("#"+"companiaTarjeta"+numerodepago.toString() ).select().val(1).trigger("change");
 $("#"+ collapse.id).click(function() {
 
 						if (collapse.value==2){
