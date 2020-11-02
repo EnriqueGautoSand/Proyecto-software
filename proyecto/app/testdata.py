@@ -1,11 +1,11 @@
 from app import db
-from app.models import Venta,Clientes,TipoClaves,TiposDocumentos,FormadePago,CompaniaTarjeta,EmpresaDatos
+from app.models import Venta,Clientes,TipoClaves,TiposDocumentos,FormadePago,CompaniaTarjeta,EmpresaDatos,TipoPersona
 from datetime import datetime as dt
 
 
 
 
-datos_test=[EmpresaDatos(compania="Kiogestion",direccion="Avenida Roque Perez, 1522"),
+datos_test=[
     CompaniaTarjeta(compania="Visa"),
             CompaniaTarjeta(compania="Mastercard"),
             FormadePago(Metodo="Contado"),
@@ -13,14 +13,16 @@ datos_test=[EmpresaDatos(compania="Kiogestion",direccion="Avenida Roque Perez, 1
             TipoClaves(tipoClave="Consumidor Final"),
             TipoClaves(tipoClave="Responsable Inscripto"),
             TipoClaves(tipoClave="Monotributista"),TipoClaves(tipoClave="Exento"),TiposDocumentos(tipoDocumento="DNI"),
+            EmpresaDatos(compania="Kiogestion",direccion="Avenida Roque Perez, 1522",tipoClave_id=1),
             TiposDocumentos(tipoDocumento="CUIT"),
+            TipoPersona(tipoPersona="Fisica"),TipoPersona(tipoPersona="Juridica"),
             Clientes(documento="Consumidor Final",
+                        tipoDocumento_id=1, estado=True,tipoClave_id=1,idTipoPersona=1),
+            Clientes(documento="3905508741",idTipoPersona=1,
                         tipoDocumento_id=1, estado=True,tipoClave_id=1),
-            Clientes(documento="3905508741",
+            Clientes(documento="253648741",idTipoPersona=1,
                         tipoDocumento_id=1, estado=True,tipoClave_id=1),
-            Clientes(documento="253648741",
-                        tipoDocumento_id=1, estado=True,tipoClave_id=1),
-            Clientes(documento="131618746",
+            Clientes(documento="131618746",idTipoPersona=1,
                         tipoDocumento_id=1, estado=True,tipoClave_id=1)
         ]
 for carga in datos_test:

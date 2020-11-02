@@ -26,7 +26,7 @@ from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, Tabl
 from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT
 from reportlab.lib.colors import black, purple, white,cyan,gray
 from reportlab.pdfgen import canvas
-from flask import g
+from flask import g, url_for
 from datetime import datetime as dt
 from .models import EmpresaDatos
 from . import appbuilder, db
@@ -63,15 +63,32 @@ class reportePDF(object):
         # Encabezado
         encabezadoNombre = Paragraph(self.nombreautor, estilos["Heading1"])
         anchura, altura = encabezadoNombre.wrap(archivoPDF.width, archivoPDF.topMargin)
-        encabezadoNombre.drawOn(canvas, archivoPDF.leftMargin, 736)
+        encabezadoNombre.drawOn(canvas, archivoPDF.leftMargin, 715)
         if self.filtros != None:
             escribirfiltros = Paragraph(self.filtros.__repr__(), estilos["Normal"])
             anchura, altura = escribirfiltros.wrap(archivoPDF.width, archivoPDF.topMargin)
-            escribirfiltros.drawOn(canvas, archivoPDF.leftMargin, 715)
+            escribirfiltros.drawOn(canvas, archivoPDF.leftMargin, 705)
 
 
         fecha = utcnow().to("local").format("dddd, DD / MMMM / YYYY", locale="es")
         fechaReporte = "Fecha: "+dt.now().strftime("%d/%m/%Y-%H:%M")#fecha.replace("-", "de")
+        from io import StringIO
+        import PIL
+        from reportlab.lib.utils import ImageReader
+
+        import os.path
+
+        if db.session.query(EmpresaDatos).first().logo!= None:
+
+            fn = os.path.join(os.path.dirname(os.path.abspath(__file__)),"static\\uploads\\"+db.session.query(EmpresaDatos).first().logo)
+            print(os.path.dirname(os.path.abspath(__file__)))
+            print(os.getcwd() + url_for('static',filename='uploads/logo_thumb.jpg'))
+
+
+
+
+
+            canvas.drawImage(fn, archivoPDF.leftMargin, 736, width=50,height=50)
 
         encabezadoFecha = Paragraph(fechaReporte, alineacion)
         anchura, altura = encabezadoFecha.wrap(archivoPDF.width, archivoPDF.topMargin)
@@ -193,12 +210,24 @@ def generarReporte(titulo,cabecera,buscar,nombre,datos=None,filtros=None):
         d={}
         claves, nombres = zip(*[[k, n] for k, n in cabecera])
         for titulo in claves:
+            d[titulo] = getattr(row, titulo)
+            if titulo == "fecha":
+
+                fecha=getattr(row, titulo)
+                fecha=fecha.strftime(" %d-%m-%Y ")
+                print( fecha,d[titulo], type(fecha) )
+                d[titulo] =fecha
             if titulo == "total":
                 d[titulo] = "$"+str(getattr(row,titulo))
             elif titulo == "condicionFrenteIva" or titulo== "formadepago" :
-                d[titulo] = getattr(row, titulo)()
-            else:
-                d[titulo]=getattr(row,titulo)
+                print(buscar().__class__.__name__, titulo)
+                if buscar().__class__.__name__ == "Venta" or titulo == "condicionFrenteIva" :
+                    d[titulo] = getattr(row, titulo)()
+                elif buscar().__class__.__name__ == "Compra":
+
+                    d[titulo] = getattr(row, titulo)
+
+
         return d
     if datos!=None:
         for u in datos:

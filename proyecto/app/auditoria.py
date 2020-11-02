@@ -9,5 +9,9 @@ class ventaauditoriaView(AuditedModelView):
 class clientesauditoriaView(AuditedModelView):
     datamodel = SQLAInterface(Clientes)
 
+appbuilder.add_view_no_menu(compraauditoriaView)
+appbuilder.add_view_no_menu(ventaauditoriaView)
+appbuilder.add_view_no_menu(clientesauditoriaView)
+
 
 

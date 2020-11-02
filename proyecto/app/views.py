@@ -23,6 +23,7 @@ from wtforms.validators import DataRequired,InputRequired
 from flask_appbuilder.fieldwidgets import BS3TextFieldWidget, Select2Widget
 from flask_babelpkg import gettext
 from flask_appbuilder.urltools import get_filter_args
+
 from .reportes import generarReporte
 #manejador en caso de que no se encuentre la pagina
 @appbuilder.app.errorhandler(404)
@@ -104,10 +105,20 @@ class ProductoModelview(ModelView):
     datamodel = SQLAInterface(Productos)
     #configuro vistas de crear, listar y editar
     list_title = "Listado de Productos"
-    add_columns = ['categoria', 'marca','unidad', 'medida', 'precio', 'detalle']
-    list_columns = ['categoria', 'marca', 'medida','unidad', 'precio', 'stock', 'detalle']
-    edit_columns = ['categoria','medida','unidad','marca','precio','stock','detalle']
+    add_columns = ['categoria', 'marca','unidad', 'medida', 'precio','iva', 'detalle']
+    list_columns = ['categoria', 'marca', 'medida','unidad', 'precio', 'stock','iva','estado', 'detalle']
+    edit_columns = ['categoria','medida','unidad','marca','precio','iva','estado','detalle']
     # search_columns = ['producto','unidad','medida','marca','precio','stock']
+    @expose("/delete/<pk>", methods=["GET", "POST"])
+    @has_access
+    def delete(self, pk):
+        item = self.datamodel.get(pk, self._base_filters)
+        item.estado=False
+        db.session.commit()
+
+        self.update_redirect()
+        return self.post_delete_redirect()
+
 
 
 #creo clase de manejador de vistas de marcas y unidad de medida
@@ -158,13 +169,14 @@ class ReportesView(BaseView):
     @expose('/reportes/<var>', methods=["GET", "POST"])
     @has_access
     def show_static_pdf(self,var):
-        from flask import send_from_directory, g
+        from flask import send_from_directory
         import os
         print(os.getcwd())
         return send_from_directory(os.getcwd()+"/app/static/docs/", f'{var}.pdf')
 
-#creo clase de manejador de la vista de ventas
+
 def repre(self):
+
     retstr = "FILTROS:"
     if len(self.get_filters_values())>0:
         for flt, value in self.get_filters_values():
@@ -175,12 +187,13 @@ def repre(self):
         return retstr
     else:
         return ""
-class VentaReportes(ModelView):
+# creo clase de manejador de la vista de ventas
+class VentaReportes(AuditedModelView):
     datamodel = SQLAInterface(Venta)
     list_title = "Listado de Ventas"
-    label_columns = {"totalrender":"Total",'formadepago':'Forma de Pago','renglonesrender':'','estadorender':'Estado'}
-    list_columns = ['cliente', "totalrender", 'estadorender','fecha']
-    show_columns = ['cliente', 'estadorender','fecha','renglonesrender']
+    label_columns = {"formatofecha":"Fecha","totalrender":"Total",'formadepago':'Forma de Pago','renglonesrender':'','estadorender':'Estado'}
+    list_columns = ['cliente', "totalrender", 'estadorender','formatofecha']
+    show_columns = ['cliente', 'estadorender','formatofecha','renglonesrender']
     edit_columns = ['Estado']
     base_permissions = ['can_show','can_list', 'can_edit']
     #list_template = "reportes.html"
@@ -218,13 +231,13 @@ class VentaReportes(ModelView):
         return redirect(url_for('ReportesView.show_static_pdf',var="Listado de ventas" ))
 
 
-class CompraReportes(ModelView):
+class CompraReportes(AuditedModelView):
     datamodel = SQLAInterface(Compra)
     list_widget =ListDownloadWidgetcompra
     list_title = "Listado de Compras"
-    label_columns = {'renglonesrender':'', 'estadorender':'Estado'}
-    list_columns = ['proveedor', "total", 'estadorender', 'formadepago','fecha']
-    show_columns = ['proveedor', 'total', 'estadorender','formadepago','fecha','renglonesrender']
+    label_columns = {'renglonesrender':'', 'estadorender':'Estado','formatofecha':'Fecha',"percepcion":"Percepcion %"}
+    list_columns = ['proveedor', "total", 'estadorender', 'formadepago','formatofecha',"percepcion"]
+    show_columns = ['proveedor', 'total', 'estadorender','formadepago','formatofecha',"percepcion",'renglonesrender']
     edit_columns = ['Estado']
 
     base_permissions = ['can_show','can_list', 'can_edit']
@@ -249,7 +262,7 @@ class CompraReportes(ModelView):
             ("formadepago", "Forma de Pago"),("total", "Total"),
         )
 
-        generarReporte(titulo="Listado de Compras",cabecera=cabecera,buscar=Venta,nombre="Listado de Compras",datos=lst)
+        generarReporte(titulo="Listado de Compras",cabecera=cabecera,buscar=Compra,nombre="Listado de Compras",datos=lst)
         return redirect(url_for('ReportesView.show_static_pdf',var="Listado de Compras" ))
 
 
@@ -271,12 +284,14 @@ class RenglonVenta(Form):
     cantidad = IntegerField('Cantidad', widget=BS3TextFieldWidget())
     metodo = SelectField('Forma de Pago', coerce=str, choices=[(p.id, p) for p in db.session.query(FormadePago)])
     #condicionfrenteiva= SelectField('Condicion Frente Iva', coerce=TipoClaves.coerce, choices=TipoClaves.choices() )
-    Total = FloatField('Total $', render_kw={'disabled': ''},
+    Total = FloatField('Total $', render_kw={'disabled': '', 'type':"number"},
                        validators=[DataRequired()], default=0)
     numeroCupon = IntegerField('Numero de cupon', widget=BS3TextFieldWidget())
     companiaTarjeta = SelectField('Compania de la Tarjeta', coerce=str, choices=[(p.id, p) for p in db.session.query(CompaniaTarjeta)] )
     credito = BooleanField("Credito", default=False)
-    cuotas = IntegerField("Cuotas", default=0)
+    descuento = FloatField("Descuento %", render_kw={ 'type':"number"}, default=0)
+    percepcion = FloatField("Percepcion %", render_kw={ 'type':"number"}, default=0)
+    cuotas = FloatField("Cuotas", render_kw={ 'type':"number"}, default=0)
 
 #creo clase manejadora de la vista de realizar venta
 class VentaView(BaseView):
@@ -289,14 +304,14 @@ class VentaView(BaseView):
         #creo formulario
         form2 = RenglonVenta(request.form)
         #cargo las elecciones de producto
-        form2.producto.choices = [('{"id": ' + f'{p.id}' + ', "representacion":' + f'"{p.__repr__()}"' + '}', p) for p
-                                  in db.session.query(Productos)]
+        form2.producto.choices = [('{"id": ' + f'{p.id}' + ', "representacion":' + f'"{p.__repr__()}"' + '}', p.__repr__()) for p
+                                  in db.session.query(Productos).filter(Productos.estado==True).all()]
         form2.Fecha.data = dt.now()
         # cargo las elecciones de cliente
-        form2.cliente.choices = [(c.id, c) for c in db.session.query(Clientes)]
+        form2.cliente.choices = [(c.id, c) for c in db.session.query(Clientes).filter(Clientes.estado==True).all()]
         # cargo las elecciones de metodo de pago
         form2.metodo.choices = [(c.id, c) for c in db.session.query(FormadePago)]
-
+        # cargo las elecciones de las tarjetas
         form2.companiaTarjeta.choices = [(c.id, c) for c in db.session.query(CompaniaTarjeta)]
         # le digo que guarde la url actual en el historial
         #esto sirve para cuando creas un cliente que te redirija despues a la venta
@@ -312,15 +327,19 @@ class VentaView(BaseView):
 class RenglonCompra(Form):
     proveedor=SelectField('Proveedor', coerce=str, choices=[(c.id, c) for c in db.session.query(Proveedor)])
     producto = SelectField('Producto', coerce=str, choices=[(p.id, p) for p in db.session.query(Productos)])
-    cantidad = IntegerField('Cantidad', widget=BS3TextFieldWidget())
+    cantidad = IntegerField('Cantidad', render_kw={ 'type':"number"}, widget=BS3TextFieldWidget())
     metodo = SelectField('Metodo de Pago', coerce=str, choices=[(p.id, p) for p in db.session.query(FormadePago)])
     Total = FloatField('Total', render_kw={'disabled': ''},
                        validators=[DataRequired()], default=0)
     #condicionfrenteiva = SelectField('Condicion Frente Iva', coerce=TipoClaves.coerce, choices=TipoClaves.choices())
-    numeroCupon = IntegerField('Numero de cupon', widget=BS3TextFieldWidget())
+    numeroCupon = IntegerField('Numero de cupon', render_kw={ 'type':"number"}, widget=BS3TextFieldWidget())
     companiaTarjeta = SelectField('Compania de la Tarjeta', coerce=str, choices=[(p.id, p) for p in db.session.query(CompaniaTarjeta)] )
     credito = BooleanField("Credito", default=False)
-    cuotas = IntegerField("Cuotas", default=0)
+    cuotas = IntegerField("Cuotas", render_kw={ 'type':"number"}, default=0)
+    percepcion = IntegerField("Percepcion %", render_kw={ 'type':"number"}, default=0)
+    descuento = FloatField("Descuento %", render_kw={ 'type':"number"}, default=0)
+    totalneto = FloatField("Total Neto $", render_kw={'disabled': ''},default=0)
+    preciocompra = FloatField("Precio de Compra", render_kw={ 'type':"number"}, default=0)
 
 #creo clase manejadora de la vista de realizar compra
 class CompraView(BaseView):
@@ -338,8 +357,8 @@ class CompraView(BaseView):
         #creo formulario
         form2 = RenglonCompra(request.form)
         #cargo las elecciones de producto
-        form2.producto.choices = [('{"id": ' + f'{p.id}' + ', "representacion":' + f'"{p.__repr__()}"' + '}', p) for p
-                                  in db.session.query(Productos)]
+        form2.producto.choices = [('{"id": ' + f'{p.id}' + ', "iva":' + f'"{p.iva}"' + ', "representacion":' + f'"{p.__str__()}"' + '}', p.__str__()) for p
+                                  in db.session.query(Productos).filter(Productos.estado==True).all()]
 
         # cargo las elecciones de cliente
         form2.proveedor.choices = [(c.id, c) for c in db.session.query(Proveedor)]
@@ -362,8 +381,8 @@ class CompraView(BaseView):
 def tipoClave_query():
     print(g.user.__dict__.keys(), g.user.roles)
     return db.session.query(TipoClaves).filter(TipoClaves.tipoClave != "Consumidor Final" ).all()
-
-class ProveedorView(ModelView):
+from fab_addon_audit.views import AuditedModelView
+class ProveedorView(AuditedModelView):
     """
     #creo clase de el manejador de proveedor
     """
@@ -374,9 +393,9 @@ class ProveedorView(ModelView):
 
     base_permissions =['can_list','can_add','can_edit', 'can_delete' ]
     label_columns = {'tipoClave': 'Cond. Frente Iva'}
-    add_columns = ['cuit', 'nombre', 'apellido', 'correo','tipoClave']
-    list_columns = ['cuit', 'nombre', 'apellido','correo' ,'tipoClave']
-    edit_columns = ['cuit', 'nombre', 'apellido', 'correo','tipoClave']
+    add_columns = ["tipoPersona",'cuit', 'nombre', 'apellido', 'correo','tipoClave']
+    list_columns = ["tipoPersona",'cuit', 'nombre', 'apellido','correo' ,'tipoClave']
+    edit_columns = ["tipoPersona",'cuit', 'nombre', 'apellido', 'correo','tipoClave']
     add_template = "addproveedor.html"
 
     validators_columns ={
@@ -412,9 +431,9 @@ class ClientesView(ModelView):
     #base_filters = [['estado', FilterEqual, True]]#descomentar para que filtre solo los activos
     add_template = "agregarcliente.html"
     #configurando las columnas de las vistas crear listar y editar
-    add_columns = ['tipoDocumento','documento','tipoClave', 'nombre', 'apellido']
-    list_columns = ['documento', 'nombre', 'apellido','tipoDocumento']
-    edit_columns = ['documento', 'nombre', 'apellido','tipoDocumento','estado']
+    add_columns = ["tipoPersona",'tipoDocumento','documento','tipoClave', 'nombre', 'apellido']
+    list_columns = ["tipoPersona",'documento', 'nombre', 'apellido','tipoDocumento']
+    edit_columns = ["tipoPersona",'documento', 'nombre', 'apellido','tipoDocumento','estado']
     validators_columns ={
         'documento':[InputRequired(),cuitvalidator(dato='tipoDocumento')]
     }

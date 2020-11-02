@@ -45,24 +45,49 @@
 
         <td> {{ form2.cantidad.label }}</td>
         <td>    {{ form2.cantidad}}     </td >
-        
+         <td> {{ form2.preciocompra.label }} <b> $</b> </td>
+        <td>{{ form2.preciocompra}}</td >
+         </tr>
+        <tr>
+           <td> {{ form2.descuento.label }} </td>
 
 
-        <td></td >
+        <td>{{ form2.descuento}}</td >
+                  <td > 
+    
+          {{ form2.percepcion.label }} </td >
+           <td> {{ form2.percepcion}} </td> 
+       </tr>
+    <tr>
+          <td></td> <td></td> 
+          <td></td>
        <td>  <input id="agregar" class="btn  btn-info btn-sm" type="button" value="Agregar Renglon" onclick="agregarRenglon(this);" align="right" />
                 <input id="borrar" class="btn  btn-danger btn-sm" type="button" value="Borrar Renglon" disabled="true" onclick="borrarRenglon(this);" align="right" />
        </td >
     </tr>
 </table>
 </form >
+<table class="table table-bordered" id="neto">
+        <tr>
+        <td style="float:right: " align="right"> 
+          {{ form2.totalneto.label }}
+            {{ form2.totalneto}} 
+        </td >
+        </tr>
+
+</table>
+
 <table class="table table-bordered" id="finalizar">
 
         <td style="float:right: " align="right"> 
+
+
             {{ form2.metodo.label }}
             {{ form2.metodo}}     
-        {{ form2.Total.label }}
+        {{ form2.Total.label }}<b>$</b>
             {{ form2.Total}}     </td >
         <td id="botonagregar"align="center"> </td >
+
 </table>
 
 <div class = "panel-heading">
@@ -102,11 +127,16 @@
     <link href="{{url_for('static',filename='appbuilder/select2/select2.css')}}"rel="stylesheet"/>
         <link href="{{url_for('static',filename='css/claseselect.css')}}"rel="stylesheet"/>
     <script src="{{url_for('static',filename='js/select2.js')}}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
     <script>
         $(document).ready(function() { $("#producto").select2(); });
          $(document).ready(function() { $("#proveedor").select2(); });
          $(document).ready(function() { $("#metodo").select2(); });
          $(document).ready(function() { $("#condicionfrenteiva").select2(); });
+
+
+
+
     </script>
 
 {% endblock %}

@@ -1,3 +1,8 @@
+DROP TRIGGER IF EXISTS descontarstockenventa on renglon;
+DROP FUNCTION  IF EXISTS  descontarstockenventa CASCADE  ;
+DROP FUNCTION  IF EXISTS  sumarstockencompra CASCADE ;
+DROP FUNCTION  IF EXISTS  sumarstockenventanulada CASCADE ;
+DROP FUNCTION  IF EXISTS  actualiarstockencompranulada CASCADE ;
 create function descontarstockenventa() returns Trigger
 as
 $$
@@ -14,9 +19,9 @@ Language plpgsql VOLATILE;
 create trigger updateproductosventa
 	after insert on renglon
 	for each row
-	execute procedure descontarstockenventa()
+	execute procedure descontarstockenventa();
 
-
+DROP TRIGGER IF EXISTS sumarstockencompra on renglon_compras;
 create function sumarstockencompra() returns Trigger
 as
 $$
@@ -33,7 +38,9 @@ Language plpgsql VOLATILE;
 create trigger updateproductoscompra
 	after insert on renglon_compras
 	for each row
-	execute procedure sumarstockencompra()
+	execute procedure sumarstockencompra();
+	
+DROP TRIGGER IF EXISTS sumarstockenventanulada on ventas;
 
 create function sumarstockenventanulada() returns Trigger
 as
@@ -42,7 +49,10 @@ begin
 if not new."Estado" then
 update productos  set stock=stock+renglon.cantidad from  
  renglon where renglon.venta_id=new.id  and productos.id =renglon.producto_id;
- end if;
+else
+update productos  set stock=stock-renglon.cantidad from  
+ renglon where renglon.venta_id=new.id  and productos.id =renglon.producto_id;
+end if;
 return new;
 
 end
@@ -52,9 +62,9 @@ Language plpgsql VOLATILE;
 create trigger updateproductosventanulada
 	after update on ventas
 	for each row
-	execute procedure sumarstockenventanulada()
+	execute procedure sumarstockenventanulada();
 
-//acutaliza el stock si anula o des anula
+
 create function actualiarstockencompranulada() returns Trigger
 as
 $$

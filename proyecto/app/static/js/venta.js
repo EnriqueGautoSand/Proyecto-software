@@ -7,7 +7,8 @@ var total = document.getElementById('Total')
 var botonborrar=document.getElementById('borrar')
 //var condicionfrenteiva = document.getElementById('condicionfrenteiva')
 cantidad.className="form-inline"
-
+var descuento= document.getElementById('descuento')
+var percepcion= document.getElementById('percepcion')
 tarjeta=document.getElementById('unmetodo')
 var ultimoElemento=tarjeta
 
@@ -30,6 +31,20 @@ function agregarTd(tere,texto){
 	tede.align="center"
 	tere.appendChild(tede)
 }
+function updateValue(e){
+	if(e.target.value>100 || e.target.value<0)
+		{alert("Error El valor en "+e.target.name + " debe estar entre 0 y 100");
+		 
+		e.target.value=0
+
+		}
+	if(e.target.id==percepcion.id){
+		totalhtml.value=parseFloat(totalneto.value) + parseFloat((totalneto.value/100.0)*porcentajepositivo(percepcion,true))
+	}
+	}
+percepcion.addEventListener('change', updateValue);
+descuento.addEventListener('change', updateValue);
+
 var fila =document.getElementById('agregar')
 parentNodes=fila.parentNode
 parentNodes.insertBefore(tabla, fila.nextSibling); 
@@ -45,6 +60,7 @@ var tere=document.createElement("tr")
 
 agregarTd(tere,'Producto')
 agregarTd(tere,'Cantidad')
+agregarTd(tere,'Descuento %')
 agregarTd(tere,'SubTotal')
 
 tebody.appendChild(tere)
@@ -61,7 +77,15 @@ var totalhtml=document.getElementById("Total")
 var jsonProductos={}
 var renglonseleccionado=undefined
 
-
+function  porcentajepositivo(valor,buelan){
+if (parseFloat(valor.value)>=0 && parseFloat(valor.value)<=100){
+	if (buelan){
+	return parseFloat(valor.value)}else{return true}
+}else{
+	return false 
+}
+return Math.abs(parseFloat(valor.value))
+}
 function addRowHandlers() {
 //esta funcion es la que se enecarga del evento click en las filas
   var table = tabla
@@ -85,17 +109,25 @@ function addRowHandlers() {
   }
 	}
 function  cantidadpos(){
-if (parseInt(cantidad.value)>0){
-	return parseFloat(cantidad.value)
+	if (parseInt(cantidad.value)>0){
+		return parseFloat(cantidad.value)
+	}else{
+		return false 
+	}
+}
+function  cantidadposdescuento(buelan){
+if (parseInt(descuento.value)>=0 && parseInt(descuento.value)<=100){
+	if (buelan){
+	return parseInt(descuento.value)}else{return true}
 }else{
 	return false 
 }
-
+return Math.abs(parseInt(descuento.value))
 }
 function borrarRenglon(element){
 	 var cellProducto = renglonseleccionado.getElementsByTagName("td")[0];
      var textoProducto = cellProducto.innerHTML;
-     var totalfi= renglonseleccionado.getElementsByTagName("td")[2];
+     var totalfi= renglonseleccionado.getElementsByTagName("td")[3];
     console.log('totalfila',totalfi)
      totalfi=totalfi.innerHTML
 	totalColuma-=parseFloat( totalfi.split('$')[1])
@@ -126,27 +158,24 @@ function agregarRenglon(element){
 	console.log(cantidad.value)
 	productosel=JSON.parse(producto.value)
 
-	if (! listaProductos.has(productosel.id)  && cantidadpos()){
+	if (! listaProductos.has(productosel.id)  && cantidadpos() && porcentajepositivo(valor=descuento)){
 		//jsonproductos guarda el producto y su cantidad basicamente guarda los renglones de la venta
-		jsonProductos[productosel.representacion]=[producto.value, cantidadpos()]
+		jsonProductos[productosel.representacion]=[producto.value, cantidadpos(),parseFloat(descuento.value)]
 
 		var hilera = document.createElement("tr");
 		//configuro id de la fila
 		contadorfilas+=1
 		hilera.id="fila"+contadorfilas.toString()
 		
-		var celda = document.createElement("td");
-		var textoCelda = document.createTextNode(producto[producto.selectedIndex].innerHTML );
-      celda.appendChild(textoCelda);
-      celda.align="center"
-      celda.className="col-md-1 col-lg-1 col-sm-1"
-      var celda2 = document.createElement("td");
-      var textoCelda2 = document.createTextNode(cantidadpos());
-      celda2.appendChild(textoCelda2);
-      celda2.className="col-md-1 col-lg-1 col-sm-1"
-      celda2.align="center"
-      hilera.appendChild(celda);
-      hilera.appendChild(celda2);
+		
+
+
+      
+
+      agregarTd(hilera,producto[producto.selectedIndex].innerHTML)
+      agregarTd(hilera,cantidadpos())
+      agregarTd(hilera, porcentajepositivo(descuento,true))
+      
 
 
 
@@ -165,19 +194,16 @@ try {
 .catch(error => console.error('Error:', error))
 .then(response =>{ console.log('Success:', response)
 	
-	totalFila =parseFloat( response.message)
+	
 
 	console.log('Success:', response.message,'  ',typeof totalFila)
 
 
 
-	var celdsa = document.createElement("td");
-	totalFila*=cantidadpos()
-	var textoCelda3 = document.createTextNode("$" + totalFila.toFixed(2) );
-	celdsa.appendChild(textoCelda3)
-	celdsa.align="center"
-	celdsa.className="col-md-1 col-lg-1 col-sm-1"
-	hilera.appendChild(celdsa);
+	
+	totalFila=cantidadpos()*(parseFloat( response.message)*( 1-descuento.value/100))
+
+		agregarTd(hilera, "$" + totalFila.toFixed(2) )
 	  tebody.appendChild(hilera);
       listaProductos.add(productosel.id);
       console.log(listaProductos)
@@ -265,12 +291,15 @@ boton.disabled=true
 			    // Mostrando en pantalla la clave junto a su valor
 			    if(jsonProductos[clave]!= undefined && jsonProductos[clave]!=null ){
 			    	console.log(" Producto  " + JSON.parse(jsonProductos[clave][0])['id'] , " Cantidad: "+ jsonProductos[clave][1])
-					jsonventa["productos"].push([JSON.parse(jsonProductos[clave][0])['id'],jsonProductos[clave][1] ])
+					jsonventa["productos"].push({"producto":JSON.parse(jsonProductos[clave][0])['id'],"cantidad":jsonProductos[clave][1],
+								"descuento": jsonProductos[clave][2]})
 				}
 			  }
 			}
 			jsonventa["cliente"]=parseInt(cliente.value);
 			jsonventa["total"]=parseFloat(total.value).toFixed(2);
+			jsonventa["totalneto"]=parseFloat(total.value).toFixed(2);
+			jsonventa["percepcion"]=parseFloat(percepcion.value).toFixed(2);
 			//jsonventa["condicionfrenteiva"]=condicionfrenteiva.value
 
 			//validar si la suma de los pagos no supera el total del la venta

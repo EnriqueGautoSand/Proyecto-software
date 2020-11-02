@@ -47,7 +47,15 @@
         
 
 
-        <td></td >
+        <td> {{ form2.descuento.label }} </td>
+
+
+        <td>{{ form2.descuento}}</td >
+         </tr>
+         <tr>
+          <td > {{ form2.percepcion.label }} </td >
+          <td> {{ form2.percepcion}} </td> 
+            <td></td>
        <td>  <input id="agregar" class="btn  btn-info btn-sm" type="button" value="Agregar Renglon" onclick="agregarRenglon(this);" align="right" />
         <input id="borrar" class="btn  btn-danger btn-sm" type="button" value="Borrar Renglon" disabled="true" onclick="borrarRenglon(this);" align="right" />
        </td >
