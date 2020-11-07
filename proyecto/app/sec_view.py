@@ -7,6 +7,9 @@ from wtforms.ext.sqlalchemy.fields import QuerySelectMultipleField
 from wtforms import StringField
 from flask_appbuilder.fieldwidgets import  Select2ManyWidget,BS3PasswordFieldWidget,BS3TextFieldWidget
 from wtforms.validators import EqualTo
+from flask_appbuilder.security.registerviews import RegisterUserDBView
+class MyRegisterUserDBView(RegisterUserDBView):
+    email_template = 'email_template.html'
 def cuil_query():
 
     from . import appbuilder, db
@@ -107,20 +110,16 @@ class MyUserDBModelView(UserDBModelView):
                             widget=Select2ManyWidget()
                        ),
         'first_name': StringField(
-            'Nombre', render_kw={'disabled': ''},
-            widget=BS3TextFieldWidget()
+            'Nombre', render_kw={'disabled': ''}
         ),
         'last_name': StringField(
-            'Apellidos', render_kw={'disabled': ''},
-            widget=BS3TextFieldWidget()
+            'Apellidos', render_kw={'disabled': 'true'}
         ),
         'username': StringField(
-            'Nombre de usuario', render_kw={'disabled': ''},
-            widget=BS3TextFieldWidget()
+            'Nombre de usuario', render_kw={'disabled': 'true'}
         ),
         'cuil': StringField(
-            'Cuil', render_kw={'disabled': ''},
-            widget=BS3TextFieldWidget()
+            'Cuil', render_kw={'disabled': 'true'}
         )
 
     }

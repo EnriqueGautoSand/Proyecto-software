@@ -29,7 +29,7 @@ MAIL_SERVER = 'smtp.gmail.com'
 MAIL_USE_TLS = True
 MAIL_USERNAME = 'soporte.kiogestion@gmail.com'
 MAIL_PASSWORD = '123456Asdf'
-MAIL_DEFAULT_SENDER = 'soporte.kiogestion@kiogestion.com'
+MAIL_DEFAULT_SENDER = 'soporte.kiogestion@gmail.com'
 
 # ------------------------------
 # GLOBALS FOR APP Builder

@@ -5,7 +5,7 @@
 -- Dumped from database version 12.2
 -- Dumped by pg_dump version 12.2
 
--- Started on 2020-11-02 10:26:13
+-- Started on 2020-11-07 09:45:03
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -42,7 +42,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- TOC entry 739 (class 1247 OID 166904)
+-- TOC entry 723 (class 1247 OID 166904)
 -- Name: companiatarjeta; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -56,7 +56,7 @@ CREATE TYPE public.companiatarjeta AS ENUM (
 ALTER TYPE public.companiatarjeta OWNER TO postgres;
 
 --
--- TOC entry 746 (class 1247 OID 166922)
+-- TOC entry 730 (class 1247 OID 166922)
 -- Name: metodospagos; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -69,7 +69,7 @@ CREATE TYPE public.metodospagos AS ENUM (
 ALTER TYPE public.metodospagos OWNER TO postgres;
 
 --
--- TOC entry 729 (class 1247 OID 134040)
+-- TOC entry 713 (class 1247 OID 134040)
 -- Name: tipoclaves; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -83,7 +83,7 @@ CREATE TYPE public.tipoclaves AS ENUM (
 ALTER TYPE public.tipoclaves OWNER TO postgres;
 
 --
--- TOC entry 732 (class 1247 OID 134106)
+-- TOC entry 716 (class 1247 OID 134106)
 -- Name: tiposdocumentos; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -103,7 +103,7 @@ CREATE TYPE public.tiposdocumentos AS ENUM (
 ALTER TYPE public.tiposdocumentos OWNER TO postgres;
 
 --
--- TOC entry 274 (class 1255 OID 200110)
+-- TOC entry 274 (class 1255 OID 208440)
 -- Name: actualiarstockencompranulada(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -127,7 +127,7 @@ $$;
 ALTER FUNCTION public.actualiarstockencompranulada() OWNER TO postgres;
 
 --
--- TOC entry 259 (class 1255 OID 200104)
+-- TOC entry 259 (class 1255 OID 208434)
 -- Name: descontarstockenventa(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -147,7 +147,7 @@ $$;
 ALTER FUNCTION public.descontarstockenventa() OWNER TO postgres;
 
 --
--- TOC entry 260 (class 1255 OID 200106)
+-- TOC entry 260 (class 1255 OID 208436)
 -- Name: sumarstockencompra(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -167,7 +167,7 @@ $$;
 ALTER FUNCTION public.sumarstockencompra() OWNER TO postgres;
 
 --
--- TOC entry 273 (class 1255 OID 200108)
+-- TOC entry 273 (class 1255 OID 208438)
 -- Name: sumarstockenventanulada(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -195,7 +195,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- TOC entry 246 (class 1259 OID 199852)
+-- TOC entry 252 (class 1259 OID 208362)
 -- Name: FormadePago_Venta; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -210,7 +210,7 @@ CREATE TABLE public."FormadePago_Venta" (
 ALTER TABLE public."FormadePago_Venta" OWNER TO postgres;
 
 --
--- TOC entry 245 (class 1259 OID 199850)
+-- TOC entry 251 (class 1259 OID 208360)
 -- Name: FormadePago_Venta_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -227,7 +227,7 @@ ALTER TABLE public."FormadePago_Venta_id_seq" OWNER TO postgres;
 
 --
 -- TOC entry 3229 (class 0 OID 0)
--- Dependencies: 245
+-- Dependencies: 251
 -- Name: FormadePago_Venta_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -633,7 +633,7 @@ ALTER SEQUENCE public."companiaTarjeta_id_seq" OWNED BY public."companiaTarjeta"
 
 
 --
--- TOC entry 256 (class 1259 OID 200065)
+-- TOC entry 250 (class 1259 OID 208339)
 -- Name: compras; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -642,6 +642,7 @@ CREATE TABLE public.compras (
     "Estado" boolean,
     total double precision NOT NULL,
     "totalNeto" double precision NOT NULL,
+    totaliva double precision,
     fecha date NOT NULL,
     proveedor_id integer NOT NULL,
     formadepago_id integer NOT NULL,
@@ -653,7 +654,7 @@ CREATE TABLE public.compras (
 ALTER TABLE public.compras OWNER TO postgres;
 
 --
--- TOC entry 255 (class 1259 OID 200063)
+-- TOC entry 249 (class 1259 OID 208337)
 -- Name: compras_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -670,7 +671,7 @@ ALTER TABLE public.compras_id_seq OWNER TO postgres;
 
 --
 -- TOC entry 3233 (class 0 OID 0)
--- Dependencies: 255
+-- Dependencies: 249
 -- Name: compras_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -678,7 +679,7 @@ ALTER SEQUENCE public.compras_id_seq OWNED BY public.compras.id;
 
 
 --
--- TOC entry 252 (class 1259 OID 199949)
+-- TOC entry 244 (class 1259 OID 200114)
 -- Name: datosEmpresa; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -695,7 +696,7 @@ CREATE TABLE public."datosEmpresa" (
 ALTER TABLE public."datosEmpresa" OWNER TO postgres;
 
 --
--- TOC entry 251 (class 1259 OID 199947)
+-- TOC entry 243 (class 1259 OID 200112)
 -- Name: datosEmpresa_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -712,7 +713,7 @@ ALTER TABLE public."datosEmpresa_id_seq" OWNER TO postgres;
 
 --
 -- TOC entry 3234 (class 0 OID 0)
--- Dependencies: 251
+-- Dependencies: 243
 -- Name: datosEmpresa_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -720,7 +721,7 @@ ALTER SEQUENCE public."datosEmpresa_id_seq" OWNED BY public."datosEmpresa".id;
 
 
 --
--- TOC entry 250 (class 1259 OID 199888)
+-- TOC entry 256 (class 1259 OID 208398)
 -- Name: datosFormaPagos; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -737,13 +738,13 @@ CREATE TABLE public."datosFormaPagos" (
 ALTER TABLE public."datosFormaPagos" OWNER TO postgres;
 
 --
--- TOC entry 254 (class 1259 OID 200045)
+-- TOC entry 248 (class 1259 OID 208319)
 -- Name: datosFormaPagosCompra; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public."datosFormaPagosCompra" (
     id integer NOT NULL,
-    "numeroCupon" character varying(50),
+    "numeroCupon" character varying(50) NOT NULL,
     credito boolean,
     cuotas integer,
     "companiaTarjeta_id" integer NOT NULL,
@@ -754,7 +755,7 @@ CREATE TABLE public."datosFormaPagosCompra" (
 ALTER TABLE public."datosFormaPagosCompra" OWNER TO postgres;
 
 --
--- TOC entry 253 (class 1259 OID 200043)
+-- TOC entry 247 (class 1259 OID 208317)
 -- Name: datosFormaPagosCompra_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -771,7 +772,7 @@ ALTER TABLE public."datosFormaPagosCompra_id_seq" OWNER TO postgres;
 
 --
 -- TOC entry 3235 (class 0 OID 0)
--- Dependencies: 253
+-- Dependencies: 247
 -- Name: datosFormaPagosCompra_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -779,7 +780,7 @@ ALTER SEQUENCE public."datosFormaPagosCompra_id_seq" OWNED BY public."datosForma
 
 
 --
--- TOC entry 249 (class 1259 OID 199886)
+-- TOC entry 255 (class 1259 OID 208396)
 -- Name: datosFormaPagos_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -796,7 +797,7 @@ ALTER TABLE public."datosFormaPagos_id_seq" OWNER TO postgres;
 
 --
 -- TOC entry 3236 (class 0 OID 0)
--- Dependencies: 249
+-- Dependencies: 255
 -- Name: datosFormaPagos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -984,7 +985,7 @@ ALTER SEQUENCE public.proveedor_id_seq OWNED BY public.proveedor.id;
 
 
 --
--- TOC entry 248 (class 1259 OID 199870)
+-- TOC entry 254 (class 1259 OID 208380)
 -- Name: renglon; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -1001,7 +1002,7 @@ CREATE TABLE public.renglon (
 ALTER TABLE public.renglon OWNER TO postgres;
 
 --
--- TOC entry 258 (class 1259 OID 200088)
+-- TOC entry 258 (class 1259 OID 208418)
 -- Name: renglon_compras; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -1018,7 +1019,7 @@ CREATE TABLE public.renglon_compras (
 ALTER TABLE public.renglon_compras OWNER TO postgres;
 
 --
--- TOC entry 257 (class 1259 OID 200086)
+-- TOC entry 257 (class 1259 OID 208416)
 -- Name: renglon_compras_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -1043,7 +1044,7 @@ ALTER SEQUENCE public.renglon_compras_id_seq OWNED BY public.renglon_compras.id;
 
 
 --
--- TOC entry 247 (class 1259 OID 199868)
+-- TOC entry 253 (class 1259 OID 208378)
 -- Name: renglon_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -1060,7 +1061,7 @@ ALTER TABLE public.renglon_id_seq OWNER TO postgres;
 
 --
 -- TOC entry 3242 (class 0 OID 0)
--- Dependencies: 247
+-- Dependencies: 253
 -- Name: renglon_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -1220,7 +1221,7 @@ ALTER SEQUENCE public.unidad_medida_id_seq OWNED BY public.unidad_medida.id;
 
 
 --
--- TOC entry 244 (class 1259 OID 199839)
+-- TOC entry 246 (class 1259 OID 208306)
 -- Name: ventas; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -1229,6 +1230,7 @@ CREATE TABLE public.ventas (
     "Estado" boolean,
     fecha date NOT NULL,
     "totalNeto" double precision NOT NULL,
+    totaliva double precision,
     total double precision NOT NULL,
     cliente_id integer NOT NULL,
     percepcion double precision
@@ -1238,7 +1240,7 @@ CREATE TABLE public.ventas (
 ALTER TABLE public.ventas OWNER TO postgres;
 
 --
--- TOC entry 243 (class 1259 OID 199837)
+-- TOC entry 245 (class 1259 OID 208304)
 -- Name: ventas_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -1255,7 +1257,7 @@ ALTER TABLE public.ventas_id_seq OWNER TO postgres;
 
 --
 -- TOC entry 3247 (class 0 OID 0)
--- Dependencies: 243
+-- Dependencies: 245
 -- Name: ventas_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -1263,7 +1265,7 @@ ALTER SEQUENCE public.ventas_id_seq OWNED BY public.ventas.id;
 
 
 --
--- TOC entry 2885 (class 2604 OID 199855)
+-- TOC entry 2888 (class 2604 OID 208365)
 -- Name: FormadePago_Venta id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1295,7 +1297,7 @@ ALTER TABLE ONLY public."companiaTarjeta" ALTER COLUMN id SET DEFAULT nextval('p
 
 
 --
--- TOC entry 2890 (class 2604 OID 200068)
+-- TOC entry 2887 (class 2604 OID 208342)
 -- Name: compras id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1303,7 +1305,7 @@ ALTER TABLE ONLY public.compras ALTER COLUMN id SET DEFAULT nextval('public.comp
 
 
 --
--- TOC entry 2888 (class 2604 OID 199952)
+-- TOC entry 2884 (class 2604 OID 200117)
 -- Name: datosEmpresa id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1311,7 +1313,7 @@ ALTER TABLE ONLY public."datosEmpresa" ALTER COLUMN id SET DEFAULT nextval('publ
 
 
 --
--- TOC entry 2887 (class 2604 OID 199891)
+-- TOC entry 2890 (class 2604 OID 208401)
 -- Name: datosFormaPagos id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1319,7 +1321,7 @@ ALTER TABLE ONLY public."datosFormaPagos" ALTER COLUMN id SET DEFAULT nextval('p
 
 
 --
--- TOC entry 2889 (class 2604 OID 200048)
+-- TOC entry 2886 (class 2604 OID 208322)
 -- Name: datosFormaPagosCompra id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1359,7 +1361,7 @@ ALTER TABLE ONLY public.proveedor ALTER COLUMN id SET DEFAULT nextval('public.pr
 
 
 --
--- TOC entry 2886 (class 2604 OID 199873)
+-- TOC entry 2889 (class 2604 OID 208383)
 -- Name: renglon id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1367,7 +1369,7 @@ ALTER TABLE ONLY public.renglon ALTER COLUMN id SET DEFAULT nextval('public.reng
 
 
 --
--- TOC entry 2891 (class 2604 OID 200091)
+-- TOC entry 2891 (class 2604 OID 208421)
 -- Name: renglon_compras id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1407,7 +1409,7 @@ ALTER TABLE ONLY public.unidad_medida ALTER COLUMN id SET DEFAULT nextval('publi
 
 
 --
--- TOC entry 2884 (class 2604 OID 199842)
+-- TOC entry 2885 (class 2604 OID 208309)
 -- Name: ventas id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1415,11 +1417,21 @@ ALTER TABLE ONLY public.ventas ALTER COLUMN id SET DEFAULT nextval('public.venta
 
 
 --
--- TOC entry 3210 (class 0 OID 199852)
--- Dependencies: 246
+-- TOC entry 3216 (class 0 OID 208362)
+-- Dependencies: 252
 -- Data for Name: FormadePago_Venta; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO public."FormadePago_Venta" (id, monto, venta_id, formadepago_id) VALUES (1, 443, 1, 1);
+INSERT INTO public."FormadePago_Venta" (id, monto, venta_id, formadepago_id) VALUES (2, 254, 2, 1);
+INSERT INTO public."FormadePago_Venta" (id, monto, venta_id, formadepago_id) VALUES (3, 300, 3, 1);
+INSERT INTO public."FormadePago_Venta" (id, monto, venta_id, formadepago_id) VALUES (4, 32, 3, 2);
+INSERT INTO public."FormadePago_Venta" (id, monto, venta_id, formadepago_id) VALUES (5, 247.5, 4, 1);
+INSERT INTO public."FormadePago_Venta" (id, monto, venta_id, formadepago_id) VALUES (6, 99, 5, 1);
+INSERT INTO public."FormadePago_Venta" (id, monto, venta_id, formadepago_id) VALUES (7, 219.77999999999997, 5, 2);
+INSERT INTO public."FormadePago_Venta" (id, monto, venta_id, formadepago_id) VALUES (8, 90, 6, 1);
+INSERT INTO public."FormadePago_Venta" (id, monto, venta_id, formadepago_id) VALUES (9, 217, 7, 1);
+INSERT INTO public."FormadePago_Venta" (id, monto, venta_id, formadepago_id) VALUES (10, 2201.5, 8, 1);
 
 
 --
@@ -1611,6 +1623,22 @@ INSERT INTO public.ab_permission_view (id, permission_id, view_menu_id) VALUES (
 INSERT INTO public.ab_permission_view (id, permission_id, view_menu_id) VALUES (482, 42, 203);
 INSERT INTO public.ab_permission_view (id, permission_id, view_menu_id) VALUES (483, 44, 204);
 INSERT INTO public.ab_permission_view (id, permission_id, view_menu_id) VALUES (484, 42, 205);
+INSERT INTO public.ab_permission_view (id, permission_id, view_menu_id) VALUES (485, 37, 206);
+INSERT INTO public.ab_permission_view (id, permission_id, view_menu_id) VALUES (486, 34, 206);
+INSERT INTO public.ab_permission_view (id, permission_id, view_menu_id) VALUES (487, 32, 206);
+INSERT INTO public.ab_permission_view (id, permission_id, view_menu_id) VALUES (488, 38, 206);
+INSERT INTO public.ab_permission_view (id, permission_id, view_menu_id) VALUES (489, 33, 206);
+INSERT INTO public.ab_permission_view (id, permission_id, view_menu_id) VALUES (490, 35, 206);
+INSERT INTO public.ab_permission_view (id, permission_id, view_menu_id) VALUES (491, 33, 208);
+INSERT INTO public.ab_permission_view (id, permission_id, view_menu_id) VALUES (492, 38, 208);
+INSERT INTO public.ab_permission_view (id, permission_id, view_menu_id) VALUES (493, 35, 208);
+INSERT INTO public.ab_permission_view (id, permission_id, view_menu_id) VALUES (494, 38, 209);
+INSERT INTO public.ab_permission_view (id, permission_id, view_menu_id) VALUES (495, 35, 209);
+INSERT INTO public.ab_permission_view (id, permission_id, view_menu_id) VALUES (496, 32, 209);
+INSERT INTO public.ab_permission_view (id, permission_id, view_menu_id) VALUES (497, 34, 209);
+INSERT INTO public.ab_permission_view (id, permission_id, view_menu_id) VALUES (498, 37, 209);
+INSERT INTO public.ab_permission_view (id, permission_id, view_menu_id) VALUES (499, 33, 209);
+INSERT INTO public.ab_permission_view (id, permission_id, view_menu_id) VALUES (500, 42, 210);
 
 
 --
@@ -1780,6 +1808,22 @@ INSERT INTO public.ab_permission_view_role (id, permission_view_id, role_id) VAL
 INSERT INTO public.ab_permission_view_role (id, permission_view_id, role_id) VALUES (536, 482, 5);
 INSERT INTO public.ab_permission_view_role (id, permission_view_id, role_id) VALUES (537, 483, 5);
 INSERT INTO public.ab_permission_view_role (id, permission_view_id, role_id) VALUES (538, 484, 5);
+INSERT INTO public.ab_permission_view_role (id, permission_view_id, role_id) VALUES (539, 485, 5);
+INSERT INTO public.ab_permission_view_role (id, permission_view_id, role_id) VALUES (540, 486, 5);
+INSERT INTO public.ab_permission_view_role (id, permission_view_id, role_id) VALUES (541, 487, 5);
+INSERT INTO public.ab_permission_view_role (id, permission_view_id, role_id) VALUES (542, 488, 5);
+INSERT INTO public.ab_permission_view_role (id, permission_view_id, role_id) VALUES (543, 489, 5);
+INSERT INTO public.ab_permission_view_role (id, permission_view_id, role_id) VALUES (544, 490, 5);
+INSERT INTO public.ab_permission_view_role (id, permission_view_id, role_id) VALUES (545, 491, 5);
+INSERT INTO public.ab_permission_view_role (id, permission_view_id, role_id) VALUES (546, 492, 5);
+INSERT INTO public.ab_permission_view_role (id, permission_view_id, role_id) VALUES (547, 493, 5);
+INSERT INTO public.ab_permission_view_role (id, permission_view_id, role_id) VALUES (548, 494, 5);
+INSERT INTO public.ab_permission_view_role (id, permission_view_id, role_id) VALUES (549, 495, 5);
+INSERT INTO public.ab_permission_view_role (id, permission_view_id, role_id) VALUES (550, 496, 5);
+INSERT INTO public.ab_permission_view_role (id, permission_view_id, role_id) VALUES (551, 497, 5);
+INSERT INTO public.ab_permission_view_role (id, permission_view_id, role_id) VALUES (552, 498, 5);
+INSERT INTO public.ab_permission_view_role (id, permission_view_id, role_id) VALUES (553, 499, 5);
+INSERT INTO public.ab_permission_view_role (id, permission_view_id, role_id) VALUES (554, 500, 5);
 
 
 --
@@ -1808,9 +1852,10 @@ INSERT INTO public.ab_role (id, name) VALUES (8, 'vendedor');
 -- Data for Name: ab_user; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.ab_user (id, first_name, last_name, username, password, active, email, last_login, login_count, fail_login_count, created_on, changed_on, created_by_fk, changed_by_fk, cuil) VALUES (6, 'gerente', 'gerente', 'gerente1', 'pbkdf2:sha256:50000$Q5m5vE72$9a595328c91717556dc8d8e9a89b781f26a05c50016dc84e195797eb8bdcaac4', true, 'gerente@gmail.com', '2020-10-26 12:09:04.017316', 6, 0, '2020-10-15 18:33:32.22051', '2020-10-26 12:54:36.693305', 5, 5, '27-39441118-9');
-INSERT INTO public.ab_user (id, first_name, last_name, username, password, active, email, last_login, login_count, fail_login_count, created_on, changed_on, created_by_fk, changed_by_fk, cuil) VALUES (7, 'Lucia', 'Ferrrary', 'vendedor1', 'pbkdf2:sha256:50000$VeGquQCw$227b26ff3ec6525a00b3dad69290825b3a29e0c47ecfe93e9c63f17cf137b630', true, 'luciaFerrary@gmail.com', NULL, NULL, NULL, '2020-10-26 13:14:52.38399', '2020-10-26 13:14:52.38399', 6, 6, '27-28776119-3');
-INSERT INTO public.ab_user (id, first_name, last_name, username, password, active, email, last_login, login_count, fail_login_count, created_on, changed_on, created_by_fk, changed_by_fk, cuil) VALUES (5, 'admin', 'super', 'superadmin', 'pbkdf2:sha256:50000$DIByLH7T$9421fe78a224369623f4e330177bcbebf9f22d6384b72366d8f8f4ec3511d55e', true, 'admin@fab.org', '2020-11-01 09:28:11.617879', 12, 0, '2020-10-15 18:13:49.879222', '2020-10-15 18:13:49.879222', NULL, NULL, NULL);
+INSERT INTO public.ab_user (id, first_name, last_name, username, password, active, email, last_login, login_count, fail_login_count, created_on, changed_on, created_by_fk, changed_by_fk, cuil) VALUES (8, 'enrique', 'sand', 'egsand', 'pbkdf2:sha256:50000$M2KUtiFD$2bbe3354fdf08e42d3a2b9cfb6e08ba7e693dbe72a933f530184e52c9353f827', true, 'xovibe4870@x1post.com', '2020-11-06 10:01:50.553639', 1, 0, '2020-11-06 09:50:56.941954', '2020-11-06 10:11:03.964096', NULL, 6, '27-05883446-2');
+INSERT INTO public.ab_user (id, first_name, last_name, username, password, active, email, last_login, login_count, fail_login_count, created_on, changed_on, created_by_fk, changed_by_fk, cuil) VALUES (6, 'gerente', 'gerente', 'gerente1', 'pbkdf2:sha256:50000$Q5m5vE72$9a595328c91717556dc8d8e9a89b781f26a05c50016dc84e195797eb8bdcaac4', true, 'gerente@gmail.com', '2020-11-06 22:14:16.573668', 10, 0, '2020-10-15 18:33:32.22051', '2020-10-26 12:54:36.693305', 5, 5, '27-39441118-9');
+INSERT INTO public.ab_user (id, first_name, last_name, username, password, active, email, last_login, login_count, fail_login_count, created_on, changed_on, created_by_fk, changed_by_fk, cuil) VALUES (5, 'admin', 'super', 'superadmin', 'pbkdf2:sha256:50000$DIByLH7T$9421fe78a224369623f4e330177bcbebf9f22d6384b72366d8f8f4ec3511d55e', true, 'admin@fab.org', '2020-11-06 22:24:33.807701', 25, 0, '2020-10-15 18:13:49.879222', '2020-10-15 18:13:49.879222', NULL, NULL, NULL);
+INSERT INTO public.ab_user (id, first_name, last_name, username, password, active, email, last_login, login_count, fail_login_count, created_on, changed_on, created_by_fk, changed_by_fk, cuil) VALUES (14, 'pexow28768@x1post.com', 'pexow28768@x1post.com', 'pexow28768@x1post.com', 'pbkdf2:sha256:50000$dLyte5Rb$1956d95756f42ec00c2c574a27d080c39fc58f20fe673f4e8bb404d4ad747c4b', true, 'pexow28768@x1post.com', '2020-11-06 22:26:32.713031', 1, 0, '2020-11-06 22:26:23.960468', '2020-11-06 22:26:23.960468', NULL, NULL, NULL);
 
 
 --
@@ -1821,7 +1866,9 @@ INSERT INTO public.ab_user (id, first_name, last_name, username, password, activ
 
 INSERT INTO public.ab_user_role (id, user_id, role_id) VALUES (6, 5, 5);
 INSERT INTO public.ab_user_role (id, user_id, role_id) VALUES (9, 6, 7);
-INSERT INTO public.ab_user_role (id, user_id, role_id) VALUES (10, 7, 8);
+INSERT INTO public.ab_user_role (id, user_id, role_id) VALUES (11, 8, 6);
+INSERT INTO public.ab_user_role (id, user_id, role_id) VALUES (12, 8, 8);
+INSERT INTO public.ab_user_role (id, user_id, role_id) VALUES (21, 14, 6);
 
 
 --
@@ -1897,6 +1944,12 @@ INSERT INTO public.ab_view_menu (id, name) VALUES (202, 'AuditLogView');
 INSERT INTO public.ab_view_menu (id, name) VALUES (203, 'Audit Events');
 INSERT INTO public.ab_view_menu (id, name) VALUES (204, 'AuditLogChartView');
 INSERT INTO public.ab_view_menu (id, name) VALUES (205, 'Chart Events');
+INSERT INTO public.ab_view_menu (id, name) VALUES (206, 'MetododepagoVentas');
+INSERT INTO public.ab_view_menu (id, name) VALUES (207, 'RegisterUserDBView');
+INSERT INTO public.ab_view_menu (id, name) VALUES (208, 'RegisterUserModelView');
+INSERT INTO public.ab_view_menu (id, name) VALUES (209, 'PrecioMdelview');
+INSERT INTO public.ab_view_menu (id, name) VALUES (210, 'Control de Precios');
+INSERT INTO public.ab_view_menu (id, name) VALUES (211, 'MyRegisterUserDBView');
 
 
 --
@@ -1906,6 +1959,10 @@ INSERT INTO public.ab_view_menu (id, name) VALUES (205, 'Chart Events');
 --
 
 INSERT INTO public.audit_log (id, message, username, created_on, operation_id, target) VALUES (4, 'Cuit 20-41091788-3 sand enrique', 'superadmin', '2020-11-01 12:30:33.852218', 1, 'ProveedorView');
+INSERT INTO public.audit_log (id, message, username, created_on, operation_id, target) VALUES (5, 'Cuit 30-13453456-3 Retondo Cortencio', 'superadmin', '2020-11-02 12:55:48.405188', 1, 'ProveedorView');
+INSERT INTO public.audit_log (id, message, username, created_on, operation_id, target) VALUES (6, 'Cuit 20-41091788-3 sand enrique 39397.5 False 2020-11-01', 'superadmin', '2020-11-02 12:57:33.715283', 2, 'CompraReportes');
+INSERT INTO public.audit_log (id, message, username, created_on, operation_id, target) VALUES (7, 'Cuit 20-41091788-3 sand enrique 39397.5 True 2020-11-01', 'superadmin', '2020-11-02 12:58:20.990859', 2, 'CompraReportes');
+INSERT INTO public.audit_log (id, message, username, created_on, operation_id, target) VALUES (8, 'Cuit 20-41091788-3 sand enrique', 'superadmin', '2020-11-03 16:12:41.496419', 2, 'ProveedorView');
 
 
 --
@@ -1933,7 +1990,8 @@ INSERT INTO public.categoria (id, categoria) VALUES (11, 'Harina');
 INSERT INTO public.clientes (id, documento, nombre, apellido, "tipoDocumento_id", "tipoClave_id", "idTipoPersona", estado) VALUES (1, 'Consumidor Final', NULL, NULL, 1, 1, 1, true);
 INSERT INTO public.clientes (id, documento, nombre, apellido, "tipoDocumento_id", "tipoClave_id", "idTipoPersona", estado) VALUES (2, '3905508741', NULL, NULL, 1, 1, 1, true);
 INSERT INTO public.clientes (id, documento, nombre, apellido, "tipoDocumento_id", "tipoClave_id", "idTipoPersona", estado) VALUES (3, '253648741', NULL, NULL, 1, 1, 1, true);
-INSERT INTO public.clientes (id, documento, nombre, apellido, "tipoDocumento_id", "tipoClave_id", "idTipoPersona", estado) VALUES (4, '131618746', NULL, NULL, 1, 1, 1, true);
+INSERT INTO public.clientes (id, documento, nombre, apellido, "tipoDocumento_id", "tipoClave_id", "idTipoPersona", estado) VALUES (637, '27-10255123-6', 'Marcelo', 'Lobardy', 2, 2, 1, true);
+INSERT INTO public.clientes (id, documento, nombre, apellido, "tipoDocumento_id", "tipoClave_id", "idTipoPersona", estado) VALUES (4, '131618746', 'juan', 'perez', 1, 3, 1, true);
 
 
 --
@@ -1949,39 +2007,41 @@ INSERT INTO public."companiaTarjeta" (id, compania) VALUES (730, 'Maestro');
 
 
 --
--- TOC entry 3220 (class 0 OID 200065)
--- Dependencies: 256
+-- TOC entry 3214 (class 0 OID 208339)
+-- Dependencies: 250
 -- Data for Name: compras; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.compras (id, "Estado", total, "totalNeto", fecha, proveedor_id, formadepago_id, "datosFormaPagos_id", percepcion) VALUES (1, true, 39397.5, 38250, '2020-11-01', 4, 2, 1, 3);
-INSERT INTO public.compras (id, "Estado", total, "totalNeto", fecha, proveedor_id, formadepago_id, "datosFormaPagos_id", percepcion) VALUES (2, true, 40400, 40000, '2020-11-01', 4, 1, NULL, 1);
+INSERT INTO public.compras (id, "Estado", total, "totalNeto", totaliva, fecha, proveedor_id, formadepago_id, "datosFormaPagos_id", percepcion) VALUES (1, true, 217.8, 198, 19.8, '2020-11-04', 5, 1, NULL, 0);
+INSERT INTO public.compras (id, "Estado", total, "totalNeto", totaliva, fecha, proveedor_id, formadepago_id, "datosFormaPagos_id", percepcion) VALUES (2, true, 104.5, 95, 9.5, '2020-11-05', 5, 1, NULL, 0);
+INSERT INTO public.compras (id, "Estado", total, "totalNeto", totaliva, fecha, proveedor_id, formadepago_id, "datosFormaPagos_id", percepcion) VALUES (3, true, 309, 300, 0, '2020-11-06', 5, 1, NULL, 3);
 
 
 --
--- TOC entry 3216 (class 0 OID 199949)
--- Dependencies: 252
+-- TOC entry 3208 (class 0 OID 200114)
+-- Dependencies: 244
 -- Data for Name: datosEmpresa; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public."datosEmpresa" (id, compania, direccion, cuit, logo, "tipoClave_id") VALUES (11, 'Kiogestion', 'Avenida Roque Perez, 1522', NULL, NULL, 1);
+INSERT INTO public."datosEmpresa" (id, compania, direccion, cuit, logo, "tipoClave_id") VALUES (1, 'Kiogestion', 'Avenida Roque Perez, 1522', '', '24a99ed4-1e9c-11eb-8bac-10c37b9bc0ef_sep_logo.jpg', 3);
 
 
 --
--- TOC entry 3214 (class 0 OID 199888)
--- Dependencies: 250
+-- TOC entry 3220 (class 0 OID 208398)
+-- Dependencies: 256
 -- Data for Name: datosFormaPagos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO public."datosFormaPagos" (id, "numeroCupon", credito, cuotas, "companiaTarjeta_id", formadepago_id) VALUES (1, '3243', false, 0, 730, 4);
+INSERT INTO public."datosFormaPagos" (id, "numeroCupon", credito, cuotas, "companiaTarjeta_id", formadepago_id) VALUES (2, '4654654656', false, 0, 1, 7);
 
 
 --
--- TOC entry 3218 (class 0 OID 200045)
--- Dependencies: 254
+-- TOC entry 3212 (class 0 OID 208319)
+-- Dependencies: 248
 -- Data for Name: datosFormaPagosCompra; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public."datosFormaPagosCompra" (id, "numeroCupon", credito, cuotas, "companiaTarjeta_id", formadepago_id) VALUES (1, '13153153', false, 0, 1, 2);
 
 
 --
@@ -2037,10 +2097,10 @@ INSERT INTO public.operation (id, name) VALUES (3, 'DELETE');
 -- Data for Name: productos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.productos (id, estado, precio, stock, iva, unidad_id, marcas_id, categoria_id, medida, detalle) VALUES (4, true, 50, 0, 0, 2, 6, 3, 250, '');
-INSERT INTO public.productos (id, estado, precio, stock, iva, unidad_id, marcas_id, categoria_id, medida, detalle) VALUES (1, true, 60, 598, 10, 2, 1, 1, 500, '');
-INSERT INTO public.productos (id, estado, precio, stock, iva, unidad_id, marcas_id, categoria_id, medida, detalle) VALUES (3, true, 50, 302, 0, 1, 5, 2, 1.5, '');
-INSERT INTO public.productos (id, estado, precio, stock, iva, unidad_id, marcas_id, categoria_id, medida, detalle) VALUES (5, true, 50, 200, 0, 2, 7, 3, 250, '');
+INSERT INTO public.productos (id, estado, precio, stock, iva, unidad_id, marcas_id, categoria_id, medida, detalle) VALUES (1, true, 60, 571, 20, 2, 1, 1, 500, '');
+INSERT INTO public.productos (id, estado, precio, stock, iva, unidad_id, marcas_id, categoria_id, medida, detalle) VALUES (5, true, 50, 190, 21, 2, 7, 3, 250, '');
+INSERT INTO public.productos (id, estado, precio, stock, iva, unidad_id, marcas_id, categoria_id, medida, detalle) VALUES (3, true, 50, 258, 11, 1, 5, 2, 1.5, '');
+INSERT INTO public.productos (id, estado, precio, stock, iva, unidad_id, marcas_id, categoria_id, medida, detalle) VALUES (4, true, 50, 68, 10, 2, 6, 3, 250, '');
 
 
 --
@@ -2049,25 +2109,44 @@ INSERT INTO public.productos (id, estado, precio, stock, iva, unidad_id, marcas_
 -- Data for Name: proveedor; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.proveedor (id, cuit, nombre, apellido, domicilio, correo, estado, "tipoClave_id", "idTipoPersona") VALUES (4, '20-41091788-3', 'enrique', 'sand', NULL, '', true, 2, 1);
+INSERT INTO public.proveedor (id, cuit, nombre, apellido, domicilio, correo, estado, "tipoClave_id", "idTipoPersona") VALUES (5, '30-13453456-3', 'Cortencio', 'Retondo', NULL, '', true, 2, 1);
+INSERT INTO public.proveedor (id, cuit, nombre, apellido, domicilio, correo, estado, "tipoClave_id", "idTipoPersona") VALUES (4, '20-41091788-3', 'enrique', 'sand', NULL, '', true, 3, 1);
 
 
 --
--- TOC entry 3212 (class 0 OID 199870)
--- Dependencies: 248
+-- TOC entry 3218 (class 0 OID 208380)
+-- Dependencies: 254
 -- Data for Name: renglon; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO public.renglon (id, "precioVenta", cantidad, venta_id, producto_id, descuento) VALUES (1, 50, 2, 1, 4, 50);
+INSERT INTO public.renglon (id, "precioVenta", cantidad, venta_id, producto_id, descuento) VALUES (2, 50, 6, 1, 3, 50);
+INSERT INTO public.renglon (id, "precioVenta", cantidad, venta_id, producto_id, descuento) VALUES (3, 50, 2, 2, 4, 50);
+INSERT INTO public.renglon (id, "precioVenta", cantidad, venta_id, producto_id, descuento) VALUES (4, 60, 2, 2, 1, 60);
+INSERT INTO public.renglon (id, "precioVenta", cantidad, venta_id, producto_id, descuento) VALUES (5, 50, 2, 3, 4, 50);
+INSERT INTO public.renglon (id, "precioVenta", cantidad, venta_id, producto_id, descuento) VALUES (6, 50, 4, 3, 3, 50);
+INSERT INTO public.renglon (id, "precioVenta", cantidad, venta_id, producto_id, descuento) VALUES (7, 50, 2, 4, 4, 1);
+INSERT INTO public.renglon (id, "precioVenta", cantidad, venta_id, producto_id, descuento) VALUES (8, 50, 3, 4, 3, 1);
+INSERT INTO public.renglon (id, "precioVenta", cantidad, venta_id, producto_id, descuento) VALUES (9, 50, 2, 5, 4, 10);
+INSERT INTO public.renglon (id, "precioVenta", cantidad, venta_id, producto_id, descuento) VALUES (10, 50, 4, 5, 3, 1);
+INSERT INTO public.renglon (id, "precioVenta", cantidad, venta_id, producto_id, descuento) VALUES (11, 100, 5, 1, 1, NULL);
+INSERT INTO public.renglon (id, "precioVenta", cantidad, venta_id, producto_id, descuento) VALUES (12, 50, 2, 6, 5, 10);
+INSERT INTO public.renglon (id, "precioVenta", cantidad, venta_id, producto_id, descuento) VALUES (13, 60, 2, 7, 1, 0);
+INSERT INTO public.renglon (id, "precioVenta", cantidad, venta_id, producto_id, descuento) VALUES (14, 50, 2, 7, 4, 3);
+INSERT INTO public.renglon (id, "precioVenta", cantidad, venta_id, producto_id, descuento) VALUES (15, 50, 10, 8, 5, 3);
+INSERT INTO public.renglon (id, "precioVenta", cantidad, venta_id, producto_id, descuento) VALUES (16, 50, 15, 8, 3, 3);
+INSERT INTO public.renglon (id, "precioVenta", cantidad, venta_id, producto_id, descuento) VALUES (17, 50, 20, 8, 4, 1.1);
 
 
 --
--- TOC entry 3222 (class 0 OID 200088)
+-- TOC entry 3222 (class 0 OID 208418)
 -- Dependencies: 258
 -- Data for Name: renglon_compras; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.renglon_compras (id, "precioCompra", cantidad, compra_id, producto_id, descuento) VALUES (1, 150, 300, 1, 1, 15);
-INSERT INTO public.renglon_compras (id, "precioCompra", cantidad, compra_id, producto_id, descuento) VALUES (2, 200, 200, 2, 5, 0);
+INSERT INTO public.renglon_compras (id, "precioCompra", cantidad, compra_id, producto_id, descuento) VALUES (1, 100, 2, 1, 4, 1);
+INSERT INTO public.renglon_compras (id, "precioCompra", cantidad, compra_id, producto_id, descuento) VALUES (2, 50, 2, 2, 4, 5);
+INSERT INTO public.renglon_compras (id, "precioCompra", cantidad, compra_id, producto_id, descuento) VALUES (3, 150, 2, 3, 1, 0);
 
 
 --
@@ -2115,20 +2194,28 @@ INSERT INTO public.unidad_medida (id, unidad) VALUES (4, 'mililitro');
 
 
 --
--- TOC entry 3208 (class 0 OID 199839)
--- Dependencies: 244
+-- TOC entry 3210 (class 0 OID 208306)
+-- Dependencies: 246
 -- Data for Name: ventas; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO public.ventas (id, "Estado", fecha, "totalNeto", totaliva, total, cliente_id, percepcion) VALUES (1, true, '2020-11-04', 400, 400, 443, 637, 0);
+INSERT INTO public.ventas (id, "Estado", fecha, "totalNeto", totaliva, total, cliente_id, percepcion) VALUES (2, true, '2020-11-04', 220, 34, 254, 637, 0);
+INSERT INTO public.ventas (id, "Estado", fecha, "totalNeto", totaliva, total, cliente_id, percepcion) VALUES (3, true, '2020-11-04', 300, 32, 332, 637, 0);
+INSERT INTO public.ventas (id, "Estado", fecha, "totalNeto", totaliva, total, cliente_id, percepcion) VALUES (4, true, '2020-11-04', 247.5, 0, 247.5, 1, 0);
+INSERT INTO public.ventas (id, "Estado", fecha, "totalNeto", totaliva, total, cliente_id, percepcion) VALUES (5, true, '2020-11-04', 288, 30.78, 318.78, 637, 0);
+INSERT INTO public.ventas (id, "Estado", fecha, "totalNeto", totaliva, total, cliente_id, percepcion) VALUES (6, true, '2020-11-04', 90, 0, 90, 1, 0);
+INSERT INTO public.ventas (id, "Estado", fecha, "totalNeto", totaliva, total, cliente_id, percepcion) VALUES (7, true, '2020-11-06', 217, 0, 217, 1, 0);
+INSERT INTO public.ventas (id, "Estado", fecha, "totalNeto", totaliva, total, cliente_id, percepcion) VALUES (8, true, '2020-11-06', 2201.5, 0, 2201.5, 1, 0);
 
 
 --
 -- TOC entry 3248 (class 0 OID 0)
--- Dependencies: 245
+-- Dependencies: 251
 -- Name: FormadePago_Venta_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."FormadePago_Venta_id_seq"', 1, false);
+SELECT pg_catalog.setval('public."FormadePago_Venta_id_seq"', 10, true);
 
 
 --
@@ -2146,7 +2233,7 @@ SELECT pg_catalog.setval('public.ab_permission_id_seq', 57, true);
 -- Name: ab_permission_view_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.ab_permission_view_id_seq', 484, true);
+SELECT pg_catalog.setval('public.ab_permission_view_id_seq', 500, true);
 
 
 --
@@ -2155,7 +2242,7 @@ SELECT pg_catalog.setval('public.ab_permission_view_id_seq', 484, true);
 -- Name: ab_permission_view_role_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.ab_permission_view_role_id_seq', 538, true);
+SELECT pg_catalog.setval('public.ab_permission_view_role_id_seq', 554, true);
 
 
 --
@@ -2164,7 +2251,7 @@ SELECT pg_catalog.setval('public.ab_permission_view_role_id_seq', 538, true);
 -- Name: ab_register_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.ab_register_user_id_seq', 1, false);
+SELECT pg_catalog.setval('public.ab_register_user_id_seq', 12, true);
 
 
 --
@@ -2182,7 +2269,7 @@ SELECT pg_catalog.setval('public.ab_role_id_seq', 8, true);
 -- Name: ab_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.ab_user_id_seq', 7, true);
+SELECT pg_catalog.setval('public.ab_user_id_seq', 14, true);
 
 
 --
@@ -2191,7 +2278,7 @@ SELECT pg_catalog.setval('public.ab_user_id_seq', 7, true);
 -- Name: ab_user_role_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.ab_user_role_id_seq', 10, true);
+SELECT pg_catalog.setval('public.ab_user_role_id_seq', 21, true);
 
 
 --
@@ -2200,7 +2287,7 @@ SELECT pg_catalog.setval('public.ab_user_role_id_seq', 10, true);
 -- Name: ab_view_menu_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.ab_view_menu_id_seq', 205, true);
+SELECT pg_catalog.setval('public.ab_view_menu_id_seq', 211, true);
 
 
 --
@@ -2209,7 +2296,7 @@ SELECT pg_catalog.setval('public.ab_view_menu_id_seq', 205, true);
 -- Name: audit_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.audit_log_id_seq', 4, true);
+SELECT pg_catalog.setval('public.audit_log_id_seq', 8, true);
 
 
 --
@@ -2227,7 +2314,7 @@ SELECT pg_catalog.setval('public.categoria_id_seq', 11, true);
 -- Name: clientes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.clientes_id_seq', 448, true);
+SELECT pg_catalog.setval('public.clientes_id_seq', 1750, true);
 
 
 --
@@ -2236,43 +2323,43 @@ SELECT pg_catalog.setval('public.clientes_id_seq', 448, true);
 -- Name: companiaTarjeta_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."companiaTarjeta_id_seq"', 1728, true);
+SELECT pg_catalog.setval('public."companiaTarjeta_id_seq"', 2395, true);
 
 
 --
 -- TOC entry 3261 (class 0 OID 0)
--- Dependencies: 255
+-- Dependencies: 249
 -- Name: compras_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.compras_id_seq', 2, true);
+SELECT pg_catalog.setval('public.compras_id_seq', 3, true);
 
 
 --
 -- TOC entry 3262 (class 0 OID 0)
--- Dependencies: 251
+-- Dependencies: 243
 -- Name: datosEmpresa_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."datosEmpresa_id_seq"', 23, true);
+SELECT pg_catalog.setval('public."datosEmpresa_id_seq"', 293, true);
 
 
 --
 -- TOC entry 3263 (class 0 OID 0)
--- Dependencies: 253
+-- Dependencies: 247
 -- Name: datosFormaPagosCompra_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."datosFormaPagosCompra_id_seq"', 1, true);
+SELECT pg_catalog.setval('public."datosFormaPagosCompra_id_seq"', 1, false);
 
 
 --
 -- TOC entry 3264 (class 0 OID 0)
--- Dependencies: 249
+-- Dependencies: 255
 -- Name: datosFormaPagos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."datosFormaPagos_id_seq"', 1, false);
+SELECT pg_catalog.setval('public."datosFormaPagos_id_seq"', 2, true);
 
 
 --
@@ -2281,7 +2368,7 @@ SELECT pg_catalog.setval('public."datosFormaPagos_id_seq"', 1, false);
 -- Name: formadepago_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.formadepago_id_seq', 1504, true);
+SELECT pg_catalog.setval('public.formadepago_id_seq', 2171, true);
 
 
 --
@@ -2308,7 +2395,7 @@ SELECT pg_catalog.setval('public.productos_id_seq', 5, true);
 -- Name: proveedor_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.proveedor_id_seq', 4, true);
+SELECT pg_catalog.setval('public.proveedor_id_seq', 5, true);
 
 
 --
@@ -2317,16 +2404,16 @@ SELECT pg_catalog.setval('public.proveedor_id_seq', 4, true);
 -- Name: renglon_compras_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.renglon_compras_id_seq', 2, true);
+SELECT pg_catalog.setval('public.renglon_compras_id_seq', 3, true);
 
 
 --
 -- TOC entry 3270 (class 0 OID 0)
--- Dependencies: 247
+-- Dependencies: 253
 -- Name: renglon_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.renglon_id_seq', 1, false);
+SELECT pg_catalog.setval('public.renglon_id_seq', 17, true);
 
 
 --
@@ -2335,7 +2422,7 @@ SELECT pg_catalog.setval('public.renglon_id_seq', 1, false);
 -- Name: tipoPersona_idTipoPersona_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."tipoPersona_idTipoPersona_seq"', 224, true);
+SELECT pg_catalog.setval('public."tipoPersona_idTipoPersona_seq"', 891, true);
 
 
 --
@@ -2344,7 +2431,7 @@ SELECT pg_catalog.setval('public."tipoPersona_idTipoPersona_seq"', 224, true);
 -- Name: tiposClave_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."tiposClave_id_seq"', 1992, true);
+SELECT pg_catalog.setval('public."tiposClave_id_seq"', 3293, true);
 
 
 --
@@ -2353,7 +2440,7 @@ SELECT pg_catalog.setval('public."tiposClave_id_seq"', 1992, true);
 -- Name: tiposDocumentos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."tiposDocumentos_id_seq"', 996, true);
+SELECT pg_catalog.setval('public."tiposDocumentos_id_seq"', 1663, true);
 
 
 --
@@ -2367,15 +2454,15 @@ SELECT pg_catalog.setval('public.unidad_medida_id_seq', 4, true);
 
 --
 -- TOC entry 3275 (class 0 OID 0)
--- Dependencies: 243
+-- Dependencies: 245
 -- Name: ventas_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.ventas_id_seq', 1, false);
+SELECT pg_catalog.setval('public.ventas_id_seq', 8, true);
 
 
 --
--- TOC entry 2979 (class 2606 OID 199857)
+-- TOC entry 2995 (class 2606 OID 208367)
 -- Name: FormadePago_Venta FormadePago_Venta_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2609,7 +2696,7 @@ ALTER TABLE ONLY public."companiaTarjeta"
 
 
 --
--- TOC entry 3001 (class 2606 OID 200070)
+-- TOC entry 2993 (class 2606 OID 208344)
 -- Name: compras compras_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2618,7 +2705,7 @@ ALTER TABLE ONLY public.compras
 
 
 --
--- TOC entry 2987 (class 2606 OID 199959)
+-- TOC entry 2977 (class 2606 OID 200124)
 -- Name: datosEmpresa datosEmpresa_compania_direccion_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2627,7 +2714,7 @@ ALTER TABLE ONLY public."datosEmpresa"
 
 
 --
--- TOC entry 2989 (class 2606 OID 199961)
+-- TOC entry 2979 (class 2606 OID 200126)
 -- Name: datosEmpresa datosEmpresa_compania_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2636,7 +2723,7 @@ ALTER TABLE ONLY public."datosEmpresa"
 
 
 --
--- TOC entry 2991 (class 2606 OID 199965)
+-- TOC entry 2981 (class 2606 OID 200130)
 -- Name: datosEmpresa datosEmpresa_cuit_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2645,7 +2732,7 @@ ALTER TABLE ONLY public."datosEmpresa"
 
 
 --
--- TOC entry 2993 (class 2606 OID 199963)
+-- TOC entry 2983 (class 2606 OID 200128)
 -- Name: datosEmpresa datosEmpresa_direccion_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2654,7 +2741,7 @@ ALTER TABLE ONLY public."datosEmpresa"
 
 
 --
--- TOC entry 2995 (class 2606 OID 199957)
+-- TOC entry 2985 (class 2606 OID 200122)
 -- Name: datosEmpresa datosEmpresa_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2663,7 +2750,7 @@ ALTER TABLE ONLY public."datosEmpresa"
 
 
 --
--- TOC entry 2997 (class 2606 OID 200052)
+-- TOC entry 2989 (class 2606 OID 208326)
 -- Name: datosFormaPagosCompra datosFormaPagosCompra_numeroCupon_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2672,7 +2759,7 @@ ALTER TABLE ONLY public."datosFormaPagosCompra"
 
 
 --
--- TOC entry 2999 (class 2606 OID 200050)
+-- TOC entry 2991 (class 2606 OID 208324)
 -- Name: datosFormaPagosCompra datosFormaPagosCompra_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2681,7 +2768,7 @@ ALTER TABLE ONLY public."datosFormaPagosCompra"
 
 
 --
--- TOC entry 2983 (class 2606 OID 199895)
+-- TOC entry 2999 (class 2606 OID 208405)
 -- Name: datosFormaPagos datosFormaPagos_numeroCupon_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2690,7 +2777,7 @@ ALTER TABLE ONLY public."datosFormaPagos"
 
 
 --
--- TOC entry 2985 (class 2606 OID 199893)
+-- TOC entry 3001 (class 2606 OID 208403)
 -- Name: datosFormaPagos datosFormaPagos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2780,7 +2867,7 @@ ALTER TABLE ONLY public.proveedor
 
 
 --
--- TOC entry 3003 (class 2606 OID 200093)
+-- TOC entry 3003 (class 2606 OID 208423)
 -- Name: renglon_compras renglon_compras_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2789,7 +2876,7 @@ ALTER TABLE ONLY public.renglon_compras
 
 
 --
--- TOC entry 2981 (class 2606 OID 199875)
+-- TOC entry 2997 (class 2606 OID 208385)
 -- Name: renglon renglon_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2870,7 +2957,7 @@ ALTER TABLE ONLY public.unidad_medida
 
 
 --
--- TOC entry 2977 (class 2606 OID 199844)
+-- TOC entry 2987 (class 2606 OID 208311)
 -- Name: ventas ventas_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2879,7 +2966,7 @@ ALTER TABLE ONLY public.ventas
 
 
 --
--- TOC entry 3039 (class 2620 OID 200107)
+-- TOC entry 3039 (class 2620 OID 208437)
 -- Name: renglon_compras updateproductoscompra; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
@@ -2887,7 +2974,7 @@ CREATE TRIGGER updateproductoscompra AFTER INSERT ON public.renglon_compras FOR 
 
 
 --
--- TOC entry 3038 (class 2620 OID 200111)
+-- TOC entry 3037 (class 2620 OID 208441)
 -- Name: compras updateproductoscompranulada; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
@@ -2895,7 +2982,7 @@ CREATE TRIGGER updateproductoscompranulada AFTER UPDATE ON public.compras FOR EA
 
 
 --
--- TOC entry 3037 (class 2620 OID 200105)
+-- TOC entry 3038 (class 2620 OID 208435)
 -- Name: renglon updateproductosventa; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
@@ -2903,7 +2990,7 @@ CREATE TRIGGER updateproductosventa AFTER INSERT ON public.renglon FOR EACH ROW 
 
 
 --
--- TOC entry 3036 (class 2620 OID 200109)
+-- TOC entry 3036 (class 2620 OID 208439)
 -- Name: ventas updateproductosventanulada; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
@@ -2911,7 +2998,7 @@ CREATE TRIGGER updateproductosventanulada AFTER UPDATE ON public.ventas FOR EACH
 
 
 --
--- TOC entry 3023 (class 2606 OID 199863)
+-- TOC entry 3029 (class 2606 OID 208373)
 -- Name: FormadePago_Venta FormadePago_Venta_formadepago_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2920,7 +3007,7 @@ ALTER TABLE ONLY public."FormadePago_Venta"
 
 
 --
--- TOC entry 3022 (class 2606 OID 199858)
+-- TOC entry 3028 (class 2606 OID 208368)
 -- Name: FormadePago_Venta FormadePago_Venta_venta_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -3037,7 +3124,7 @@ ALTER TABLE ONLY public.clientes
 
 
 --
--- TOC entry 3033 (class 2606 OID 200081)
+-- TOC entry 3027 (class 2606 OID 208355)
 -- Name: compras compras_datosFormaPagos_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -3046,7 +3133,7 @@ ALTER TABLE ONLY public.compras
 
 
 --
--- TOC entry 3032 (class 2606 OID 200076)
+-- TOC entry 3026 (class 2606 OID 208350)
 -- Name: compras compras_formadepago_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -3055,7 +3142,7 @@ ALTER TABLE ONLY public.compras
 
 
 --
--- TOC entry 3031 (class 2606 OID 200071)
+-- TOC entry 3025 (class 2606 OID 208345)
 -- Name: compras compras_proveedor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -3064,7 +3151,7 @@ ALTER TABLE ONLY public.compras
 
 
 --
--- TOC entry 3028 (class 2606 OID 199966)
+-- TOC entry 3021 (class 2606 OID 200131)
 -- Name: datosEmpresa datosEmpresa_tipoClave_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -3073,7 +3160,7 @@ ALTER TABLE ONLY public."datosEmpresa"
 
 
 --
--- TOC entry 3029 (class 2606 OID 200053)
+-- TOC entry 3023 (class 2606 OID 208327)
 -- Name: datosFormaPagosCompra datosFormaPagosCompra_companiaTarjeta_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -3082,7 +3169,7 @@ ALTER TABLE ONLY public."datosFormaPagosCompra"
 
 
 --
--- TOC entry 3030 (class 2606 OID 200058)
+-- TOC entry 3024 (class 2606 OID 208332)
 -- Name: datosFormaPagosCompra datosFormaPagosCompra_formadepago_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -3091,7 +3178,7 @@ ALTER TABLE ONLY public."datosFormaPagosCompra"
 
 
 --
--- TOC entry 3026 (class 2606 OID 199896)
+-- TOC entry 3032 (class 2606 OID 208406)
 -- Name: datosFormaPagos datosFormaPagos_companiaTarjeta_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -3100,7 +3187,7 @@ ALTER TABLE ONLY public."datosFormaPagos"
 
 
 --
--- TOC entry 3027 (class 2606 OID 199901)
+-- TOC entry 3033 (class 2606 OID 208411)
 -- Name: datosFormaPagos datosFormaPagos_formadepago_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -3154,7 +3241,7 @@ ALTER TABLE ONLY public.proveedor
 
 
 --
--- TOC entry 3034 (class 2606 OID 200094)
+-- TOC entry 3034 (class 2606 OID 208424)
 -- Name: renglon_compras renglon_compras_compra_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -3163,7 +3250,7 @@ ALTER TABLE ONLY public.renglon_compras
 
 
 --
--- TOC entry 3035 (class 2606 OID 200099)
+-- TOC entry 3035 (class 2606 OID 208429)
 -- Name: renglon_compras renglon_compras_producto_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -3172,7 +3259,7 @@ ALTER TABLE ONLY public.renglon_compras
 
 
 --
--- TOC entry 3025 (class 2606 OID 199881)
+-- TOC entry 3031 (class 2606 OID 208391)
 -- Name: renglon renglon_producto_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -3181,7 +3268,7 @@ ALTER TABLE ONLY public.renglon
 
 
 --
--- TOC entry 3024 (class 2606 OID 199876)
+-- TOC entry 3030 (class 2606 OID 208386)
 -- Name: renglon renglon_venta_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -3190,7 +3277,7 @@ ALTER TABLE ONLY public.renglon
 
 
 --
--- TOC entry 3021 (class 2606 OID 199845)
+-- TOC entry 3022 (class 2606 OID 208312)
 -- Name: ventas ventas_cliente_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -3198,7 +3285,7 @@ ALTER TABLE ONLY public.ventas
     ADD CONSTRAINT ventas_cliente_id_fkey FOREIGN KEY (cliente_id) REFERENCES public.clientes(id);
 
 
--- Completed on 2020-11-02 10:26:15
+-- Completed on 2020-11-07 09:45:05
 
 --
 -- PostgreSQL database dump complete

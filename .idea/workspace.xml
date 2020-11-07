@@ -2,27 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e6f9fc09-d089-4896-be04-4879e7efe7f0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/proyecto/app/templates/productoshtml.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/consulta contador.docx" beforeDir="false" afterPath="$PROJECT_DIR$/consulta contador.docx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/apis.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/apis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/reportes.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/reportes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proyecto/app/sec.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/sec.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proyecto/app/sec_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/sec_view.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/static/docs/Listado de Compras.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/static/docs/Listado de Compras.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/static/docs/Listado de ventas.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/static/docs/Listado de ventas.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/static/js/compra.js" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/static/js/compra.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/static/js/venta.js" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/static/js/venta.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/templates/compra.html" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/templates/compra.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/templates/reportecompras.html" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/templates/reportecompras.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/templates/venta.html" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/templates/venta.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/testdata.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/testdata.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/translations/pt/LC_MESSAGES/messages.mo" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/translations/pt/LC_MESSAGES/messages.mo" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/translations/pt/LC_MESSAGES/messages.po" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/translations/pt/LC_MESSAGES/messages.po" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/babel/messages.pot" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/babel/messages.pot" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proyecto/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proyecto/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/run.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -32,11 +15,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/proyecto/config.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="31" column="52" selection-start-line="31" selection-start-column="52" selection-end-line="31" selection-end-column="52" />
+            <state relative-caret-position="249">
+              <caret line="31" column="47" selection-start-line="31" selection-start-column="47" selection-end-line="31" selection-end-column="47" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -71,8 +54,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/proyecto/app/sec_view.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="121" column="14" selection-start-line="121" selection-start-column="14" selection-end-line="121" selection-end-column="14" />
+            <state relative-caret-position="69">
+              <caret line="11" column="36" selection-start-line="11" selection-start-column="36" selection-end-line="11" selection-end-column="36" />
               <folding>
                 <element signature="e#0#59#0" expanded="true" />
               </folding>
@@ -107,6 +90,27 @@
           </provider>
         </entry>
       </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/proyecto/run.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="34">
+              <caret line="2" column="48" selection-start-line="2" selection-start-column="48" selection-end-line="2" selection-end-column="48" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/proyecto/app/sec.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="102">
+              <caret line="6" column="39" lean-forward="true" selection-start-line="6" selection-start-column="39" selection-end-line="6" selection-end-column="39" />
+              <folding>
+                <element signature="e#0#66#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
     </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
@@ -119,7 +123,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>renglones</find>
       <find>filter</find>
       <find>list_title</find>
       <find>ProductoModelview</find>
@@ -137,9 +140,6 @@
       <find>String</find>
       <find>FloatField</find>
       <find>delete</find>
-      <find>string</find>
-      <find>QuerySelectMultipleField</find>
-      <find>User confirmation needed</find>
       <find>template</find>
       <find>_('Delete record'</find>
       <find>perce</find>
@@ -147,8 +147,12 @@
       <find>listwitget</find>
       <find>ListWidget</find>
       <find>product</find>
+      <find>string</find>
+      <find>User confirmation needed</find>
       <find>compra</find>
       <find>venta</find>
+      <find>QuerySelectMultipleField</find>
+      <find>send_mai</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -159,7 +163,6 @@
       <list>
         <option value="$PROJECT_DIR$/proyecto/app/templates/reporteventa.html" />
         <option value="$PROJECT_DIR$/proyecto/app/templates/repotecompras.html" />
-        <option value="$PROJECT_DIR$/proyecto/app/sec.py" />
         <option value="$PROJECT_DIR$/proyecto/app/templates/addproveedor.html" />
         <option value="$PROJECT_DIR$/proyecto/app/validadores" />
         <option value="$PROJECT_DIR$/proyecto/app/templates/agregarcliente.html" />
@@ -173,16 +176,17 @@
         <option value="$PROJECT_DIR$/proyecto/app/testdata.py" />
         <option value="$PROJECT_DIR$/proyecto/app/apis.py" />
         <option value="$PROJECT_DIR$/proyecto/app/reportes.py" />
-        <option value="$PROJECT_DIR$/proyecto/run.py" />
         <option value="$PROJECT_DIR$/proyecto/app/__init__.py" />
         <option value="$PROJECT_DIR$/proyecto/app/templates/reportecompras.html" />
         <option value="$PROJECT_DIR$/proyecto/app/templates/productoshtml.html" />
-        <option value="$PROJECT_DIR$/proyecto/app/sec_view.py" />
         <option value="K:/Users/USUARIO/Anaconda3/Lib/site-packages/flask_appbuilder/baseviews.py" />
         <option value="$PROJECT_DIR$/proyecto/app/templates/list.html" />
         <option value="$PROJECT_DIR$/proyecto/app/views.py" />
         <option value="$PROJECT_DIR$/proyecto/app/models.py" />
+        <option value="$PROJECT_DIR$/proyecto/run.py" />
         <option value="$PROJECT_DIR$/proyecto/config.py" />
+        <option value="$PROJECT_DIR$/proyecto/app/sec_view.py" />
+        <option value="$PROJECT_DIR$/proyecto/app/sec.py" />
       </list>
     </option>
   </component>
@@ -324,14 +328,13 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49756098" visible="true" weight="0.18973215" />
       <window_info id="Structure" order="1" sideWeight="0.502439" side_tool="true" weight="0.18229167" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3289689" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49925596" visible="true" weight="0.17184943" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49925596" weight="0.34697217" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.62847793" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -365,7 +368,6 @@
     </layout-to-restore>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/reportlab/lib/styles.py" />
     <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/flask_appbuilder/baseviews.py" />
     <entry file="file://$PROJECT_DIR$/proyecto/app/validadores/validadores.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -470,16 +472,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/proyecto/app/security.py" />
-    <entry file="file://$PROJECT_DIR$/proyecto/app/sec.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" column="39" lean-forward="true" selection-start-line="6" selection-start-column="39" selection-end-line="6" selection-end-column="39" />
-          <folding>
-            <element signature="e#0#66#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/reportlab/platypus/paragraph.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="50">
@@ -565,13 +557,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/run.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="47" selection-start-line="2" selection-start-column="47" selection-end-line="2" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/sqlalchemy/sql/operators.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="499">
@@ -613,13 +598,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/sec_models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="53" selection-start-column="53" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/proyecto/app/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
@@ -634,30 +612,6 @@
           <folding>
             <element signature="e#0#41#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/wtforms/ext/sqlalchemy/fields.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="32" column="28" selection-start-line="32" selection-start-column="22" selection-end-line="32" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/sec_view.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="121" column="14" selection-start-line="121" selection-start-column="14" selection-end-line="121" selection-end-column="14" />
-          <folding>
-            <element signature="e#0#59#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/flask_appbuilder/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="117">
-          <caret line="153" column="22" lean-forward="true" selection-start-line="153" selection-start-column="22" selection-end-line="153" selection-end-column="22" />
         </state>
       </provider>
     </entry>
@@ -695,10 +649,34 @@
     <entry file="file://$PROJECT_DIR$/proyecto/app/templates/addproveedor.html">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="249">
+          <caret line="31" column="47" selection-start-line="31" selection-start-column="47" selection-end-line="31" selection-end-column="47" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/proyecto/app/templates/reportecompras.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
           <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/wtforms/ext/sqlalchemy/fields.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="32" column="28" selection-start-line="32" selection-start-column="22" selection-end-line="32" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/flask_appbuilder/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="117">
+          <caret line="153" column="22" lean-forward="true" selection-start-line="153" selection-start-column="22" selection-end-line="153" selection-end-column="22" />
         </state>
       </provider>
     </entry>
@@ -722,12 +700,46 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/config.py">
+    <entry file="file://$PROJECT_DIR$/proyecto/app/sec_view.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="31" column="52" selection-start-line="31" selection-start-column="52" selection-end-line="31" selection-end-column="52" />
+        <state relative-caret-position="69">
+          <caret line="11" column="36" selection-start-line="11" selection-start-column="36" selection-end-line="11" selection-end-column="36" />
           <folding>
-            <element signature="e#0#9#0" expanded="true" />
+            <element signature="e#0#59#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/flask_appbuilder/security/registerviews.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="89" column="31" selection-start-line="89" selection-start-column="17" selection-end-line="89" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/sec_models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="2" />
+          <folding>
+            <element signature="e#0#54#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/run.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="48" selection-start-line="2" selection-start-column="48" selection-end-line="2" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/sec.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" column="39" lean-forward="true" selection-start-line="6" selection-start-column="39" selection-end-line="6" selection-end-column="39" />
+          <folding>
+            <element signature="e#0#66#0" expanded="true" />
           </folding>
         </state>
       </provider>
