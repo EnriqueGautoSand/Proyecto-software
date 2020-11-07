@@ -23,7 +23,7 @@ class ComprasApi(BaseApi):
                     print(data["total"])
                     # creo la venta
                     if int(data["metododePago"]) == 1:
-                        compra=Compra(percepcion=float(data["percepcion"]),totalNeto=float(data["totalneto"]),Estado=True,total=float(data["total"]),proveedor_id=data["proveedor"],formadepago_id=data["metododePago"])
+                        compra=Compra(percepcion=float(data["percepcion"]),totaliva=float(data["totaliva"]),totalNeto=float(data["totalneto"]),Estado=True,total=float(data["total"]),proveedor_id=data["proveedor"],formadepago_id=data["metododePago"])
                     else:
                         datosFormaPagos=DatosFormaPagosCompra(numeroCupon=data["numeroCupon"],
                                               companiaTarjeta_id=data["companiaTarjeta"],
@@ -31,7 +31,7 @@ class ComprasApi(BaseApi):
                                               cuotas=data["cuotas"],formadepago_id=data["metododePago"]
                                               )
 
-                        compra = Compra(Estado=True,totalNeto=float(data["totalneto"]),
+                        compra = Compra(Estado=True,totalNeto=float(data["totalneto"]),totaliva=float(data["totaliva"]),
                                       total=float(data["total"]), proveedor_id=data["proveedor"],formadepago_id=data["metododePago"],
                                       datosFormaPagos=datosFormaPagos,percepcion=float(data["percepcion"]))
 
@@ -81,10 +81,10 @@ class VentasApi(BaseApi):
             usuario=get_user()
             print(usuario.__dict__)
             #retorno el precio del producto
-            return self.response(200, message={'last_name':usuario.last_name,'first_name':usuario.first_name})
+            return self.response(200, message={'last_name':usuario.last_name.capitalize(),'first_name':usuario.first_name.capitalize(),'cond frente iva':str(db.session.query(EmpresaDatos).first().tipoClave)})
         return self.response(400, message="error")
     @expose('/obtenerprecio/', methods=["GET", "POST"])
-    def method2(self):
+    def obtenerprecio(self):
         """
         obtengo el precio de un producto
         """
@@ -113,7 +113,8 @@ class VentasApi(BaseApi):
                     print(data["total"])
                     # creo la venta
 
-                    venta=Venta(Estado=True,percepcion=float(data["percepcion"]),totalNeto=float(data["totalneto"]), total=float(data["total"]),cliente_id=int(data["cliente"]))
+                    venta=Venta(Estado=True,percepcion=float(data["percepcion"]),totaliva=float(data["totaliva"]),totalNeto=float(data["totalneto"]), total=float(data["total"])
+                                ,cliente_id=int(data["cliente"]))
                     db.session.add(venta)
                     db.session.flush()
                     for i in data["metodos"]:

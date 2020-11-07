@@ -13,7 +13,7 @@ datos_test=[
             TipoClaves(tipoClave="Consumidor Final"),
             TipoClaves(tipoClave="Responsable Inscripto"),
             TipoClaves(tipoClave="Monotributista"),TipoClaves(tipoClave="Exento"),TiposDocumentos(tipoDocumento="DNI"),
-            EmpresaDatos(compania="Kiogestion",direccion="Avenida Roque Perez, 1522",tipoClave_id=1),
+            EmpresaDatos(compania="Kiogestion",direccion="Avenida Roque Perez, 1522",tipoClave_id=3),
             TiposDocumentos(tipoDocumento="CUIT"),
             TipoPersona(tipoPersona="Fisica"),TipoPersona(tipoPersona="Juridica"),
             Clientes(documento="Consumidor Final",

@@ -4,7 +4,8 @@ from wtforms.validators import InputRequired
 from wtforms import validators,PasswordField
 from validadores import  cuitvalidatorProveedores
 from wtforms.ext.sqlalchemy.fields import QuerySelectMultipleField
-from flask_appbuilder.fieldwidgets import  Select2ManyWidget,BS3PasswordFieldWidget
+from wtforms import StringField
+from flask_appbuilder.fieldwidgets import  Select2ManyWidget,BS3PasswordFieldWidget,BS3TextFieldWidget
 from wtforms.validators import EqualTo
 def cuil_query():
 
@@ -58,6 +59,7 @@ class MyUserDBModelView(UserDBModelView):
         'last_name',
         'username',
         'email',
+        'cuil',
         'active',
         'roles'
     ]
@@ -65,10 +67,9 @@ class MyUserDBModelView(UserDBModelView):
         'first_name',
         'last_name',
         'username',
+        'cuil',
         'active',
-        'email',
-        'roles',
-        'cuil'
+        'roles'
     ]
 
     validators_columns ={
@@ -104,5 +105,22 @@ class MyUserDBModelView(UserDBModelView):
                             'Rol',
                             query_factory=cuil_query,
                             widget=Select2ManyWidget()
-                       )
+                       ),
+        'first_name': StringField(
+            'Nombre', render_kw={'disabled': ''},
+            widget=BS3TextFieldWidget()
+        ),
+        'last_name': StringField(
+            'Apellidos', render_kw={'disabled': ''},
+            widget=BS3TextFieldWidget()
+        ),
+        'username': StringField(
+            'Nombre de usuario', render_kw={'disabled': ''},
+            widget=BS3TextFieldWidget()
+        ),
+        'cuil': StringField(
+            'Cuil', render_kw={'disabled': ''},
+            widget=BS3TextFieldWidget()
+        )
+
     }

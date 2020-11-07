@@ -1,0 +1,40 @@
+
+
+{% import 'lib.html' as lib %}
+{% extends 'listwitget.html' %}
+
+{% block list_header scoped %}
+   {{ super() }}
+    <script>
+        function cargarporcentaje(){
+        var person = prompt("Please enter your name", "Harry Potter");
+
+        if (person == null || person == "") {
+          txt = "User cancelled the prompt.";
+        } else {
+          txt = "Hello " + person + "! How are you today?";
+        }
+}
+    </script>
+    <a onclick="cargarporcentaje();" class="btn btn-sm btn-default">
+       <i class="fa fa-rocket"></i>
+    </a>
+
+{% endblock %}
+
+
+{% block begin_content scoped %}
+{{ super() }}
+{% endblock %}
+
+{% block begin_loop_header scoped %}
+{{ super() }}
+{% endblock %}
+
+{% block begin_loop_values %}
+{{ super() }}
+{% endblock %}
+
+{% block end_content scoped %}
+{{ super() }}
+{% endblock %}

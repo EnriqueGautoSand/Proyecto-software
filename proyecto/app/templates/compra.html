@@ -1,5 +1,9 @@
 
 {% extends "appbuilder/base.html" %}
+{% block head_js %}
+    {{ super() }}
+    {{ JSGlue.include() }}
+{% endblock %}
      {% block messages %}
         {% with messages = get_flashed_messages(category_filter=["nuevocliente"], with_categories=true) %}
   {% if messages %}
@@ -74,6 +78,14 @@
             {{ form2.totalneto}} 
         </td >
         </tr>
+        {% if iva %}
+        <tr>
+        <td style="float:right: " align="right"> 
+          {{ form2.totaliva.label }}
+            {{ form2.totaliva}} 
+        </td >
+        </tr>
+        {% endif %}
 
 </table>
 
@@ -122,12 +134,13 @@
 
 {% block tail_js %}
     {{ super() }}
-
+ <script src="{{url_for('static',filename='js/condfrenteivanegocio.js')}}"></script>
     <script src="{{url_for('static',filename='js/compra.js')}}"></script>
     <link href="{{url_for('static',filename='appbuilder/select2/select2.css')}}"rel="stylesheet"/>
         <link href="{{url_for('static',filename='css/claseselect.css')}}"rel="stylesheet"/>
     <script src="{{url_for('static',filename='js/select2.js')}}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
+
     <script>
         $(document).ready(function() { $("#producto").select2(); });
          $(document).ready(function() { $("#proveedor").select2(); });

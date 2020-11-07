@@ -12,6 +12,7 @@ from sqlalchemy import Enum
 from datetime import datetime as dt
 from flask_appbuilder.filemanager import  ImageManager
 from fab_addon_audit.views import AuditedModelView
+
 print(flask_appbuilder.security.sqla.models)
 class EmpresaDatos(Model):
     """
@@ -23,7 +24,7 @@ class EmpresaDatos(Model):
     direccion = Column(String(255), unique=True)
     cuit = Column(String(30), unique=True,nullable=True)
     logo = Column(ImageColumn(size=(300, 300, True), thumbnail_size=(30, 30, True)))
-    tipoClave_id = Column(Integer, ForeignKey('tiposClave.id'), nullable=False)
+    tipoClave_id = Column(Integer, ForeignKey('tiposClave.id'), nullable=False,default=3)
     tipoClave = relationship("TipoClaves")
     __table_args__ = (
         UniqueConstraint("compania","direccion"),
@@ -126,6 +127,7 @@ class Proveedor(Model):
         return f"Cuit {self.cuit} {self.apellido} {self.nombre}"
 
 
+
 class Clientes(Model):
     """
     creo clase que sera mapeada como la tabla clientes en la base de datos
@@ -196,6 +198,7 @@ class Compra(Model):
     Estado=Column(Boolean)
     total=Column(Float, nullable=False)
     totalNeto = Column(Float, nullable=False)
+    totaliva = Column(Float, nullable=True)
     fecha=Column(Date, nullable=False,default=dt.now())
     proveedor_id = Column(Integer, ForeignKey('proveedor.id'), nullable=False)
     proveedor = relationship("Proveedor")
@@ -227,13 +230,15 @@ class Compra(Model):
         total=0
         for i in  self.renglones:
             if i.compra_id == self.id:
-                unrenglon=f"<tr><td>{i.producto}</td> <td>${i.precioCompra}</td><td>{i.cantidad}</td><td>{i.producto.iva}%</td><td>{i.descuento} %</td><td>${i.precioCompra*i.cantidad}</td></tr> "
+                unrenglon=f"<tr><td>{i.producto}</td> <td>${i.precioCompra}</td><td>{i.cantidad}</td><td>{i.producto.iva}%</td><td>{i.descuento} %</td><td>${i.precioCompra*i.cantidad*(1-i.descuento/100)}</td></tr> "
+                unrenglon=f"<tr><td>{i.producto}</td> <td>${i.precioCompra}</td><td>{i.cantidad}</td><td>{i.producto.iva}%</td><td>{i.descuento} %</td><td>${i.precioCompra*i.cantidad*(1-i.descuento/100)}</td></tr> "
                 renglones+=unrenglon+'\n'
                 total+=i.precioCompra*i.cantidad
             else:
                 print('equibocado',i)
 
-        renglones+=f"<tr><td></td><td></td><td>Percepcion</td><td>{self.percepcion}</td><td>Total</td> <td>${self.total}</td></tr>"
+        renglones += f"<tr><td></td><td></td><td></td><td></td><td>Total Neto</td> <td>${self.totalNeto}</td></tr>"
+        renglones+=f"<tr><td></td><td></td><td></td><td></td><td>Total</td> <td>${self.total}</td></tr>"
         print(renglones)
         renglones+="</table>"
         return Markup( renglones )
@@ -247,6 +252,7 @@ class Venta(Model):
     Estado=Column(Boolean)
     fecha = Column(Date, nullable=False,default=dt.now())
     totalNeto = Column(Float, nullable=False)
+    totaliva = Column(Float, nullable=True)
     #condicionFrenteIva = Column(Enum(TipoClaves))
     total=Column(Float, nullable=False)
     cliente_id = Column(Integer, ForeignKey('clientes.id'), nullable=False)
@@ -263,7 +269,17 @@ class Venta(Model):
     def condicionFrenteIva(self):
         return self.cliente.tipoClave
     def formadepago(self):
-        return str(self.formadepagos)
+        pagos=""
+
+        if len(self.formadepagos)>1:
+            for i in self.formadepagos:
+                pagos+= str(i) + " $"+ str(i.monto)+ "\n"
+            return pagos
+        else:
+            return str(self.formadepagos[0])
+
+
+
     @renders('total')
     def totalrender(self):
          return Markup('<b> $' + str(self.total) + '</b>')
@@ -276,20 +292,19 @@ class Venta(Model):
     def renglonesrender(self):
     # will render this columns as lista
         print(self.renglones)
-        renglones="</table> <table class='table table-bordered'> <tr><td>Producto</td> <td>Precio</td><td>Cantidad</td><td>Subtotal</td></tr>"
+        renglones="</table> <table class='table table-bordered'> <tr><td>Producto</td> <td>Precio</td><td>Cantidad</td><td>IVA</td><td>Descuento</td><td>Subtotal</td></tr>"
         from .views import RenglonVentas
         total=0
         for i in  self.renglones:
             print(type(i))
             print(f'{redirect(url_for("RenglonVentas.edit",pk=i.id))}')
-            #el editar era en caso de que quisiera darle el permiso de editar una venta pero decidi que no.
-            editar=f"<td><a  href='http://localhost:8080/renglonventas/edit/{i.id}' class='btn btn-sm btn-default'> <i class='fa fa-edit' ></i></a></td>"
 
-            unrenglon=f"<tr><td>{i.producto}</td> <td>${i.precioVenta}</td><td>{i.cantidad}</td><td>${i.precioVenta*i.cantidad}</td></tr> "
+            unrenglon=f"<tr><td>{i.producto}</td> <td>${i.precioVenta}</td><td>{i.cantidad}</td><td>{i.producto.iva}%</td><td>{i.descuento} %</td><td>${(i.precioVenta*i.cantidad)*(1-i.descuento/100)}</td></tr> "
             renglones+=unrenglon+'\n'
             total+=i.precioVenta*i.cantidad
 
-        renglones+=f"<tr><td></td><td></td><td>Total</td> <td>${self.total}</td></tr>"
+        renglones += f"<tr><td></td><td></td><td></td><td></td><td>Total Neto</td> <td>${self.totalNeto}</td></tr>"
+        renglones+=f"<tr><td></td><td></td><td></td><td></td><td>Total</td> <td>${self.total}</td></tr>"
         print(renglones)
         renglones+="</table>"
         return Markup( renglones )
@@ -314,7 +329,7 @@ class DatosFormaPagosCompra(Model):
     """
     __tablename__ = 'datosFormaPagosCompra'
     id = Column(Integer, primary_key=True)
-    numeroCupon = Column(String(50), unique=True)
+    numeroCupon = Column(String(50), unique=True, nullable=False)
     credito = Column(Boolean, default=False)
     cuotas = Column(Integer)
     companiaTarjeta_id = Column(Integer, ForeignKey('companiaTarjeta.id'), nullable=False)

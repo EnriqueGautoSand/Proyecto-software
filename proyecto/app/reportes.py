@@ -31,7 +31,7 @@ from datetime import datetime as dt
 from .models import EmpresaDatos
 from . import appbuilder, db
 def get_user():
-    return g.user.first_name+" "+g.user.last_name
+    return g.user.first_name.capitalize()+" "+g.user.last_name.capitalize()
 
 # ======================= CLASE reportePDF =========================
 class reportePDF(object):

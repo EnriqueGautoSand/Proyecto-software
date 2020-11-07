@@ -8,11 +8,12 @@ from flask_appbuilder import AppBuilder, SQLA
 """
 from .sec import MySecurityManager
 from flask_appbuilder.menu import Menu
+from flask_jsglue import JSGlue
 logging.basicConfig(format="%(asctime)s:%(levelname)s:%(name)s:%(message)s")
 logging.getLogger().setLevel(logging.DEBUG)
 
 app = Flask(__name__)
-
+jsglue = JSGlue(app)
 app.config.from_object("config")
 db = SQLA(app)
 appbuilder = AppBuilder(app, db.session,menu=Menu(reverse=False), security_manager_class=MySecurityManager)

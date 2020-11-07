@@ -21,6 +21,15 @@ SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:410556@localhost/almacen'
 
 # Flask-WTF flag for CSRF
 CSRF_ENABLED = False
+# Config for Flask-WTF Recaptcha necessary for user registration
+RECAPTCHA_PUBLIC_KEY = '6Lfxwt8ZAAAAABEskZgHAkqLYkLWaNL0J_1nmUKH'
+RECAPTCHA_PRIVATE_KEY = '6Lfxwt8ZAAAAAKuuwPU3G7TfqjJBPYVE6BLR814V'
+
+MAIL_SERVER = 'smtp.gmail.com'
+MAIL_USE_TLS = True
+MAIL_USERNAME = 'soporte.kiogestion@gmail.com'
+MAIL_PASSWORD = '123456Asdf'
+MAIL_DEFAULT_SENDER = 'soporte.kiogestion@kiogestion.com'
 
 # ------------------------------
 # GLOBALS FOR APP Builder
@@ -57,7 +66,7 @@ FAB_ROLES = {
     ["Reporte Compras", "menu_access"],
     ["Compra", "menu_access"],
         ["Security","menu_access"],
-        ["UserInfoEditView","can_access" ],
+        ["UserInfoEditView","can_access" ],["UserInfoEditView","can_edit" ],["MyUserDBModelView",'can_edit'],
 ["UserInfoEditView","can_list" ],["ResetMyPasswordView","can_this_form_post"],["ResetMyPasswordView","can_this_form_get"],
 
 ["MyUserDBModelView",'can_add']
@@ -78,16 +87,16 @@ FAB_ROLES = {
 }
 
 # Will allow user self registration
-# AUTH_USER_REGISTRATION = True
+AUTH_USER_REGISTRATION = True
 
 # The default user self registration role
-# AUTH_USER_REGISTRATION_ROLE = "Public"
+AUTH_USER_REGISTRATION_ROLE = "Public"
 
 # When using LDAP Auth, setup the ldap server
 # AUTH_LDAP_SERVER = "ldap://ldapserver.new"
 
 # Uncomment to setup OpenID providers example for OpenID authentication
-# OPENID_PROVIDERS = [
+#OPENID_PROVIDERS = [
 #    { 'name': 'Yahoo', 'url': 'https://me.yahoo.com' },
 #    { 'name': 'AOL', 'url': 'http://openid.aol.com/<username>' },
 #    { 'name': 'Flickr', 'url': 'http://www.flickr.com/<username>' },

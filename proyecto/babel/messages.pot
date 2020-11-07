@@ -1,21 +1,55 @@
 # Translations template for PROJECT.
-# Copyright (C) 2015 ORGANIZATION
+# Copyright (C) 2020 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-10-26 13:23+0000\n"
+"POT-Creation-Date: 2020-11-06 14:16-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.0\n"
+"Generated-By: Babel 2.6.0\n"
+
+#: app/sec_view.py:30 app/sec_view.py:40
+msgid "User info"
+msgstr ""
+
+#: app/sec_view.py:32 app/sec_view.py:42
+msgid "Personal Info"
+msgstr ""
+
+#: app/sec_view.py:34
+msgid "Audit Info"
+msgstr ""
+
+#: app/sec_view.py:86
+msgid "Password"
+msgstr ""
+
+#: app/sec_view.py:87
+msgid ""
+"Utilice una buena política de contraseñas, esta aplicación no verifica "
+"esto por usted"
+msgstr ""
+
+#: app/sec_view.py:94
+msgid "Confirmar Password"
+msgstr ""
+
+#: app/sec_view.py:95
+msgid "Vuelva a escribir la contraseña del usuario para confirmar"
+msgstr ""
+
+#: app/sec_view.py:97
+msgid "Passwords deben coincidir"
+msgstr ""
 
 #: app/templates/404.html:4
 msgid "Page not found"

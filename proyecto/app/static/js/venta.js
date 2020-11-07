@@ -1,9 +1,41 @@
+
+var venta=true
+var compra=false
 var producto = document.getElementById('producto')
 var cantidad = document.getElementById('cantidad')
 var cliente = document.getElementById('cliente')
 var metododePago= document.getElementById('metodo')
 var tablafinalizar= document.getElementById('finalizar')
+var iva
 var total = document.getElementById('Total')
+var totaliva=document.getElementById('totaliva')
+if (totaliva==undefined){
+	totaliva={}
+	totaliva.value=0
+}
+
+function calculatotaliva(){
+	let total=0
+			for (var clave in jsonProductos){
+			  // Controlando que json realmente tenga esa propiedad
+			  if (jsonProductos.hasOwnProperty(clave)) {
+			    // Mostrando en pantalla la clave junto a su valor
+			    if(jsonProductos[clave]!= undefined && jsonProductos[clave]!=null ){
+			  console.log(" Producto  " + typeof parseFloat(JSON.parse(jsonProductos[clave][0]).iva))
+                      precioxcantidad=parseFloat(JSON.parse(jsonProductos[clave][2]))*parseFloat(JSON.parse(jsonProductos[clave][1]))
+			   		 total+=(precioxcantidad*(1-parseFloat(JSON.parse(jsonProductos[clave][3]))/100))*(parseFloat(JSON.parse(jsonProductos[clave][0]).iva)/100)
+
+				}
+			  }
+
+console.log(total)
+			}
+			
+			totaliva.value=total.toFixed(2)
+
+			return parseFloat(totaliva.value)
+			
+		}
 var botonborrar=document.getElementById('borrar')
 //var condicionfrenteiva = document.getElementById('condicionfrenteiva')
 cantidad.className="form-inline"
@@ -11,7 +43,7 @@ var descuento= document.getElementById('descuento')
 var percepcion= document.getElementById('percepcion')
 tarjeta=document.getElementById('unmetodo')
 var ultimoElemento=tarjeta
-
+condfrenteivanego()
 var cupon= document.getElementById('numeroCupon')
 cupon.className="form-inline"
 var companiaTarjeta= document.getElementById('companiaTarjeta')
@@ -20,7 +52,11 @@ companiaTarjeta.className="form-control"
 var credito= document.getElementById('credito')
 var cuotas= document.getElementById('cuotas')
 
-
+var totalneto = document.getElementById('totalneto')
+if (totalneto==undefined){
+	totalneto={}
+	totalneto.value=0
+}
 var	tabla=document.createElement("table")
 
 var tebody=document.createElement("tbody")
@@ -39,7 +75,7 @@ function updateValue(e){
 
 		}
 	if(e.target.id==percepcion.id){
-		totalhtml.value=parseFloat(totalneto.value) + parseFloat((totalneto.value/100.0)*porcentajepositivo(percepcion,true))
+		totalhtml.value=parseFloat(totalColuma) + parseFloat((totalColuma/100.0)*porcentajepositivo(percepcion,true))
 	}
 	}
 percepcion.addEventListener('change', updateValue);
@@ -61,6 +97,7 @@ var tere=document.createElement("tr")
 agregarTd(tere,'Producto')
 agregarTd(tere,'Cantidad')
 agregarTd(tere,'Descuento %')
+agregarTd(tere,'IVA')
 agregarTd(tere,'SubTotal')
 
 tebody.appendChild(tere)
@@ -124,36 +161,55 @@ if (parseInt(descuento.value)>=0 && parseInt(descuento.value)<=100){
 }
 return Math.abs(parseInt(descuento.value))
 }
+function totalconimpuestos(){
+	      if (JSON.parse(cliente.value).tipoclave=="Responsable Inscripto" && responsableinscripto){
+	      	
+	      	console.log(totaliva.value)
+
+      	      totalhtml.value= (parseFloat(totalColuma) + parseFloat((totalColuma/100.0)*porcentajepositivo(percepcion,true)) +  calculatotaliva());
+			}
+		else if (JSON.parse(cliente.value).tipoclave=="Monotributista" &&  responsableinscripto) {
+			totalhtml.value= parseFloat(totalColuma) + parseFloat((totalColuma/100.0)*porcentajepositivo(percepcion,true)) 
+			totaliva.value=0
+			}
+		else{
+			totalhtml.value=parseFloat(totalColuma)
+			totaliva.value=0
+		}
+		totalneto.value= parseFloat(totalColuma).toFixed(2)
+		
+
+}
 function borrarRenglon(element){
 	 var cellProducto = renglonseleccionado.getElementsByTagName("td")[0];
      var textoProducto = cellProducto.innerHTML;
-     var totalfi= renglonseleccionado.getElementsByTagName("td")[3];
+     var totalfi= renglonseleccionado.getElementsByTagName("td")[4];
     console.log('totalfila',totalfi)
      totalfi=totalfi.innerHTML
-	totalColuma-=parseFloat( totalfi.split('$')[1])
-	totalhtml.value=parseFloat(totalColuma)
+
+	
 
      listaProductos.delete(JSON.parse(jsonProductos[textoProducto][0]).id)
      jsonProductos[textoProducto] = undefined;
 	jsonProductos=JSON.parse(JSON.stringify(jsonProductos))
+		totalColuma-=parseFloat( totalfi.split('$')[1])
+	totalconimpuestos();
 	console.log(renglonseleccionado.id)
 	$("#" + renglonseleccionado.id).remove();
 
 	element.disabled=true
 }
 var contadorfilas=0
+
+
 function agregarRenglon(element){
+	//estafuncion sirve para agregar un renglon de producto
 	renglonseleccionado=NaN
 	botonborrar.disabled=true
 
 	element.disabled=true
 
 	totalFila=0
-
-	
-	//var producto = document.getElementById('producto')
-	//var cantidad = document.getElementById('cantidad')
-
 	console.log(producto.value, producto[producto.selectedIndex].innerHTML)
 	console.log(cantidad.value)
 	productosel=JSON.parse(producto.value)
@@ -175,11 +231,10 @@ function agregarRenglon(element){
       agregarTd(hilera,producto[producto.selectedIndex].innerHTML)
       agregarTd(hilera,cantidadpos())
       agregarTd(hilera, porcentajepositivo(descuento,true))
+      agregarTd(hilera, productosel['iva'])
       
 
-
-
-var url = "http://localhost:8080/api/v1/ventasapi/obtenerprecio/"
+var url = "http://"+location.host+Flask.url_for("VentasApi.obtenerprecio")
 var data = {p: productosel.id};
 try {
 	// statements
@@ -194,12 +249,8 @@ try {
 .catch(error => console.error('Error:', error))
 .then(response =>{ console.log('Success:', response)
 	
-	
 
 	console.log('Success:', response.message,'  ',typeof totalFila)
-
-
-
 	
 	totalFila=cantidadpos()*(parseFloat( response.message)*( 1-descuento.value/100))
 
@@ -208,8 +259,10 @@ try {
       listaProductos.add(productosel.id);
       console.log(listaProductos)
       totalColuma += parseFloat(totalFila)
-      totalhtml.value=totalColuma.toFixed(2)
+      let precio=parseFloat( response.message)
+      jsonProductos[productosel.representacion]=[producto.value, cantidadpos(),precio,parseFloat(descuento.value)]
 
+      totalconimpuestos() 
       addRowHandlers()
       //busco el monto y si no esta desabiliado lo cargo en el 
       //primer monto de froma de pago
@@ -217,6 +270,12 @@ try {
       if (!montos.disabled){
       		montos.value=totalhtml.value
       }
+      
+      
+      
+
+
+
       
 
       element.disabled=false
@@ -226,8 +285,6 @@ try {
 	console.log(e);
 	element.disabled=false
 }
-
-
 
 	}else{
 		alert("Producto Repetido o cantidad incorrecta")
@@ -292,13 +349,14 @@ boton.disabled=true
 			    if(jsonProductos[clave]!= undefined && jsonProductos[clave]!=null ){
 			    	console.log(" Producto  " + JSON.parse(jsonProductos[clave][0])['id'] , " Cantidad: "+ jsonProductos[clave][1])
 					jsonventa["productos"].push({"producto":JSON.parse(jsonProductos[clave][0])['id'],"cantidad":jsonProductos[clave][1],
-								"descuento": jsonProductos[clave][2]})
+								"descuento": jsonProductos[clave][3]})
 				}
 			  }
 			}
-			jsonventa["cliente"]=parseInt(cliente.value);
+			jsonventa["cliente"]=parseInt(JSON.parse(cliente.value).id);
 			jsonventa["total"]=parseFloat(total.value).toFixed(2);
-			jsonventa["totalneto"]=parseFloat(total.value).toFixed(2);
+			jsonventa["totalneto"]=parseFloat(totalneto.value);
+			jsonventa["totaliva"]=parseFloat(totaliva.value);
 			jsonventa["percepcion"]=parseFloat(percepcion.value).toFixed(2);
 			//jsonventa["condicionfrenteiva"]=condicionfrenteiva.value
 
@@ -644,3 +702,20 @@ $("#metodo").click(function() {
 						}
 
 						})
+cliente.onchange= (event)=> {
+console.log(JSON.parse(event.target.value).tipoclave=="Responsable Inscripto",event.target.value)
+    if(JSON.parse(event.target.value).tipoclave=="Responsable Inscripto" && responsableinscripto){
+    	    percepcion.disabled=false
+    	    iva=true
+	}else if (JSON.parse(event.target.value).tipoclave=="Monotributista" && responsableinscripto) {
+		percepcion.disabled=false
+		iva=false
+	}else{
+		percepcion.disabled=true
+		iva=false
+		percepcion.value=0
+	}
+	totalconimpuestos()
+	
+
+}

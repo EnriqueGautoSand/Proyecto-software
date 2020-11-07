@@ -1,8 +1,34 @@
+var venta=false
+var compra=true
 var producto = document.getElementById('producto')
 var cantidad = document.getElementById('cantidad')
 var proveedor = document.getElementById('proveedor')
 var metododePago= document.getElementById('metodo')
+var iva
+var totaliva=document.getElementById('totaliva')
+if (totaliva==undefined){
+	totaliva={}
+	totaliva.value=0
+}
+function calculatotaliva(){
+	let total=0
+			for (var clave in jsonProductos){
+			  // Controlando que json realmente tenga esa propiedad
+			  if (jsonProductos.hasOwnProperty(clave)) {
+			    // Mostrando en pantalla la clave junto a su valor
+			    if(jsonProductos[clave]!= undefined && jsonProductos[clave]!=null ){
+			  console.log(" Producto  " + typeof parseFloat(JSON.parse(jsonProductos[clave][0]).iva))
+                      precioxcantidad=parseFloat(JSON.parse(jsonProductos[clave][2]))*parseFloat(JSON.parse(jsonProductos[clave][1]))
+			   		 total+=(precioxcantidad*(1-parseFloat(JSON.parse(jsonProductos[clave][3]))/100))*(parseFloat(JSON.parse(jsonProductos[clave][0]).iva)/100)
 
+				}
+			  }
+
+console.log(total)
+			}
+			
+			totaliva.value=total.toFixed(2)
+		}
 var descuento= document.getElementById('descuento')
 
 var preciocompra= document.getElementById('preciocompra')
@@ -10,6 +36,8 @@ var preciocompra= document.getElementById('preciocompra')
 var percepcion= document.getElementById('percepcion')
 
 var totalneto = document.getElementById('totalneto')
+
+condfrenteivanego()
 
 var total = document.getElementById('total')
 cantidad.className="form-inline"
@@ -196,16 +224,6 @@ function agregarRenglon(element){
       agregarTd(hilera,porcentajepositivo(descuento,true))
       
 
-
-
-
-	
-	
-	
-
-
-
-	
 	totalFila=cantidadpos()*(preciocompra.value*( 1-descuento.value/100))
 	agregarTd(hilera,"$" + totalFila )
 
@@ -214,8 +232,15 @@ function agregarRenglon(element){
       console.log(listaProductos)
       totalColuma += totalFila
       totalneto.value=totalColuma
-      totalhtml.value= parseFloat(totalneto.value) + parseFloat((totalneto.value/100.0)*porcentajepositivo(percepcion,true))
-
+      
+      if ( JSON.parse(proveedor.value).tipoclave=="Responsable Inscripto" && responsableinscripto){
+      	calculatotaliva()
+      	totalhtml.value= parseFloat(totalneto.value) + parseFloat((totalneto.value/100.0)*porcentajepositivo(percepcion,true)) + parseFloat(totaliva.value)
+      }else if (JSON.parse(proveedor.value).tipoclave=="Responsable Inscripto" && monotributista) {
+      	totalhtml.value= parseFloat(totalneto.value) + parseFloat((totalneto.value/100.0)*porcentajepositivo(percepcion,true))       	
+      }else {
+      	 totalhtml.value= parseFloat(totalneto.value)      	
+      }
       addRowHandlers()
       element.disabled=false
       
@@ -240,7 +265,8 @@ function agregarRenglon(element){
 
 }
 function conectarVentaapi(jsonventa){
-	var url = "http://localhost:8080/api/v1/comprasapi/realizarcompra/"
+
+	var url = location.origin+Flask.url_for("ComprasApi.compra")
 var data = jsonventa;
 try {
 	fetch(url, {
@@ -288,9 +314,10 @@ boton.disabled=true
 			  }
 			}
 			
-			jsonventa["proveedor"]=parseInt(proveedor.value);
+			jsonventa["proveedor"]=parseInt(JSON.parse(proveedor.value).id);
 			jsonventa["totalneto"]=parseFloat(totalneto.value);
 			jsonventa["total"]=parseFloat(totalhtml.value);
+			jsonventa["totaliva"]=parseFloat(totaliva.value);
 			jsonventa["percepcion"]=parseFloat(percepcion.value);
 			//jsonventa["condicionfrenteiva"]=condicionfrenteiva.value
 	if (metododePago.value==1){
@@ -345,3 +372,20 @@ $("#metodo").click(function() {
 						}
 
 						})
+
+proveedor.onchange= (event)=> {
+console.log(JSON.parse(event.target.value).tipoclave=="Responsable Inscripto",event.target.value)
+    if(JSON.parse(event.target.value).tipoclave=="Responsable Inscripto" && responsableinscripto){
+    	    percepcion.disabled=false
+    	    iva=true
+	}else if (JSON.parse(event.target.value).tipoclave=="Responsable Inscripto" && monotributista) {
+		percepcion.disabled=false
+		iva=false
+	}else{
+		percepcion.disabled=true
+		iva=false
+		percepcion.value=0
+	}
+	
+
+}
