@@ -95,6 +95,7 @@ boton.className="btn  btn-success btn-sm"
 var tere=document.createElement("tr")
 
 agregarTd(tere,'Producto')
+agregarTd(tere,'Precio')
 agregarTd(tere,'Cantidad')
 agregarTd(tere,'Descuento %')
 agregarTd(tere,'IVA')
@@ -134,7 +135,8 @@ function addRowHandlers() {
         var cellProducto = row.getElementsByTagName("td")[0];
         var textoProducto = cellProducto.innerHTML;
  		$("#producto").select2().val(jsonProductos[textoProducto][0]).trigger("change");
-		var cellCantidad= row.getElementsByTagName("td")[1];
+		var cellCantidad= row.getElementsByTagName("td")[2];
+		descuento.value= row.getElementsByTagName("td")[3].innerHTML;
         cantidad.value=cellCantidad.innerHTML;
         renglonseleccionado=row
         botonborrar.disabled=false
@@ -169,7 +171,7 @@ function totalconimpuestos(){
       	      totalhtml.value= (parseFloat(totalColuma) + parseFloat((totalColuma/100.0)*porcentajepositivo(percepcion,true)) +  calculatotaliva());
 			}
 		else if (JSON.parse(cliente.value).tipoclave=="Monotributista" &&  responsableinscripto) {
-			totalhtml.value= parseFloat(totalColuma) + parseFloat((totalColuma/100.0)*porcentajepositivo(percepcion,true)) 
+			totalhtml.value= parseFloat(totalColuma) + parseFloat((totalColuma/100.0)*porcentajepositivo(percepcion,true)) + calculatotaliva()
 			totaliva.value=0
 			}
 		else{
@@ -177,20 +179,18 @@ function totalconimpuestos(){
 			totaliva.value=0
 		}
 		totalneto.value= parseFloat(totalColuma).toFixed(2)
-		
-
 }
 function borrarRenglon(element){
 	 var cellProducto = renglonseleccionado.getElementsByTagName("td")[0];
      var textoProducto = cellProducto.innerHTML;
-     var totalfi= renglonseleccionado.getElementsByTagName("td")[4];
+     var totalfi= renglonseleccionado.getElementsByTagName("td")[5];
     console.log('totalfila',totalfi)
      totalfi=totalfi.innerHTML
 
 	
 
-     listaProductos.delete(JSON.parse(jsonProductos[textoProducto][0]).id)
-     jsonProductos[textoProducto] = undefined;
+    listaProductos.delete(JSON.parse(jsonProductos[textoProducto][0]).id)
+    jsonProductos[textoProducto] = undefined;
 	jsonProductos=JSON.parse(JSON.stringify(jsonProductos))
 		totalColuma-=parseFloat( totalfi.split('$')[1])
 	totalconimpuestos();
@@ -229,13 +229,11 @@ function agregarRenglon(element){
       
 
       agregarTd(hilera,producto[producto.selectedIndex].innerHTML)
-      agregarTd(hilera,cantidadpos())
-      agregarTd(hilera, porcentajepositivo(descuento,true))
-      agregarTd(hilera, productosel['iva'])
+
       
 
 var url = "http://"+location.host+Flask.url_for("VentasApi.obtenerprecio")
-var data = {p: productosel.id};
+var data = {p: productosel.id, venta:true, cliente_condfrenteiva:JSON.parse(cliente.value).tipoclave};
 try {
 	// statements
 
@@ -246,14 +244,20 @@ try {
     'Content-Type': 'application/json'
   }
 }).then(res => res.json())
-.catch(error => console.error('Error:', error))
+.catch(error => { console.error('Error:', error)
+	alert('Error:', error)
+	element.disabled=true
+	} )
 .then(response =>{ console.log('Success:', response)
 	
 
 	console.log('Success:', response.message,'  ',typeof totalFila)
 	
 	totalFila=cantidadpos()*(parseFloat( response.message)*( 1-descuento.value/100))
-
+	agregarTd(hilera,response.message)
+      agregarTd(hilera,cantidadpos())
+      agregarTd(hilera, porcentajepositivo(descuento,true))
+      agregarTd(hilera, productosel['iva'])
 		agregarTd(hilera, "$" + totalFila.toFixed(2) )
 	  tebody.appendChild(hilera);
       listaProductos.add(productosel.id);
@@ -283,7 +287,8 @@ try {
 })} catch(e) {
 	// statements
 	console.log(e);
-	element.disabled=false
+	alert(e)
+	element.disabled=true
 }
 
 	}else{
@@ -708,7 +713,7 @@ console.log(JSON.parse(event.target.value).tipoclave=="Responsable Inscripto",ev
     	    percepcion.disabled=false
     	    iva=true
 	}else if (JSON.parse(event.target.value).tipoclave=="Monotributista" && responsableinscripto) {
-		percepcion.disabled=false
+		percepcion.disabled=true
 		iva=false
 	}else{
 		percepcion.disabled=true

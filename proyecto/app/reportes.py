@@ -30,6 +30,7 @@ from flask import g, url_for
 from datetime import datetime as dt
 from .models import EmpresaDatos
 from . import appbuilder, db
+import os.path
 def get_user():
     return g.user.first_name.capitalize()+" "+g.user.last_name.capitalize()
 
@@ -48,6 +49,8 @@ class reportePDF(object):
         self.nombreautor=nombreautor
         self.filtros = filtros
         self.estilos = getSampleStyleSheet()
+        self.direccion=db.session.query(EmpresaDatos).first().direccion
+
 
 
 
@@ -63,42 +66,37 @@ class reportePDF(object):
         # Encabezado
         encabezadoNombre = Paragraph(self.nombreautor, estilos["Heading1"])
         anchura, altura = encabezadoNombre.wrap(archivoPDF.width, archivoPDF.topMargin)
-        encabezadoNombre.drawOn(canvas, archivoPDF.leftMargin, 715)
+        encabezadoNombre.drawOn(canvas, archivoPDF.leftMargin, 720)
         if self.filtros != None:
             escribirfiltros = Paragraph(self.filtros.__repr__(), estilos["Normal"])
             anchura, altura = escribirfiltros.wrap(archivoPDF.width, archivoPDF.topMargin)
-            escribirfiltros.drawOn(canvas, archivoPDF.leftMargin, 705)
+            escribirfiltros.drawOn(canvas, archivoPDF.leftMargin, 680)
+        if self.direccion != None:
+            escribirdireccion = Paragraph(self.direccion, estilos["Normal"])
+            anchura, altura = escribirdireccion.wrap(archivoPDF.width, archivoPDF.topMargin)
+            escribirdireccion.drawOn(canvas, archivoPDF.leftMargin, 705)
 
 
         fecha = utcnow().to("local").format("dddd, DD / MMMM / YYYY", locale="es")
         fechaReporte = "Fecha: "+dt.now().strftime("%d/%m/%Y-%H:%M")#fecha.replace("-", "de")
-        from io import StringIO
-        import PIL
-        from reportlab.lib.utils import ImageReader
 
-        import os.path
 
         if db.session.query(EmpresaDatos).first().logo!= None:
 
             fn = os.path.join(os.path.dirname(os.path.abspath(__file__)),"static\\uploads\\"+db.session.query(EmpresaDatos).first().logo)
             print(os.path.dirname(os.path.abspath(__file__)))
             print(os.getcwd() + url_for('static',filename='uploads/logo_thumb.jpg'))
-
-
-
-
-
-            canvas.drawImage(fn, archivoPDF.leftMargin, 736, width=50,height=50)
+            canvas.drawImage(fn, archivoPDF.leftMargin, 740, width=50,height=50)
 
         encabezadoFecha = Paragraph(fechaReporte, alineacion)
         anchura, altura = encabezadoFecha.wrap(archivoPDF.width, archivoPDF.topMargin)
-        encabezadoFecha.drawOn(canvas, archivoPDF.leftMargin, 736)
+        encabezadoFecha.drawOn(canvas, archivoPDF.leftMargin, 740)
 
         # Pie de página
         largo=f"Generado por {get_user()}."
         piePagina = Paragraph(largo,alineacion)
         anchura, altura = piePagina.wrap(archivoPDF.width, archivoPDF.topMargin)
-        piePagina.drawOn(canvas, archivoPDF.leftMargin,715)
+        piePagina.drawOn(canvas, archivoPDF.leftMargin,720)
 
         # Suelta el lienzo
         canvas.restoreState()
@@ -148,12 +146,15 @@ class reportePDF(object):
         ]))
 
         historia = []
+        historia.append(Spacer(1, 0.16 * inch))
+        historia.append(Spacer(1, 0.16 * inch))
+        historia.append(Spacer(1, 0.16 * inch))
         historia.append(Paragraph(self.titulo, alineacionTitulo))
         historia.append(Spacer(1, 0.16 * inch))
         historia.append(tabla)
 
         archivoPDF = SimpleDocTemplate(self.nombrePDF, leftMargin=50, rightMargin=50, pagesize=letter,
-                                       title="Reporte PDF", author="Andres Niño")
+                                       title="Reporte PDF", author="Kiogestion")
 
         try:
             archivoPDF.build(historia, onFirstPage=self._encabezadoPiePagina,

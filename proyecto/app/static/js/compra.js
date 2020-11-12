@@ -29,6 +29,17 @@ console.log(total)
 			
 			totaliva.value=total.toFixed(2)
 		}
+function totalconimpuestos(){
+      if ( JSON.parse(proveedor.value).tipoclave=="Responsable Inscripto" && responsableinscripto){
+      	calculatotaliva()
+      	totalhtml.value= (parseFloat(totalneto.value) + parseFloat((totalneto.value/100.0)*porcentajepositivo(percepcion,true)) + parseFloat(totaliva.value)).toFixed(2)  	
+      }else if (JSON.parse(proveedor.value).tipoclave=="Responsable Inscripto" && monotributista) {
+      	totalhtml.value= (parseFloat(totalneto.value) + parseFloat((totalneto.value/100.0)*porcentajepositivo(percepcion,true))).toFixed(2)  	       	
+      }else {
+      	 totalhtml.value= parseFloat(totalneto.value).toFixed(2)  	
+      }
+	totalneto.value= parseFloat(totalColuma).toFixed(2)
+}
 var descuento= document.getElementById('descuento')
 
 var preciocompra= document.getElementById('preciocompra')
@@ -131,7 +142,9 @@ function addRowHandlers() {
         var cellProducto = row.getElementsByTagName("td")[0];
         var textoProducto = cellProducto.innerHTML;
  		$("#producto").select2().val(jsonProductos[textoProducto][0]).trigger("change");
-		var cellCantidad= row.getElementsByTagName("td")[1];
+		var cellCantidad= row.getElementsByTagName("td")[2];
+		descuento.value= row.getElementsByTagName("td")[4].innerHTML;
+		preciocompra.value= row.getElementsByTagName("td")[1].innerHTML;
         cantidad.value=cellCantidad.innerHTML;
         renglonseleccionado=row
         botonborrar.disabled=false
@@ -179,16 +192,17 @@ function borrarRenglon(element){
      var totalfi= renglonseleccionado.getElementsByTagName("td")[5];
     console.log('totalfila',totalfi)
      totalfi=totalfi.innerHTML
-	totalColuma-=parseInt( totalfi.split('$')[1])
-	totalneto.value=totalColuma
-	totalhtml.value=totalneto-(totalneto.value/100)*porcentajepositivo(percepcion,true)
+	totalColuma-=parseFloat( totalfi.split('$')[1])
+	totalneto.value=totalColuma.toFixed(2)
+	totalhtml.value=(parseFloat(totalneto.value)-((parseFloat(totalneto.value)/100)*porcentajepositivo(percepcion,true))).toFixed(2)
      
      listaProductos.delete(JSON.parse(jsonProductos[textoProducto][0]).id)
      jsonProductos[textoProducto] = undefined;
 	jsonProductos=JSON.parse(JSON.stringify(jsonProductos))
 	console.log(renglonseleccionado.id)
 	$("#" + renglonseleccionado.id).remove();
-
+	totalconimpuestos()
+	calculatotaliva()
 	element.disabled=true
 }
 var contadorfilas=0
@@ -225,7 +239,7 @@ function agregarRenglon(element){
       
 
 	totalFila=cantidadpos()*(preciocompra.value*( 1-descuento.value/100))
-	agregarTd(hilera,"$" + totalFila )
+	agregarTd(hilera,"$" + totalFila.toFixed(2) )
 
 	  tebody.appendChild(hilera);
       listaProductos.add(productosel.id);
@@ -233,17 +247,14 @@ function agregarRenglon(element){
       totalColuma += totalFila
       totalneto.value=totalColuma
       
-      if ( JSON.parse(proveedor.value).tipoclave=="Responsable Inscripto" && responsableinscripto){
-      	calculatotaliva()
-      	totalhtml.value= parseFloat(totalneto.value) + parseFloat((totalneto.value/100.0)*porcentajepositivo(percepcion,true)) + parseFloat(totaliva.value)
-      }else if (JSON.parse(proveedor.value).tipoclave=="Responsable Inscripto" && monotributista) {
-      	totalhtml.value= parseFloat(totalneto.value) + parseFloat((totalneto.value/100.0)*porcentajepositivo(percepcion,true))       	
-      }else {
-      	 totalhtml.value= parseFloat(totalneto.value)      	
-      }
+
+      totalconimpuestos()
       addRowHandlers()
       element.disabled=false
-      
+
+
+
+
 
 
 
@@ -252,8 +263,11 @@ function agregarRenglon(element){
 		if(!cantidadpospreciocompra()){
 			alert("Precio de compra no valido")
 		}
-		if(!porcentajepositivo(percepcion)) {
+		if(!porcentajepositivo(valor=descuento)) {
 			alert("Descuento no valido debe estar entre 0 y 100")
+		}
+		if(!porcentajepositivo(percepcion)) {
+			alert("Percepcion no valido debe estar entre 0 y 100")
 		}
 		if(!cantidadpos() || listaProductos.has(productosel.id) ){
 		alert("Producto Repetido o cantidad incorrecta o descuento incorrecto")}

@@ -12,25 +12,26 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 ADDON_MANAGERS = ['fab_addon_audit.manager.AuditAddOnManager']
 
 # Your App secret key
-SECRET_KEY = "\2\1thisismyscretkey\1\2\e\y\y\h"
+SECRET_KEY = "jhgcjkfjlfckjyfkjvhlkukufux"
 
 # The SQLAlchemy connection string.
 #SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "app.db")
 # SQLALCHEMY_DATABASE_URI = 'mysql://myapp@localhost/myapp'
 SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:410556@localhost/almacen'
-
+AUTH_TYPE = 1
 # Flask-WTF flag for CSRF
 CSRF_ENABLED = False
 # Config for Flask-WTF Recaptcha necessary for user registration
-RECAPTCHA_PUBLIC_KEY = '6Lfxwt8ZAAAAABEskZgHAkqLYkLWaNL0J_1nmUKH'
-RECAPTCHA_PRIVATE_KEY = '6Lfxwt8ZAAAAAKuuwPU3G7TfqjJBPYVE6BLR814V'
+RECAPTCHA_PUBLIC_KEY = "6LdIhuEZAAAAAEN6gl-4QnijJCtWPkDwufuZmfJj"#'6Lfxwt8ZAAAAABEskZgHAkqLYkLWaNL0J_1nmUKH'
+RECAPTCHA_PRIVATE_KEY = '6LdIhuEZAAAAAC8Pir3KC5TaoVBuvrKgoFuCAYDv'#'6Lfxwt8ZAAAAAKuuwPU3G7TfqjJBPYVE6BLR814V'
 
 MAIL_SERVER = 'smtp.gmail.com'
 MAIL_USE_TLS = True
+#MAIL_USE_SSL=True
 MAIL_USERNAME = 'soporte.kiogestion@gmail.com'
 MAIL_PASSWORD = '123456Asdf'
-MAIL_DEFAULT_SENDER = 'soporte.kiogestion@gmail.com'
-
+MAIL_DEFAULT_SENDER = 'soporte.kiogestion@kiogestion.com'
+MAIL_PORT=587
 # ------------------------------
 # GLOBALS FOR APP Builder
 # ------------------------------
@@ -77,8 +78,11 @@ FAB_ROLES = {
 ["Datos Empresa","menu_access"],["tarjeta","can_access"],
         ["Empresaview",'can_show'],["Empresaview",'can_list'],
         ["Empresaview", 'can_edit'],
-["crudempresa","can_access"]
-
+["crudempresa","can_access"],
+["RegisterUserModelView",'can_show'],["RegisterUserModelView",'can_list'],
+["RegisterUserModelView",'can_delete'],
+        ["RegisterUserModelView","can_access" ]
+#["Audit Events","menu_access"]
 
 
 

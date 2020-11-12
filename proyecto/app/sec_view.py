@@ -7,9 +7,12 @@ from wtforms.ext.sqlalchemy.fields import QuerySelectMultipleField
 from wtforms import StringField
 from flask_appbuilder.fieldwidgets import  Select2ManyWidget,BS3PasswordFieldWidget,BS3TextFieldWidget
 from wtforms.validators import EqualTo
-from flask_appbuilder.security.registerviews import RegisterUserDBView
+from flask_appbuilder.security.registerviews import RegisterUserDBView, RegisterUserDBForm
+
 class MyRegisterUserDBView(RegisterUserDBView):
     email_template = 'email_template.html'
+
+
 def cuil_query():
 
     from . import appbuilder, db
@@ -40,19 +43,17 @@ class MyUserDBModelView(UserDBModelView):
     ]
 
     user_show_fieldsets = [
-        (lazy_gettext('User info'),
+        (lazy_gettext('Informacion de Usuario'),
          {'fields': ['username', 'active', 'roles', 'login_count', 'cuil']}),
-        (lazy_gettext('Personal Info'),
+        (lazy_gettext('Informacion Personal'),
          {'fields': ['first_name', 'last_name', 'email'], 'expanded': True}),
     ]
 
     add_columns = [
+        'username',
         'first_name',
         'last_name',
-        'username',
-        'active',
         'email',
-        'roles',
         'cuil',
         'password',
         'conf_password'
@@ -109,17 +110,22 @@ class MyUserDBModelView(UserDBModelView):
                             query_factory=cuil_query,
                             widget=Select2ManyWidget()
                        ),
+
         'first_name': StringField(
-            'Nombre', render_kw={'disabled': ''}
+            'Nombre',
+            validators=[validators.DataRequired()]
         ),
         'last_name': StringField(
-            'Apellidos', render_kw={'disabled': 'true'}
+            'Apellidos',
+            validators=[validators.DataRequired()]
         ),
         'username': StringField(
-            'Nombre de usuario', render_kw={'disabled': 'true'}
+            'Nombre de usuario',
+            validators=[validators.DataRequired()]
         ),
         'cuil': StringField(
-            'Cuil', render_kw={'disabled': 'true'}
+            'Cuil',
+            validators=[InputRequired(),cuitvalidatorProveedores]
         )
 
     }

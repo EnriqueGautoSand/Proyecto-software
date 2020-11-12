@@ -1,19 +1,24 @@
-from flask_appbuilder import Model
+
 import flask_appbuilder
 from sqlalchemy import Column, Integer, String, ForeignKey,Float,Date, Boolean, UniqueConstraint, Numeric
 from sqlalchemy.orm import relationship
 from flask_appbuilder.models.decorators import renders
 from flask_appbuilder.models.mixins import AuditMixin, ImageColumn
-from . import appbuilder, db
+
 from flask_appbuilder.security.sqla.models import User
 from flask import Markup, url_for, redirect
 import enum
 from sqlalchemy import Enum
 from datetime import datetime as dt
 from flask_appbuilder.filemanager import  ImageManager
-from fab_addon_audit.views import AuditedModelView
+from flask_appbuilder import Model
+from . import appbuilder, db
+from postgresql_audit import versioning_manager
 
+versioning_manager.init(db.Model)
 print(flask_appbuilder.security.sqla.models)
+
+
 class EmpresaDatos(Model):
     """
     # creo clase que sera mapeada como la tabla companiaTarjeta
@@ -111,6 +116,7 @@ class Proveedor(Model):
     creo clase que sera mapeada como la tabla Proveedor en la base de datos
     """
     __tablename__ = 'proveedor'
+    __versioned__ = {}
     id = Column(Integer, primary_key=True)
     cuit=Column(String(30),nullable=False,unique=True)
     nombre = Column(String(30),nullable=False)
@@ -133,6 +139,7 @@ class Clientes(Model):
     creo clase que sera mapeada como la tabla clientes en la base de datos
     """
     __tablename__ = 'clientes'
+    __versioned__ = {}
     id = Column(Integer, primary_key=True)
     documento=Column(String(30),nullable=False)
     nombre = Column(String(30))
@@ -455,4 +462,13 @@ class Renglon(Model):
     def __repr__(self):
         return f"{self.producto} ${self.precioVenta} {self.venta} {self.producto} {self.cantidad} "
 
+import sqlalchemy as sa
+sa.orm.configure_mappers()
+tablas =db.metadata.tables
+
+versioning_manager.audit_table(tablas['proveedor'])
+versioning_manager.audit_table(tablas['clientes'])
+
 db.create_all()
+
+

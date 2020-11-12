@@ -25,7 +25,7 @@ from flask_babelpkg import gettext
 from flask_appbuilder.urltools import get_filter_args
 from flask_appbuilder.widgets import ListWidget
 from .reportes import generarReporte
-
+import types
 
 def _init_titles(self):
     """
@@ -48,6 +48,11 @@ class listwitgetall(ListWidget):
     template = 'listwitget.html'
 ModelView.list_widget=listwitgetall
 
+from fab_addon_audit.views import AuditedModelView
+
+
+
+
 
 #manejador en caso de que no se encuentre la pagina
 @appbuilder.app.errorhandler(404)
@@ -64,10 +69,10 @@ def page_not_found(e):
 
 class Empresaview(ModelView):
     datamodel = SQLAInterface(EmpresaDatos)
-    label_columns ={'photo_img':'logo', 'photo_img_thumbnail':'logo'}
+    label_columns ={'photo_img':'logo', 'photo_img_thumbnail':'logo','tipoClave':'Cond Frente Iva'}
     list_title = "Datos de La Empresa"
-    list_columns = ['compania','direccion','cuit','photo_img_thumbnail']
-    show_columns = ['compania','direccion','cuit','photo_img']
+    list_columns = ['compania','tipoClave','direccion','cuit','photo_img_thumbnail']
+    show_columns = ['compania','tipoClave','direccion','cuit','photo_img']
     base_permissions = ['can_show', 'can_list', 'can_edit']
 
 
@@ -129,32 +134,43 @@ class ListWidgetProducto(ListWidget):
 
 
 #creo y configuro la clase de manejador de  vista de productos
-class ProductoModelview(ModelView):
-    datamodel = SQLAInterface(Productos)
+class ProductoModelview(AuditedModelView):
+    datamodel = SQLAInterface(Productos,session=db.session)
     #configuro vistas de crear, listar y editar
+
     list_title = "Listado de Productos"
     add_columns = ['categoria', 'marca','unidad', 'medida', 'precio','iva', 'detalle']
     list_columns = ['categoria', 'marca', 'medida','unidad', 'precio', 'stock','iva','estado', 'detalle']
     edit_columns = ['categoria','medida','unidad','marca','precio','iva','estado','detalle']
+    base_order = ('categoria.id', 'dsc')
     # search_columns = ['producto','unidad','medida','marca','precio','stock']
+
     @expose("/delete/<pk>", methods=["GET", "POST"])
     @has_access
     def delete(self, pk):
         item = self.datamodel.get(pk, self._base_filters)
         item.estado=False
         db.session.commit()
-
+        self.post_delete(item)
         self.update_redirect()
+
         return self.post_delete_redirect()
+    def pre_update(self, item):
+        session=self.datamodel.session
+        objeto=self.__class__.datamodel.obj
+        self.preitem=session.query(objeto).filter(objeto.id==item.id).first()
+        print(self.preitem,'\n',self.show_item_dict(self.preitem))
+        self.preitem=self.show_item_dict(self.preitem)
+        return self.preitem
 
 
 
 #creo clase de manejador de vistas de marcas y unidad de medida
-class MarcasModelview(ModelView):
+class MarcasModelview(AuditedModelView):
     list_title = "Listado de Marcas"
     datamodel = SQLAInterface(Marcas)
 
-class CategoriaModelview(ModelView):
+class CategoriaModelview(AuditedModelView):
     list_title = "Listado de Categorias"
     datamodel = SQLAInterface(Categoria)
 
@@ -189,7 +205,7 @@ class CrudProducto(MultipleView):
         'api_readvalues': 'access',
         'api_update': 'access'
     }
-class PrecioMdelview(ModelView):
+class PrecioMdelview(AuditedModelView):
     datamodel = SQLAInterface(Productos)
     #configuro vistas de crear, listar y editar
     list_title = "Listado de Productos"
@@ -234,24 +250,55 @@ class RenglonVentas(ModelView):
     datamodel = SQLAInterface(Renglon)
     list_columns = ['producto', 'precioVenta', 'cantidad']
     edit_columns = ['producto', 'precioVenta', 'cantidad']
-def repre(self):
+def repre(self,labels=None,tabla=None,db=None):
+    if labels!=None:
+        self.labels=labels
+        self.tabla=tabla
+        self.db=db
+        print(labels,' \n', 'desde filtros')
+    retstr = "FILTROS: "
 
-    retstr = "FILTROS:"
-    if len(self.get_filters_values())>0:
+
+    if len(self.get_filters_values())>0 and labels==None:
+        import inspect
         for flt, value in self.get_filters_values():
-            retstr = retstr + "%s:%s\n" % (
-                str(flt.column_name).capitalize(),
+            print(self.labels[flt.column_name],flt.arg_name, flt.name, value)
+
+            print(getattr(self.tabla, flt.column_name),type(getattr(self.tabla,flt.column_name)))
+            #print('prueba',getattr(self.db.session.query(self.tabla).filter(getattr(self.tabla, flt.column_name) == value).all()[0]))
+            """
+                        if flt.column_name=="Estado" and value=="y":
+                value=self.tabla().__class__.__name__+" Realizada"
+            elif inspect.ismethod(getattr(self.tabla, flt.column_name) ):
+                value=getattr(self.db.session.query(self.tabla).filter(getattr(self.tabla, flt.column_name) == value).all()[0],flt.column_name)()
+            else:
+                value=getattr(self.db.session.query(self.tabla).filter(getattr(self.tabla, flt.column_name) == value).all()[0], flt.column_name)
+            """
+            from dateutil.parser import parse
+
+
+            try:
+                if flt.column_name == "Estado" and value == "y":
+                    value = self.tabla().__class__.__name__ + " Realizada"
+                elif type(parse(value))==type(dt.now()) and flt.column_name=="fecha":
+                    value=parse(value).strftime("%d/%m/%Y-%H:%M")
+            except Exception as e:
+                print(e.__str__())
+
+            retstr = retstr + "%s %s %s\n" % (
+                str(self.labels[flt.column_name]).capitalize(),flt.name,
                 str(value),
             )
         return retstr
     else:
         return ""
-# creo clase de manejador de la vista de ventas
+
 def tipoClave_queryventa():
     print(g.user.__dict__.keys(), g.user.roles)
 
     return[i.id for i in db.session.query(Venta).filter(Venta.cliente_id == 1 ).all()]
 class VentaReportes(AuditedModelView):
+    # creo clase de manejador de la vista de ventas
     datamodel = SQLAInterface(Venta)
     list_title = "Listado de Ventas"
     label_columns = {"formatofecha":"Fecha","totaliva":"Alicuota Iva","totalrender":"Total",'formadepago':'Forma de Pago','renglonesrender':'','estadorender':'Estado'}
@@ -280,22 +327,19 @@ class VentaReportes(AuditedModelView):
            count, lst = self.datamodel.query(self._filters, order_column, order_direction)
            print(count , self.base_order)
         print(lst)
-        print(self._filters, type(self._filters))
-
-
-        import types
+        print(request.url)
         filtros=self._filters
         filtros.__repr__ = types.MethodType(repre, filtros)
         filtros.__str__ = types.MethodType(repre, filtros)
-        print(filtros, filtros.__repr__())
-
+        filtros.__repr__(self.label_columns,Venta,db=db)
         cabecera = (
             ("cliente", "Cliente"),("condicionFrenteIva", "Cond. Frente Iva"),("fecha", "Fecha"),
             ("formadepago", "Forma de Pago"),("total", "Total"),
         )
-
         generarReporte(titulo="Listado de ventas",cabecera=cabecera,buscar=Venta,nombre="Listado de ventas",datos=lst,filtros=self._filters)
         return redirect(url_for('ReportesView.show_static_pdf',var="Listado de ventas" ))
+
+
 
 
 class CompraReportes(AuditedModelView):
@@ -328,8 +372,13 @@ class CompraReportes(AuditedModelView):
             ("proveedor", "Proveedor"),("condicionFrenteIva", "Cond. Frente Iva"),("fecha", "Fecha"),
             ("formadepago", "Forma de Pago"),("total", "Total"),
         )
+        filtros=self._filters
+        filtros.__repr__ = types.MethodType(repre, filtros)
+        print(request.url,request.full_path , request.full_path,request.base_url)
+        print( filtros.__repr__(self.label_columns,Compra))
 
-        generarReporte(titulo="Listado de Compras",cabecera=cabecera,buscar=Compra,nombre="Listado de Compras",datos=lst)
+
+        generarReporte(titulo="Listado de Compras",cabecera=cabecera,buscar=Compra,nombre="Listado de Compras",datos=lst,filtros=self._filters)
         return redirect(url_for('ReportesView.show_static_pdf',var="Listado de Compras" ))
 
 
@@ -361,7 +410,6 @@ class RenglonVenta(Form):
 #creo clase manejadora de la vista de realizar venta
 class VentaView(BaseView):
     default_view = 'venta'
-
     #creo el metodo que maneja la url VentaView/venta/ donde se realiza la venta
     @expose('/venta/', methods=["GET", "POST"])
     @has_access
@@ -369,18 +417,20 @@ class VentaView(BaseView):
         #creo formulario
         form2 = RenglonVenta(request.form)
         #cargo las elecciones de producto
-        form2.producto.choices = [('{"id": ' + f'{p.id}' + ', "iva":' + f'"{p.iva}"' + ', "representacion":' + f'"{p.__repr__()}"' + '}', p.__repr__()) for p
-                                  in db.session.query(Productos).filter(Productos.estado==True).all()]
+        responsableinscripto = str(db.session.query(EmpresaDatos).first().tipoClave) == "Responsable Inscripto"
+        form2.producto.choices = [('{"id": ' + f'{p.id}' + ', "iva":' + f'"{p.iva}"' + ', "representacion":' + f'"{p.__str__()}"' + '}',  p.__str__()) for p  in db.session.query(Productos).filter(Productos.estado == True).all()]
+
         form2.Fecha.data = dt.now()
         # cargo las elecciones de cliente
         form2.cliente.choices = [('{"id": ' + f'{c.id}'+', "tipoclave":' + f'"{c.tipoClave}"'+'}', c) for c in db.session.query(Clientes).filter(Clientes.estado==True).all()]
         # cargo las elecciones de metodo de pago
         form2.metodo.choices = [(c.id, c) for c in db.session.query(FormadePago)]
         # cargo las elecciones de las tarjetas
+
         form2.companiaTarjeta.choices = [(c.id, c) for c in db.session.query(CompaniaTarjeta)]
         # le digo que guarde la url actual en el historial
         #esto sirve para cuando creas un cliente que te redirija despues a la venta
-        responsableinscripto=str(db.session.query(EmpresaDatos).first().tipoClave)=="Responsable Inscripto"
+
         self.update_redirect()
         #renderizo el html y le paso el formulario
         return render_template('venta.html', base_template=appbuilder.base_template, appbuilder=appbuilder, form2=form2,responsableinscripto=responsableinscripto)
@@ -449,7 +499,7 @@ class CompraView(BaseView):
 def tipoClave_query():
     print(g.user.__dict__.keys(), g.user.roles)
     return db.session.query(TipoClaves).filter(TipoClaves.tipoClave != "Consumidor Final" ).all()
-from fab_addon_audit.views import AuditedModelView
+
 class ProveedorView(AuditedModelView):
     """
     #creo clase de el manejador de proveedor
@@ -488,7 +538,7 @@ class ProveedorView(AuditedModelView):
 
 
 #creo clase de el manejador de clientes
-class ClientesView(ModelView):
+class ClientesView(AuditedModelView):
     datamodel = SQLAInterface(Clientes)
     related_views = [Venta]
     #le digo los permisos
