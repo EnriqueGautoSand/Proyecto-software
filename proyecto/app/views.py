@@ -26,7 +26,7 @@ from flask_appbuilder.urltools import get_filter_args
 from flask_appbuilder.widgets import ListWidget
 from .reportes import generarReporte
 import types
-
+import inspect
 def _init_titles(self):
     """
         Init Titles if not defined
@@ -50,8 +50,21 @@ ModelView.list_widget=listwitgetall
 
 from fab_addon_audit.views import AuditedModelView
 
+def pre_add(self, item):
+    for key in self.show_item_dict(item):
+        if not inspect.ismethod(getattr(item, key)):
+            print(key, type(getattr(item, key)),type("string"))
+            if type(getattr(item, key))==type("string"):
+                setattr(item, key, getattr(item, key).upper())
+            if type(getattr(item, key)) == type(10.0):
+                setattr(item, key,format(getattr(item, key), '.2f') )
 
 
+ModelView.pre_add=pre_add
+
+
+
+ModelView.list_widget = listwitgetall
 
 
 #manejador en caso de que no se encuentre la pagina
@@ -139,9 +152,10 @@ class ProductoModelview(AuditedModelView):
     #configuro vistas de crear, listar y editar
 
     list_title = "Listado de Productos"
+    label_columns = {'estadorender':'Estado'}
     add_columns = ['categoria', 'marca','unidad', 'medida', 'precio','iva', 'detalle']
-    list_columns = ['categoria', 'marca', 'medida','unidad', 'precio', 'stock','iva','estado', 'detalle']
-    edit_columns = ['categoria','medida','unidad','marca','precio','iva','estado','detalle']
+    list_columns = ['categoria', 'marca', 'medida','unidad', 'precio', 'stock','iva','estadorender', 'detalle']
+    edit_columns = ['categoria','medida','unidad','marca','precio','iva','Estado','detalle']
     base_order = ('categoria.id', 'dsc')
     # search_columns = ['producto','unidad','medida','marca','precio','stock']
 
@@ -149,19 +163,13 @@ class ProductoModelview(AuditedModelView):
     @has_access
     def delete(self, pk):
         item = self.datamodel.get(pk, self._base_filters)
-        item.estado=False
+        item.Estado=False
         db.session.commit()
-        self.post_delete(item)
+        self.post_update(item)
         self.update_redirect()
 
         return self.post_delete_redirect()
-    def pre_update(self, item):
-        session=self.datamodel.session
-        objeto=self.__class__.datamodel.obj
-        self.preitem=session.query(objeto).filter(objeto.id==item.id).first()
-        print(self.preitem,'\n',self.show_item_dict(self.preitem))
-        self.preitem=self.show_item_dict(self.preitem)
-        return self.preitem
+
 
 
 
@@ -208,27 +216,58 @@ class CrudProducto(MultipleView):
 class PrecioMdelview(AuditedModelView):
     datamodel = SQLAInterface(Productos)
     #configuro vistas de crear, listar y editar
+    list_widget = ListWidgetProducto
+    label_columns = {'estadorender': 'Estado'}
     list_title = "Listado de Productos"
     add_columns = ['categoria', 'marca','unidad', 'medida', 'precio','iva', 'detalle']
-    list_columns = ['categoria', 'marca', 'medida','unidad', 'precio', 'stock','iva','estado', 'detalle']
-    edit_columns = ['categoria','medida','unidad','marca','precio','iva','estado','detalle']
-    list_widget = ListWidgetProducto
-    # search_columns = ['producto','unidad','medida','marca','precio','stock']
+    list_columns = ['categoria', 'marca', 'medida','unidad', 'precio', 'stock','iva','estadorender', 'detalle']
+    edit_columns = ['categoria','medida','unidad','marca','precio','iva','Estado','detalle']
 
-    # list_title = "Listado de " + datamodel.model_name)
-    # add_title = "Agregar " + class_name)
-    # edit_title = "Editar " + class_name)
-    # show_title = "Detalle de " + (class_name)
 
     @expose("/delete/<pk>", methods=["GET", "POST"])
     @has_access
     def delete(self, pk):
         item = self.datamodel.get(pk, self._base_filters)
-        item.estado=False
+        item.Estado=False
         db.session.commit()
-
+        self.post_update(item)
         self.update_redirect()
         return self.post_delete_redirect()
+    @expose('/updateprecio/<var>/<signo>', methods=['GET'])
+    def updateprecio(self,var,signo):
+        get_filter_args(self._filters)
+        if self.base_order==None:
+            count, lst = self.datamodel.query(self._filters)
+        else:
+           order_column, order_direction = self.base_order
+
+           count, lst = self.datamodel.query(self._filters, order_column, order_direction)
+        print(self._filters,lst,count)
+        if request.method == "GET":
+            data = request.json
+            print(var,request.url)
+            print(lst)
+            for i in lst:
+                try:
+
+                    if signo==-1:
+                        var=-var
+                    self.pre_update(i)
+                    i.precio=format(float(i.precio)+((float(i.precio)/100) * float(var)), '.2f')
+                    if self.datamodel.edit(i):
+                        self.post_update(i)
+                except Exception as e:
+                    print(e.__str__())
+            widgets = self._list()
+            self.update_redirect()
+
+            return self.render_template(
+                self.list_template, title=self.list_title, widgets=widgets
+                )
+
+        else:
+            return self.response(400, message="error")
+
 class ReportesView(BaseView):
     default_view = 'reportes'
 
@@ -305,8 +344,9 @@ class VentaReportes(AuditedModelView):
     list_columns = ['cliente','totaliva',"percepcion", "totalrender", 'estadorender','formatofecha']
     show_columns = ['cliente','totaliva',"percepcion", 'estadorender','formatofecha','renglonesrender']
     edit_columns = ['Estado']
+    base_order = ('fecha', 'dsc')
     #base_filters = [["id",FilterInFunction,tipoClave_queryventa],]
-    base_permissions = ['can_show','can_list', 'can_edit']
+    base_permissions = ['can_show','can_list', 'can_edit','can_delete']
     #list_template = "reportes.html"
     #related_views = [RenglonVentas,MetododepagoVentas]
 
@@ -318,7 +358,7 @@ class VentaReportes(AuditedModelView):
     def download_csv(self):
 
         get_filter_args(self._filters)
-
+        print(request.url)
         if self.base_order==None:
             count, lst = self.datamodel.query(self._filters)
         else:
@@ -338,8 +378,15 @@ class VentaReportes(AuditedModelView):
         )
         generarReporte(titulo="Listado de ventas",cabecera=cabecera,buscar=Venta,nombre="Listado de ventas",datos=lst,filtros=self._filters)
         return redirect(url_for('ReportesView.show_static_pdf',var="Listado de ventas" ))
-
-
+    @expose("/delete/<pk>", methods=["GET", "POST"])
+    @has_access
+    def delete(self, pk):
+        item = self.datamodel.get(pk, self._base_filters)
+        item.Estado=False
+        db.session.commit()
+        self.post_update(item)
+        self.update_redirect()
+        return self.post_delete_redirect()
 
 
 class CompraReportes(AuditedModelView):
@@ -350,8 +397,8 @@ class CompraReportes(AuditedModelView):
     list_columns = ['proveedor',"totaliva", "total", 'estadorender', 'formadepago','formatofecha',"percepcion"]
     show_columns = ['proveedor',"totaliva", 'total', 'estadorender','formadepago','formatofecha',"percepcion",'renglonesrender']
     edit_columns = ['Estado']
-
-    base_permissions = ['can_show','can_list', 'can_edit']
+    base_order = ('fecha', 'dsc')
+    base_permissions = ['can_show','can_list', 'can_edit','can_delete']
 
 
 
@@ -381,7 +428,15 @@ class CompraReportes(AuditedModelView):
         generarReporte(titulo="Listado de Compras",cabecera=cabecera,buscar=Compra,nombre="Listado de Compras",datos=lst,filtros=self._filters)
         return redirect(url_for('ReportesView.show_static_pdf',var="Listado de Compras" ))
 
-
+    @expose("/delete/<pk>", methods=["GET", "POST"])
+    @has_access
+    def delete(self, pk):
+        item = self.datamodel.get(pk, self._base_filters)
+        item.Estado=False
+        db.session.commit()
+        self.post_update(item)
+        self.update_redirect()
+        return self.post_delete_redirect()
 
 
 
@@ -418,7 +473,7 @@ class VentaView(BaseView):
         form2 = RenglonVenta(request.form)
         #cargo las elecciones de producto
         responsableinscripto = str(db.session.query(EmpresaDatos).first().tipoClave) == "Responsable Inscripto"
-        form2.producto.choices = [('{"id": ' + f'{p.id}' + ', "iva":' + f'"{p.iva}"' + ', "representacion":' + f'"{p.__str__()}"' + '}',  p.__str__()) for p  in db.session.query(Productos).filter(Productos.estado == True).all()]
+        form2.producto.choices = [('{"id": ' + f'{p.id}' + ', "iva":' + f'"{p.iva}"' + ', "representacion":' + f'"{p.__str__()}"' + '}',  p.__str__()) for p  in db.session.query(Productos).filter(Productos.Estado == True).all()]
 
         form2.Fecha.data = dt.now()
         # cargo las elecciones de cliente
@@ -466,16 +521,12 @@ class CompraView(BaseView):
     @has_access
     def compra(self,id=None):
 
-        cabecera = (
-            ("cliente", "Cliente"),
-            ("formadepago", "Forma de Pago"),("total", "Total"),
-        )
-        generarReporte(titulo="Listado de ventas",cabecera=cabecera,buscar=Venta,nombre="Listado de ventas")
+
         #creo formulario
         form2 = RenglonCompra(request.form)
         #cargo las elecciones de producto
         form2.producto.choices = [('{"id": ' + f'{p.id}' + ', "iva":' + f'"{p.iva}"' + ', "representacion":' + f'"{p.__str__()}"' + '}', p.__str__()) for p
-                                  in db.session.query(Productos).filter(Productos.estado==True).all()]
+                                  in db.session.query(Productos).filter(Productos.Estado==True).all()]
 
         # cargo las elecciones de cliente
         form2.proveedor.choices = [('{"id": ' + f'{c.id}' + ', "tipoclave":' +f'"{c.tipoClave}"'+'}', c) for c in db.session.query(Proveedor)]
@@ -607,7 +658,7 @@ appbuilder.add_view(ClientesView, "Clientes")
 appbuilder.add_view(ProveedorView, "Proveedor")
 
 
-appbuilder.add_view(PrecioMdelview, "Control de Precios",category='Productos',icon='fa-archive')
+appbuilder.add_view(PrecioMdelview, "Control de Precios",category='Productos',icon='fa-dollar-sign')
 appbuilder.add_view_no_menu(ProductoModelview)
 appbuilder.add_view_no_menu(MarcasModelview)
 appbuilder.add_view_no_menu(unidadesModelView)

@@ -1,23 +1,42 @@
-
-
 {% import 'lib.html' as lib %}
 {% extends 'listwitget.html' %}
-
 {% block list_header scoped %}
    {{ super() }}
-    <script>
-        function cargarporcentaje(){
-        var person = prompt("Please enter your name", "Harry Potter");
 
-        if (person == null || person == "") {
-          txt = "User cancelled the prompt.";
+    <script>
+    
+        function cargarporcentaje(){
+        var porcentaje = prompt("Inserte el % a sumar o restar", "+10");
+        console.log(typeof porcentaje, porcentaje == "")
+
+        if ( !((parseFloat(porcentaje)>-100)) ||! parseFloat(porcentaje)|| porcentaje == "") {
+          if ( porcentaje == ""){alert("No ha ingresado Nada !!!")}
+           else if (!((parseFloat(porcentaje)>-100)) ||! parseFloat(porcentaje) ){
+          alert("Ingrese solo numeros entre 1 y 100")}
         } else {
-          txt = "Hello " + person + "! How are you today?";
-        }
+          try {
+
+data={
+  "var":parseFloat( porcentaje).toString(),
+  "signo": Math.sign(parseFloat( porcentaje))
 }
+var url = "http://"+location.host+Flask.url_for("PrecioMdelview.updateprecio", data)
+url =url+window.location.search
+          fetch(url)
+            .then(
+             window.location.href ="http://"+location.host+Flask.url_for("PrecioMdelview.list")+window.location.search)
+          } catch(e) {
+            // statements
+            console.log(e);
+            alert(e)
+          }
+
+          
+                  
+}}
     </script>
-    <a onclick="cargarporcentaje();" class="btn btn-sm btn-default">
-       <i class="fa fa-rocket"></i>
+    <a onclick="cargarporcentaje();" class="btn btn-sm btn-default" data-original-title="Cambiar Precio">
+       <i class="fas fa-percent"></i>
     </a>
 
 {% endblock %}

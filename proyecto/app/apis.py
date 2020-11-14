@@ -6,6 +6,7 @@ from flask_appbuilder.api import ModelRestApi
 from .models import *
 from flask import g
 from fab_addon_audit.views import AuditedModelView
+
 def get_user():
     return g.user
 class ComprasApi(BaseApi,AuditedModelView):
@@ -20,6 +21,8 @@ class ComprasApi(BaseApi,AuditedModelView):
             #paso los datos de la peticion a json
             data = request.json
             print(data)
+            from .views import CompraReportes
+            self.show_columns = CompraReportes.list_columns
             try:
                 if "metododePago" in data and "proveedor" in data and "total" in data:
                     print(data["total"])
@@ -77,6 +80,8 @@ class ComprasApi(BaseApi,AuditedModelView):
 
 class VentasApi(BaseApi,AuditedModelView):
     datamodel = SQLAInterface(Venta)
+
+
     @expose('/obtenerusuario/', methods=["GET", "POST"])
     def apiusuario(self):
         """
@@ -112,7 +117,8 @@ class VentasApi(BaseApi,AuditedModelView):
         """
         realizo la venta
         """
-
+        from .views import VentaReportes
+        self.show_columns=VentaReportes.list_columns
         if request.method == "POST":
             #paso los datos de la peticion a json
             data = request.json

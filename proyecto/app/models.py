@@ -1,21 +1,18 @@
 
 import flask_appbuilder
-from sqlalchemy import Column, Integer, String, ForeignKey,Float,Date, Boolean, UniqueConstraint, Numeric
+from sqlalchemy import Column, Integer, String, ForeignKey,Float,Date, Boolean, UniqueConstraint
 from sqlalchemy.orm import relationship
 from flask_appbuilder.models.decorators import renders
-from flask_appbuilder.models.mixins import AuditMixin, ImageColumn
+from flask_appbuilder.models.mixins import  ImageColumn
 
 from flask_appbuilder.security.sqla.models import User
 from flask import Markup, url_for, redirect
-import enum
-from sqlalchemy import Enum
+
 from datetime import datetime as dt
 from flask_appbuilder.filemanager import  ImageManager
 from flask_appbuilder import Model
 from . import appbuilder, db
-from postgresql_audit import versioning_manager
 
-versioning_manager.init(db.Model)
 print(flask_appbuilder.security.sqla.models)
 
 
@@ -207,6 +204,7 @@ class Compra(Model):
     totalNeto = Column(Float, nullable=False)
     totaliva = Column(Float, nullable=True)
     fecha=Column(Date, nullable=False,default=dt.now())
+    ranking = Column(Integer, default=0, nullable=True)
     proveedor_id = Column(Integer, ForeignKey('proveedor.id'), nullable=False)
     proveedor = relationship("Proveedor")
     formadepago_id = Column(Integer, ForeignKey('formadepago.id'), nullable=False)
@@ -289,7 +287,7 @@ class Venta(Model):
 
     @renders('total')
     def totalrender(self):
-         return Markup('<b> $' + str(self.total) + '</b>')
+         return Markup(' $' + str(format(self.total, '.2f')) )
     @renders('estado')
     def estadorender(self):
             if self.Estado:
@@ -406,7 +404,8 @@ class Productos(Model):
     __tablename__ = 'productos'
     id = Column(Integer, primary_key=True)
     #producto=Column(String(30))
-    estado=Column(Boolean,default=True, nullable=False)
+    Estado=Column(Boolean,default=True, nullable=True)
+
     precio=Column(Float)
     stock=Column(Integer,default=0)
     iva=Column(Float,default=0, nullable=False)
@@ -428,6 +427,11 @@ class Productos(Model):
         return f"{self.categoria} ${self.precio} {self.marca} {self.medida} {self.unidad}"
     def __str__(self):
         return f"{self.categoria} {self.marca} {self.medida} {self.unidad}"
+    @renders('estado')
+    def estadorender(self):
+            if self.Estado:
+                return Markup('<b> Activo </b>')
+            return Markup('<b> Desactivado</b>')
 class RenglonCompras(Model):
     """
     creo clase que sera mapeada como la tabla renglon en la base de datos
@@ -462,12 +466,7 @@ class Renglon(Model):
     def __repr__(self):
         return f"{self.producto} ${self.precioVenta} {self.venta} {self.producto} {self.cantidad} "
 
-import sqlalchemy as sa
-sa.orm.configure_mappers()
-tablas =db.metadata.tables
 
-versioning_manager.audit_table(tablas['proveedor'])
-versioning_manager.audit_table(tablas['clientes'])
 
 db.create_all()
 

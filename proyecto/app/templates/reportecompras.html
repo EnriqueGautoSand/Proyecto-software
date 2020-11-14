@@ -1,10 +1,10 @@
-{% import 'appbuilder/general/lib.html' as lib %}
-{% extends 'appbuilder/general/widgets/list.html' %}
+{% import 'lib.html' as lib %}
+{% extends 'listwitget.html' %}
 
 {% block list_header scoped %}
    {{ super() }}
-    <a href="{{url_for('CompraReportes' + '.download_pdf', **request.args)}}" class="btn btn-sm btn-default">
-       <i class="fa fa-save"></i>
+    <a href="{{url_for('CompraReportes' + '.download_pdf', **request.args)}}" class="btn btn-sm btn-default" data-original-title="imprimir">
+       <i class="fas fa-file-pdf"></i>
     </a>
 
 {% endblock %}

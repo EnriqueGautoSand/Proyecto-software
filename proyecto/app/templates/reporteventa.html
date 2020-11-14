@@ -1,10 +1,10 @@
-{% import 'appbuilder/general/lib.html' as lib %}
-{% extends 'appbuilder/general/widgets/list.html' %}
+{% import 'lib.html' as lib %}
+{% extends 'listwitget.html' %}
 
 {% block list_header scoped %}
    {{ super() }}
-    <a href="{{url_for('VentaReportes' + '.download_csv', **request.args)}}" data-original-title="Imprimir" class="btn btn-sm btn-default">
-       <i class="fa fa-save"></i>
+    <a href="{{url_for('VentaReportes' + '.download_csv', **request.args)}}" data-original-title="Imprimir" data-original-title="imprimir" class="btn btn-sm btn-default">
+       <i class="fas fa-file-pdf"></i>
     </a>
 {% endblock %}
 
