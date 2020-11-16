@@ -9,6 +9,51 @@ from fab_addon_audit.views import AuditedModelView
 
 def get_user():
     return g.user
+class Clienteapi(BaseApi,AuditedModelView):
+    datamodel = SQLAInterface(Clientes)
+    @expose('/creacliente/', methods=['POST', 'GET'])
+    def crear(self):
+        if request.method == "POST":
+            data = request.json
+            print(data)
+            from .views import ClientesView
+            self.list_columns = ClientesView.list_columns
+            try:
+                global cliente
+                if "direccion" in data and "localidad" in data:
+                    direccion=Direccion(direccion=data['direccion'],idLocalidad=int(data['localidad']))
+                    db.session.flush()
+                else:
+                    db.session.rollback()
+                    return self.response(400, message="error no hay direccion")
+                if int(data['tipopersona'])==1:
+                    print('entro')
+                    cliente = Clientes(documento=data['documento'], nombre=data['nombre'], apellido=data['apellido'],
+                            tipoDocumento_id=int(data['tipodocumento']),tipoClave_id=int(data['condiva']),idTipoPersona=int(data['tipopersona']), direccion=direccion)
+                    self.pre_add(cliente)
+                    db.session.add(cliente)
+                    db.session.flush()
+                else:
+                    cliente = Clientes(documento=data['cuit'],nombre=data['denominacion'],razonSocial=data['razonsocial'],
+                                        tipoDocumento_id = 2,tipoClave_id=int(data['condiva']),idTipoPersona=int(data['tipopersona']), direccion=direccion)
+                    self.pre_add(cliente)
+                    db.session.add(cliente)
+                    db.session.flush()
+                self.post_add(cliente)
+                db.session.add(direccion)
+
+                db.session.commit()
+
+
+
+                return self.response(200, message={'status': "sucess", 'idcliente': cliente.id})
+            except Exception as e:
+                print(e)
+                print(str(e))
+                print(repr(e))
+                db.session.rollback()
+                return self.response(400, message="error")
+        return self.response(400, message="error")
 class ComprasApi(BaseApi,AuditedModelView):
     datamodel = SQLAInterface(Compra)
     @expose('/realizarcompra/', methods=['POST', 'GET'])
@@ -22,7 +67,7 @@ class ComprasApi(BaseApi,AuditedModelView):
             data = request.json
             print(data)
             from .views import CompraReportes
-            self.show_columns = CompraReportes.list_columns
+            self.list_columns = CompraReportes.list_columns
             try:
                 if "metododePago" in data and "proveedor" in data and "total" in data:
                     print(data["total"])
@@ -108,9 +153,9 @@ class VentasApi(BaseApi,AuditedModelView):
             p=db.session.query(Productos).get(data['p'])
             #si soy responsable y el que me compra no es responsable le agrego el iva en el precio
             if data["venta"] and data['cliente_condfrenteiva']!="Responsable Inscripto" and responsableinscripto:
-                return self.response(200, message=p.precio*(1+(p.iva/100)) )
+                return self.response(200, message=format(p.precio*(1+(p.iva/100)), '.2f') )
             # retorno el precio del producto
-            return self.response(200, message=p.precio)
+            return self.response(200, message=format(p.precio, '.2f'))
         return self.response(400, message="error")
     @expose('/realizarventa/', methods=['POST', 'GET'])
     def greeting2(self):
@@ -118,7 +163,7 @@ class VentasApi(BaseApi,AuditedModelView):
         realizo la venta
         """
         from .views import VentaReportes
-        self.show_columns=VentaReportes.list_columns
+        self.list_columns=VentaReportes.list_columns
         if request.method == "POST":
             #paso los datos de la peticion a json
             data = request.json
@@ -190,7 +235,7 @@ class ProductoApi(ModelRestApi):
     datamodel = SQLAInterface(Productos)
 
 appbuilder.add_api(ProductoApi)
-
+appbuilder.add_api(Clienteapi)
 
 appbuilder.add_api(VentasApi)
 appbuilder.add_api(ComprasApi)

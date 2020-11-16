@@ -91,7 +91,6 @@ boton.className="btn  btn-success btn-sm"
 
 
 
-
 var tere=document.createElement("tr")
 
 agregarTd(tere,'Producto')
@@ -171,7 +170,7 @@ function totalconimpuestos(){
       	      totalhtml.value= (parseFloat(totalColuma) + parseFloat((totalColuma/100.0)*porcentajepositivo(percepcion,true)) +  calculatotaliva());
 			}
 		else if (JSON.parse(cliente.value).tipoclave=="Monotributista" &&  responsableinscripto) {
-			totalhtml.value= parseFloat(totalColuma) + parseFloat((totalColuma/100.0)*porcentajepositivo(percepcion,true)) + calculatotaliva()
+			totalhtml.value= parseFloat(totalColuma) + parseFloat((totalColuma/100.0)*porcentajepositivo(percepcion,true)) 
 			totaliva.value=0
 			}
 		else{
@@ -713,7 +712,7 @@ console.log(JSON.parse(event.target.value).tipoclave=="Responsable Inscripto",ev
     	    percepcion.disabled=false
     	    iva=true
 	}else if (JSON.parse(event.target.value).tipoclave=="Monotributista" && responsableinscripto) {
-		percepcion.disabled=true
+		percepcion.disabled=false
 		iva=false
 	}else{
 		percepcion.disabled=true

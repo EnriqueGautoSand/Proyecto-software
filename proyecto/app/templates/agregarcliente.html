@@ -1,15 +1,112 @@
 {% extends "appbuilder/general/model/add.html" %}
 {% block head_js %}
     {{ super() }}
+    {{ JSGlue.include() }}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
 <script src="{{url_for('static',filename='js/validaCuit.js')}}"></script>
+
 {% endblock %}
 
     {% block add_form %}
-        {{ super() }}
+    <h1 align=center>Crear Cliente</h1>
+     <table class="table table-bordered" >
+               <tr>
+        <td>{{ form.tipopersona.label }}   </td>
+         <td>   {{ form.tipopersona }}  </td>
+       </tr>
+              <tr>
+        </table >
+ <div class = "panel-heading">
+ <h4 class="panel-title" >
+<a id="expancionT" class="accordion-toggle" data-toggle="collapse" parent="#fisica" data-target="#fisica" href="#fisica" data-original-title="" title="" aria-expanded="true"></a>
+    
+  </h4>
+  
+<div id="fisica" class="collapse">
+	<table class="table table-bordered" >
+        <td>{{ form.tipoclave.label }}   </td>
+         <td>   {{ form.tipoclave }}  </td>
+       </tr>
+       <tr>
+        <td>{{ form.tipodocumento.label }}   </td>
+         <td>   {{ form.tipodocumento }}  </td>
+       </tr>
+              <tr>
+        <td>{{ form.documento.label }}   </td>
+         <td>   {{ form.documento }}  </td>
+       </tr>
+              <tr>
+        <td>{{ form.nombre.label }}   </td>
+         <td>   {{ form.nombre }}  </td>
+       </tr>
+         <tr>
+        <td>{{ form.apellido.label }}   </td>
+         <td>   {{ form.apellido }}  </td>
+       </tr>
+   </table >
+
+  </div>
+</div>
+</div>
+<div class = "panel-heading">
+ <h4 class="panel-title" >
+<a id="expancionT" class="accordion-toggle" data-toggle="collapse" parent="#juridica" data-target="#juridica" href="#juridica" data-original-title="" title="" aria-expanded="false"></a>
+    
+  </h4>
+  
+<div id="juridica" class="collapse">
+	<table class="table table-bordered" >
+        <td>{{ form.tipoclavejuridica.label }}   </td>
+         <td>   {{ form.tipoclavejuridica }}  </td>
+       </tr>
+       <tr>
+        <td>{{ form.cuit.label }}   </td>
+         <td>   {{ form.cuit }}  </td>
+       </tr>
+              <tr>
+        <td>{{ form.denominacion.label }}   </td>
+         <td>   {{ form.denominacion }}  </td>
+       </tr>
+                     <tr>
+        <td>{{ form.razonsocial.label }}   </td>
+         <td>   {{ form.razonsocial }}  </td>
+       </tr>
+
+         </table >
+
+  </div>
+</div>
+</div>
+<form class="form-group ">
+<table class="table table-bordered" >
+    <tr>
+        <td>{{ form.direccion.label }}   </td>
+         <td>   {{ form.direccion }}  </td>
+       </tr>
+                     <tr>
+        <td>{{ form.localidad.label }}   </td>
+         <td>   {{ form.localidad }}  </td>
+       </tr>
+ </table >
+</form>
+ <input id="crear" onclick="crearsion();"  class="btn  btn-info btn-sm" type="button" value="Crear Cliente"  />
 <script>
 
-	selectdocumento=document.getElementById("tipoDocumento")
+	$("#tipopersona").click(function() {
+
+						if (tipopersona.value==1){
+								//alert("Cargar Tarjeta")
+								$('#fisica').collapse('show')
+								$('#juridica').collapse('hide')
+							}
+						else{
+							$('#juridica').collapse('show')
+							$('#fisica').collapse('hide')
+						}
+
+						})
+
+	selectdocumento=document.getElementById("tipodocumento")
 
 	if (selectdocumento.options[selectdocumento.selectedIndex].text=="CUIT"){
 				    $(document).ready(function(){
@@ -34,4 +131,12 @@
 
 </script>
 
+    {% endblock %}
+
+    {% block tail_js %}
+    {{ super() }}
+    <script>
+    $('#fisica').collapse('show')
+    </script>
+    <script src="{{url_for('static',filename='js/crearcliente.js')}}"></script>
     {% endblock %}

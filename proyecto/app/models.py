@@ -52,6 +52,47 @@ class EmpresaDatos(Model):
         else:
             return Markup('<a href="' + url_for('Empresaview.show',pk=str(self.id)) +\
              '" class="thumbnail"><img src="//:0" alt="logo" class="img-responsive"></a>')
+
+
+class RazonSocial(Model):
+    """
+    # creo clase que enumera los tipos de razon social
+
+    SRL, SA, Sociedad colectiva, Sociedad comandita por acciones
+
+    """
+    __tablename__ = 'razonSocial'
+    idRazonSocial = Column(Integer, primary_key=True)
+    razonSocial = Column(String(30), nullable=False, unique=True)
+
+    # defino como se representara al ser llamado
+    def __repr__(self):
+        return f'{self.razonSocial}'
+
+class Direccion(Model):
+    """
+    # creo clase que sirve para las direcciones
+
+    """
+    __tablename__ = 'direccion'
+    idDireccion = Column(Integer, primary_key=True)
+    direccion = Column(String(255), nullable=False, unique=True)
+    idLocalidad = Column(Integer, ForeignKey('localidad.idLocalidad'), nullable=True)
+    localidad = relationship("Localidad")
+    # defino como se representara al ser llamado
+    def __repr__(self):
+        return f'{self.direccion } Localidad: {self.localidad}'
+class Localidad (Model):
+    """
+    # creo clase que sirve para las localidades
+    """
+    __tablename__ = 'localidad'
+    idLocalidad = Column(Integer, primary_key=True)
+    localidad = Column(String(55), nullable=False, unique=True)
+
+    # defino como se representara al ser llamado
+    def __repr__(self):
+        return f'{self.localidad}'
 class TipoPersona(Model):
     """
     # creo clase que enumera los tipos de persona
@@ -118,6 +159,7 @@ class Proveedor(Model):
     cuit=Column(String(30),nullable=False,unique=True)
     nombre = Column(String(30),nullable=False)
     apellido = Column(String(30),nullable=False)
+    ranking = Column(Integer, default=0, nullable=True)
     domicilio =Column(String(255))
     correo = Column(String(100),unique=False)
     estado = Column(Boolean,default=True)
@@ -125,6 +167,8 @@ class Proveedor(Model):
     tipoClave = relationship("TipoClaves")
     idTipoPersona = Column(Integer, ForeignKey('tipoPersona.idTipoPersona'), nullable=False)
     tipoPersona = relationship("TipoPersona")
+    razonSocial_id = Column(Integer, ForeignKey('razonSocial.idRazonSocial'), nullable=True)
+    razonSocial = relationship("RazonSocial")
     # defino como se representara al ser llamado
     def __repr__(self):
         return f"Cuit {self.cuit} {self.apellido} {self.nombre}"
@@ -148,7 +192,10 @@ class Clientes(Model):
     idTipoPersona = Column(Integer, ForeignKey('tipoPersona.idTipoPersona'), nullable=False)
     tipoPersona = relationship("TipoPersona")
     estado = Column(Boolean,default=True)
-
+    razonSocial_id = Column(Integer, ForeignKey('razonSocial.idRazonSocial'), nullable=True)
+    razonSocial = relationship("RazonSocial")
+    idDireccion = Column(Integer, ForeignKey('direccion.idDireccion'), nullable=True)
+    direccion = relationship("Direccion")
     #creo clave compuesta que no se pueden repetir dicha combinacion
     __table_args__ = (
         UniqueConstraint("documento","tipoDocumento_id"),
@@ -204,7 +251,7 @@ class Compra(Model):
     totalNeto = Column(Float, nullable=False)
     totaliva = Column(Float, nullable=True)
     fecha=Column(Date, nullable=False,default=dt.now())
-    ranking = Column(Integer, default=0, nullable=True)
+
     proveedor_id = Column(Integer, ForeignKey('proveedor.id'), nullable=False)
     proveedor = relationship("Proveedor")
     formadepago_id = Column(Integer, ForeignKey('formadepago.id'), nullable=False)

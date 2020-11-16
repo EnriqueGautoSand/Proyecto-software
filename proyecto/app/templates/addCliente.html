@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% import 'lib.html' as lib %}
+{% block head_js %}
+    {{ super() }}
+    {{ JSGlue.include() }}
+    <script src="https://kit.fontawesome.com/04f1870aa2.js" crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block content %}
+{{ lib.panel_begin(title) }}
+
+{% block add_form %}
+    {{ widgets.get('add')(form_action=form_action)|safe }}
+{% endblock %}
+
+{{ lib.panel_end() }}
+{% endblock %}
+{% block tail_js %}
+    {{ super() }}
+{% endblock %}

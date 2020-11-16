@@ -3,6 +3,7 @@
 {% block head_js %}
     {{ super() }}
     {{ JSGlue.include() }}
+    <script src="https://kit.fontawesome.com/04f1870aa2.js" crossorigin="anonymous"></script>
 {% endblock %}
      {% block messages %}
         {% with messages = get_flashed_messages(category_filter=["nuevocliente"], with_categories=true) %}

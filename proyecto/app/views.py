@@ -1,6 +1,6 @@
 from flask import render_template, request, jsonify,url_for,redirect,session, Markup, send_file
 from flask_appbuilder.models.sqla.interface import SQLAInterface
-from flask_appbuilder import ModelView, ModelRestApi, BaseView, expose, has_access, MultipleView, SimpleFormView
+from flask_appbuilder import ModelRestApi, BaseView, expose, has_access, MultipleView, SimpleFormView
 from flask_appbuilder.views import ModelView, CompactCRUDMixin, MasterDetailView
 from flask import flash
 from flask_appbuilder.models.sqla.filters import FilterEqualFunction
@@ -26,47 +26,11 @@ from flask_appbuilder.urltools import get_filter_args
 from flask_appbuilder.widgets import ListWidget
 from .reportes import generarReporte
 import types
-import inspect
-def _init_titles(self):
-    """
-        Init Titles if not defined
-    """
-
-    class_name = self.datamodel.model_name
-    if not self.list_title:
-        self.list_title = "Listado de " + self._prettify_name(class_name)
-    if not self.add_title:
-        self.add_title = "Agregar " + self._prettify_name(class_name)
-    if not self.edit_title:
-        self.edit_title = "Editar " + self._prettify_name(class_name)
-    if not self.show_title:
-        self.show_title = "Detalle de " + self._prettify_name(class_name)
-    self.title = self.list_title
-ModelView._init_titles=_init_titles
-ModelView.list_template="list.html"
-class listwitgetall(ListWidget):
-    template = 'listwitget.html'
-ModelView.list_widget=listwitgetall
 
 from fab_addon_audit.views import AuditedModelView
-
-def pre_add(self, item):
-    for key in self.show_item_dict(item):
-        if not inspect.ismethod(getattr(item, key)):
-            print(key, type(getattr(item, key)),type("string"))
-            if type(getattr(item, key))==type("string"):
-                setattr(item, key, getattr(item, key).upper())
-            if type(getattr(item, key)) == type(10.0):
-                setattr(item, key,format(getattr(item, key), '.2f') )
-
-
-ModelView.pre_add=pre_add
-
-
-
-ModelView.list_widget = listwitgetall
-
-
+from .modelo.ModelView import Modelovista
+AuditedModelView.__bases__=(Modelovista,)
+ModelView=Modelovista
 #manejador en caso de que no se encuentre la pagina
 @appbuilder.app.errorhandler(404)
 def page_not_found(e):
@@ -148,6 +112,7 @@ class ListWidgetProducto(ListWidget):
 
 #creo y configuro la clase de manejador de  vista de productos
 class ProductoModelview(AuditedModelView):
+    list_template = "list.html"
     datamodel = SQLAInterface(Productos,session=db.session)
     #configuro vistas de crear, listar y editar
 
@@ -163,6 +128,7 @@ class ProductoModelview(AuditedModelView):
     @has_access
     def delete(self, pk):
         item = self.datamodel.get(pk, self._base_filters)
+        self.pre_update(item)
         item.Estado=False
         db.session.commit()
         self.post_update(item)
@@ -214,6 +180,7 @@ class CrudProducto(MultipleView):
         'api_update': 'access'
     }
 class PrecioMdelview(AuditedModelView):
+    list_template = "list.html"
     datamodel = SQLAInterface(Productos)
     #configuro vistas de crear, listar y editar
     list_widget = ListWidgetProducto
@@ -338,6 +305,7 @@ def tipoClave_queryventa():
     return[i.id for i in db.session.query(Venta).filter(Venta.cliente_id == 1 ).all()]
 class VentaReportes(AuditedModelView):
     # creo clase de manejador de la vista de ventas
+    list_template = "list.html"
     datamodel = SQLAInterface(Venta)
     list_title = "Listado de Ventas"
     label_columns = {"formatofecha":"Fecha","totaliva":"Alicuota Iva","totalrender":"Total",'formadepago':'Forma de Pago','renglonesrender':'','estadorender':'Estado'}
@@ -382,6 +350,7 @@ class VentaReportes(AuditedModelView):
     @has_access
     def delete(self, pk):
         item = self.datamodel.get(pk, self._base_filters)
+        self.pre_update(item)
         item.Estado=False
         db.session.commit()
         self.post_update(item)
@@ -390,6 +359,7 @@ class VentaReportes(AuditedModelView):
 
 
 class CompraReportes(AuditedModelView):
+    list_template = "list.html"
     datamodel = SQLAInterface(Compra)
     list_widget =ListDownloadWidgetcompra
     list_title = "Listado de Compras"
@@ -557,6 +527,7 @@ class ProveedorView(AuditedModelView):
     """
     from wtforms.ext.sqlalchemy.fields import QuerySelectField
     datamodel = SQLAInterface(Proveedor)
+    list_template = "list.html"
     related_views = [Compra]
     #le digo los permisos
 
@@ -587,27 +558,42 @@ class ProveedorView(AuditedModelView):
                        )
     }
 
-
+from formulariocliente import ClienteForm
 #creo clase de el manejador de clientes
 class ClientesView(AuditedModelView):
     datamodel = SQLAInterface(Clientes)
-    related_views = [Venta]
+    list_template = "list.html"
     #le digo los permisos
     base_permissions =['can_list','can_add','can_edit', 'can_delete' ]
     message="cliente creado"
 
     #presonalizando las etiquetas de las columnas
-    label_columns = {'tipoDocumento':'Tipo de Documento' ,'tipoClave':'Tipo de Clave'}
+    label_columns = {'nombre':'Nombre/Denominacion','tipoDocumento':'Tipo de Documento' ,'tipoClave':'Tipo de Clave',"tipoPersona":"Tipo de Persona"}
     #filtrando los valores
     #base_filters = [['estado', FilterEqual, True]]#descomentar para que filtre solo los activos
-    add_template = "agregarcliente.html"
+
     #configurando las columnas de las vistas crear listar y editar
     add_columns = ["tipoPersona",'tipoClave','tipoDocumento','documento', 'nombre', 'apellido']
     list_columns = ["tipoPersona",'tipoClave','documento', 'nombre', 'apellido','tipoDocumento']
-    edit_columns = ["tipoPersona",'tipoClave','documento', 'nombre', 'apellido','tipoDocumento','estado']
-    validators_columns ={
-        'documento':[InputRequired(),cuitvalidator(dato='tipoDocumento')]
-    }
+    edit_columns = ["tipoPersona",'tipoClave','tipoDocumento','documento', 'nombre', 'apellido','estado']
+
+    @expose("/add", methods=["GET", "POST"])
+    @has_access
+    def add(self):
+        form = ClienteForm()
+
+        form.tipopersona.choices = [(p.idTipoPersona, p) for p in db.session.query(TipoPersona)]
+
+        form.tipodocumento.choices = [(p.id, p) for p in db.session.query(TiposDocumentos)]
+        form.tipoclave.choices = [(p.id, p) for p in db.session.query(TipoClaves)]
+        form.razonsocial.choices = [(p.idRazonSocial, p) for p in db.session.query(RazonSocial)]
+        form.localidad.choices = [(p.idLocalidad, p) for p in db.session.query(Localidad)]
+        form.tipoclavejuridica.choices = [(p.id, p) for p in db.session.query(TipoClaves).filter(TipoClaves.tipoClave != "Consumidor Final", TipoClaves.tipoClave != "Monotributista")]
+        self.update_redirect()
+        return render_template('agregarcliente.html', base_template=appbuilder.base_template, appbuilder=appbuilder, form=form)
+
+
+
 
     def get_redirect_anterior(self):
         """
@@ -628,7 +614,7 @@ class ClientesView(AuditedModelView):
         return url
     #metodo de postproceso despues de crear un cliente
     #sirve para mandar el mensagge flash de "cliente creado" a la vista de realizar venta
-    def post_add(self, item):
+    def post_post_add(self, item):
         urlanterior =self.get_redirect_anterior()
         try:
             url="http://localhost:8080"+url_for("VentaView.venta")
