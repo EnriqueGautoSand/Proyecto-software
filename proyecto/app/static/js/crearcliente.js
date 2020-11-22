@@ -72,7 +72,7 @@ function crearsion(){
 .then(response =>{ console.log('Success:', response)
 	if (response.message.status=="sucess"){
 		alert("Cliente Creado Satisfactoriamente")
-		window.location.href="http://"+location.host+Flask.url_for("ClientesView.show", {"id": response.idcliente})
+		window.location.href="http://"+location.host+Flask.url_for("ClientesView.add")
 	}
 	})
 

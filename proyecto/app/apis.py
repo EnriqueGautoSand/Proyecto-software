@@ -6,22 +6,51 @@ from flask_appbuilder.api import ModelRestApi
 from .models import *
 from flask import g
 from fab_addon_audit.views import AuditedModelView
-
+from .modelo.ModelView import Modelovista
+from flask import jsonify
+import json
+AuditedModelView.__bases__=(Modelovista,)
 def get_user():
     return g.user
 class Clienteapi(BaseApi,AuditedModelView):
     datamodel = SQLAInterface(Clientes)
+    @expose('/condfisicacliente/', methods=['POST', 'GET'])
+    def condfisicacliente(self):
+        respuesta={c.__repr__(): c.id for c in db.session.query(TipoClaves).all()}
+        res=json.dumps(respuesta )
+        return self.response(200, message=res )
+    @expose('/condjuridicacliente/', methods=['POST', 'GET'])
+    def condfrenteiva(self):
+        respuesta={c.__repr__(): c.id for c in db.session.query(TipoClaves).filter(TipoClaves.tipoClave != "Consumidor Final",TipoClaves.tipoClave != "Monotributista").all()}
+        res=json.dumps(respuesta )
+        return self.response(200, message=res )
+    @expose('/dnicliente/', methods=['POST', 'GET'])
+    def dnicliente(self):
+        respuesta={c.__repr__(): c.id for c in db.session.query(TiposDocumentos).all()}
+        res=json.dumps(respuesta )
+        return self.response(200, message=res )
+    @expose('/proveedorfisico/', methods=['POST', 'GET'])
+    def proveedorfisico(self):
+        respuesta={c.__repr__(): c.id for c in db.session.query(TipoClaves).filter(TipoClaves.tipoClave != "Consumidor Final").all()}
+        res=json.dumps(respuesta )
+        return self.response(200, message=res )
+
     @expose('/creacliente/', methods=['POST', 'GET'])
     def crear(self):
+        """
+        ver si la borro
+        """
         if request.method == "POST":
             data = request.json
             print(data)
             from .views import ClientesView
             self.list_columns = ClientesView.list_columns
+            print(self.list_columns)
             try:
                 global cliente
                 if "direccion" in data and "localidad" in data:
                     direccion=Direccion(direccion=data['direccion'],idLocalidad=int(data['localidad']))
+                    db.session.add(direccion)
                     db.session.flush()
                 else:
                     db.session.rollback()
@@ -30,22 +59,17 @@ class Clienteapi(BaseApi,AuditedModelView):
                     print('entro')
                     cliente = Clientes(documento=data['documento'], nombre=data['nombre'], apellido=data['apellido'],
                             tipoDocumento_id=int(data['tipodocumento']),tipoClave_id=int(data['condiva']),idTipoPersona=int(data['tipopersona']), direccion=direccion)
-                    self.pre_add(cliente)
                     db.session.add(cliente)
                     db.session.flush()
                 else:
-                    cliente = Clientes(documento=data['cuit'],nombre=data['denominacion'],razonSocial=data['razonsocial'],
+                    cliente = Clientes(documento=data['cuit'],nombre=data['denominacion'],apellido=data['razonsocial'],
                                         tipoDocumento_id = 2,tipoClave_id=int(data['condiva']),idTipoPersona=int(data['tipopersona']), direccion=direccion)
-                    self.pre_add(cliente)
+                    print(cliente)
                     db.session.add(cliente)
                     db.session.flush()
+                print(self.mostraritem(cliente))
                 self.post_add(cliente)
-                db.session.add(direccion)
-
                 db.session.commit()
-
-
-
                 return self.response(200, message={'status': "sucess", 'idcliente': cliente.id})
             except Exception as e:
                 print(e)
@@ -73,7 +97,7 @@ class ComprasApi(BaseApi,AuditedModelView):
                     print(data["total"])
                     # creo la compra y agrego forma de pago
                     if int(data["metododePago"]) == 1:
-                        compra=Compra(percepcion=float(data["percepcion"]),totaliva=float(data["totaliva"]),totalNeto=float(data["totalneto"]),Estado=True,total=float(data["total"]),proveedor_id=data["proveedor"],formadepago_id=data["metododePago"])
+                        compra=Compra(percepcion=float(data["percepcion"]),totaliva=float(data["totaliva"]),totalNeto=float(data["totalneto"]),estado=True,total=float(data["total"]),proveedor_id=data["proveedor"],formadepago_id=data["metododePago"])
                     else:
                         #en caso de que se hay apagado con tarjeta asocio los datos de la tarjeta a la compra
                         datosFormaPagos=DatosFormaPagosCompra(numeroCupon=data["numeroCupon"],
@@ -82,7 +106,7 @@ class ComprasApi(BaseApi,AuditedModelView):
                                               cuotas=data["cuotas"],formadepago_id=data["metododePago"]
                                               )
 
-                        compra = Compra(Estado=True,totalNeto=float(data["totalneto"]),totaliva=float(data["totaliva"]),
+                        compra = Compra(estado=True,totalNeto=float(data["totalneto"]),totaliva=float(data["totaliva"]),
                                       total=float(data["total"]), proveedor_id=data["proveedor"],formadepago_id=data["metododePago"],
                                       datosFormaPagos=datosFormaPagos,percepcion=float(data["percepcion"]))
 
@@ -173,7 +197,7 @@ class VentasApi(BaseApi,AuditedModelView):
                     print(data["total"])
                     # creo la venta
 
-                    venta=Venta(Estado=True,percepcion=float(data["percepcion"]),totaliva=float(data["totaliva"]),totalNeto=float(data["totalneto"]), total=float(data["total"])
+                    venta=Venta(estado=True,percepcion=float(data["percepcion"]),totaliva=float(data["totaliva"]),totalNeto=float(data["totalneto"]), total=float(data["total"])
                                 ,cliente_id=int(data["cliente"]))
                     db.session.add(venta)
                     db.session.flush()

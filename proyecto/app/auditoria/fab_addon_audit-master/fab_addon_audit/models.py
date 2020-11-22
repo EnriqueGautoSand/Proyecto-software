@@ -16,8 +16,9 @@ class Operacion(Model):
 
 class Auditoria(Model):
     id = Column(Integer, Sequence('audit_log_id_seq'), primary_key=True)
-    message = Column(String(300), nullable=False)
+    message = Column(String(500), nullable=False)
     username = Column(String(64),  nullable=False)
+    anterior = Column(String(500), nullable=False)
     created_on = Column(DateTime, default=datetime.datetime.now, nullable=True)
     operation_id = Column(Integer, ForeignKey('operacion.id'), nullable=False)
     operation = relationship("Operacion")

@@ -120,31 +120,24 @@ class ProductoModelview(AuditedModelView):
     label_columns = {'estadorender':'Estado'}
     add_columns = ['categoria', 'marca','unidad', 'medida', 'precio','iva', 'detalle']
     list_columns = ['categoria', 'marca', 'medida','unidad', 'precio', 'stock','iva','estadorender', 'detalle']
-    edit_columns = ['categoria','medida','unidad','marca','precio','iva','Estado','detalle']
+    edit_columns = ['categoria','medida','unidad','marca','precio','iva','estado','detalle']
     base_order = ('categoria.id', 'dsc')
     # search_columns = ['producto','unidad','medida','marca','precio','stock']
 
-    @expose("/delete/<pk>", methods=["GET", "POST"])
-    @has_access
-    def delete(self, pk):
-        item = self.datamodel.get(pk, self._base_filters)
-        self.pre_update(item)
-        item.Estado=False
-        db.session.commit()
-        self.post_update(item)
-        self.update_redirect()
 
-        return self.post_delete_redirect()
 
 
 
 
 #creo clase de manejador de vistas de marcas y unidad de medida
-class MarcasModelview(AuditedModelView):
+class MarcasModelview(ModelView):
     list_title = "Listado de Marcas"
     datamodel = SQLAInterface(Marcas)
+    def post_add_redirect(self):
+        self.update_redirect()
+        return redirect(url_for("MarcasModelview.add"))
 
-class CategoriaModelview(AuditedModelView):
+class CategoriaModelview(ModelView):
     list_title = "Listado de Categorias"
     datamodel = SQLAInterface(Categoria)
 
@@ -188,18 +181,10 @@ class PrecioMdelview(AuditedModelView):
     list_title = "Listado de Productos"
     add_columns = ['categoria', 'marca','unidad', 'medida', 'precio','iva', 'detalle']
     list_columns = ['categoria', 'marca', 'medida','unidad', 'precio', 'stock','iva','estadorender', 'detalle']
-    edit_columns = ['categoria','medida','unidad','marca','precio','iva','Estado','detalle']
+    edit_columns = ['categoria','medida','unidad','marca','precio','iva','estado','detalle']
 
 
-    @expose("/delete/<pk>", methods=["GET", "POST"])
-    @has_access
-    def delete(self, pk):
-        item = self.datamodel.get(pk, self._base_filters)
-        item.Estado=False
-        db.session.commit()
-        self.post_update(item)
-        self.update_redirect()
-        return self.post_delete_redirect()
+
     @expose('/updateprecio/<var>/<signo>', methods=['GET'])
     def updateprecio(self,var,signo):
         get_filter_args(self._filters)
@@ -311,7 +296,7 @@ class VentaReportes(AuditedModelView):
     label_columns = {"formatofecha":"Fecha","totaliva":"Alicuota Iva","totalrender":"Total",'formadepago':'Forma de Pago','renglonesrender':'','estadorender':'Estado'}
     list_columns = ['cliente','totaliva',"percepcion", "totalrender", 'estadorender','formatofecha']
     show_columns = ['cliente','totaliva',"percepcion", 'estadorender','formatofecha','renglonesrender']
-    edit_columns = ['Estado']
+    edit_columns = ['estado']
     base_order = ('fecha', 'dsc')
     #base_filters = [["id",FilterInFunction,tipoClave_queryventa],]
     base_permissions = ['can_show','can_list', 'can_edit','can_delete']
@@ -346,16 +331,7 @@ class VentaReportes(AuditedModelView):
         )
         generarReporte(titulo="Listado de ventas",cabecera=cabecera,buscar=Venta,nombre="Listado de ventas",datos=lst,filtros=self._filters)
         return redirect(url_for('ReportesView.show_static_pdf',var="Listado de ventas" ))
-    @expose("/delete/<pk>", methods=["GET", "POST"])
-    @has_access
-    def delete(self, pk):
-        item = self.datamodel.get(pk, self._base_filters)
-        self.pre_update(item)
-        item.Estado=False
-        db.session.commit()
-        self.post_update(item)
-        self.update_redirect()
-        return self.post_delete_redirect()
+
 
 
 class CompraReportes(AuditedModelView):
@@ -366,7 +342,7 @@ class CompraReportes(AuditedModelView):
     label_columns = {'renglonesrender':'',"totaliva":"Alicuota Iva", 'estadorender':'Estado','formatofecha':'Fecha',"percepcion":"Percepcion %"}
     list_columns = ['proveedor',"totaliva", "total", 'estadorender', 'formadepago','formatofecha',"percepcion"]
     show_columns = ['proveedor',"totaliva", 'total', 'estadorender','formadepago','formatofecha',"percepcion",'renglonesrender']
-    edit_columns = ['Estado']
+    edit_columns = ['estado']
     base_order = ('fecha', 'dsc')
     base_permissions = ['can_show','can_list', 'can_edit','can_delete']
 
@@ -398,15 +374,7 @@ class CompraReportes(AuditedModelView):
         generarReporte(titulo="Listado de Compras",cabecera=cabecera,buscar=Compra,nombre="Listado de Compras",datos=lst,filtros=self._filters)
         return redirect(url_for('ReportesView.show_static_pdf',var="Listado de Compras" ))
 
-    @expose("/delete/<pk>", methods=["GET", "POST"])
-    @has_access
-    def delete(self, pk):
-        item = self.datamodel.get(pk, self._base_filters)
-        item.Estado=False
-        db.session.commit()
-        self.post_update(item)
-        self.update_redirect()
-        return self.post_delete_redirect()
+
 
 
 
@@ -443,7 +411,7 @@ class VentaView(BaseView):
         form2 = RenglonVenta(request.form)
         #cargo las elecciones de producto
         responsableinscripto = str(db.session.query(EmpresaDatos).first().tipoClave) == "Responsable Inscripto"
-        form2.producto.choices = [('{"id": ' + f'{p.id}' + ', "iva":' + f'"{p.iva}"' + ', "representacion":' + f'"{p.__str__()}"' + '}',  p.__str__()) for p  in db.session.query(Productos).filter(Productos.Estado == True).all()]
+        form2.producto.choices = [('{"id": ' + f'{p.id}' + ', "iva":' + f'"{p.iva}"' + ', "representacion":' + f'"{p.__str__()}"' + '}',  p.__str__()) for p  in db.session.query(Productos).filter(Productos.estado == True).all()]
 
         form2.Fecha.data = dt.now()
         # cargo las elecciones de cliente
@@ -496,7 +464,7 @@ class CompraView(BaseView):
         form2 = RenglonCompra(request.form)
         #cargo las elecciones de producto
         form2.producto.choices = [('{"id": ' + f'{p.id}' + ', "iva":' + f'"{p.iva}"' + ', "representacion":' + f'"{p.__str__()}"' + '}', p.__str__()) for p
-                                  in db.session.query(Productos).filter(Productos.Estado==True).all()]
+                                  in db.session.query(Productos).filter(Productos.estado==True).all()]
 
         # cargo las elecciones de cliente
         form2.proveedor.choices = [('{"id": ' + f'{c.id}' + ', "tipoclave":' +f'"{c.tipoClave}"'+'}', c) for c in db.session.query(Proveedor)]
@@ -532,11 +500,12 @@ class ProveedorView(AuditedModelView):
     #le digo los permisos
 
     base_permissions =['can_list','can_add','can_edit', 'can_delete' ]
-    label_columns = {'tipoClave': 'Cond. Frente Iva'}
-    add_columns = ["tipoPersona",'cuit', 'nombre', 'apellido', 'correo','tipoClave']
-    list_columns = ["tipoPersona",'cuit', 'nombre', 'apellido','correo' ,'tipoClave']
-    edit_columns = ["tipoPersona",'cuit', 'nombre', 'apellido', 'correo','tipoClave']
+    label_columns = {'nombre':'Nombre/Denominacion','apellido':'Apellido/Razon Social','tipoClave': 'Cond. Frente Iva','estadorender': 'Estado',"tipoPersona":"Tipo de Persona"}
+    add_columns = ["tipoPersona",'tipoClave','cuit', 'nombre', 'apellido', 'correo','direccion','localidad']
+    list_columns = ["tipoPersona",'cuit', 'nombre', 'apellido','correo' ,'tipoClave','estadorender']
+    edit_columns = ["tipoPersona",'tipoClave','cuit', 'nombre', 'apellido', 'correo','direccion','localidad']
     add_template = "addproveedor.html"
+    edit_template = "editproveedor.html"
 
     validators_columns ={
         'cuit':[InputRequired(),cuitvalidatorProveedores]
@@ -564,33 +533,21 @@ class ClientesView(AuditedModelView):
     datamodel = SQLAInterface(Clientes)
     list_template = "list.html"
     #le digo los permisos
-    base_permissions =['can_list','can_add','can_edit', 'can_delete' ]
+    base_permissions =['can_list','can_add','can_edit', 'can_delete' ,'can_show']
     message="cliente creado"
 
     #presonalizando las etiquetas de las columnas
-    label_columns = {'nombre':'Nombre/Denominacion','tipoDocumento':'Tipo de Documento' ,'tipoClave':'Tipo de Clave',"tipoPersona":"Tipo de Persona"}
+    label_columns = {'nombre':'Nombre/Denominacion','apellido':'Apellido/Razon Social','tipoDocumento':'Tipo de Documento' ,'tipoClave':'Tipo de Clave',"tipoPersona":"Tipo de Persona",'estadorender': 'Estado'}
     #filtrando los valores
     #base_filters = [['estado', FilterEqual, True]]#descomentar para que filtre solo los activos
 
     #configurando las columnas de las vistas crear listar y editar
-    add_columns = ["tipoPersona",'tipoClave','tipoDocumento','documento', 'nombre', 'apellido']
-    list_columns = ["tipoPersona",'tipoClave','documento', 'nombre', 'apellido','tipoDocumento']
-    edit_columns = ["tipoPersona",'tipoClave','tipoDocumento','documento', 'nombre', 'apellido','estado']
-
-    @expose("/add", methods=["GET", "POST"])
-    @has_access
-    def add(self):
-        form = ClienteForm()
-
-        form.tipopersona.choices = [(p.idTipoPersona, p) for p in db.session.query(TipoPersona)]
-
-        form.tipodocumento.choices = [(p.id, p) for p in db.session.query(TiposDocumentos)]
-        form.tipoclave.choices = [(p.id, p) for p in db.session.query(TipoClaves)]
-        form.razonsocial.choices = [(p.idRazonSocial, p) for p in db.session.query(RazonSocial)]
-        form.localidad.choices = [(p.idLocalidad, p) for p in db.session.query(Localidad)]
-        form.tipoclavejuridica.choices = [(p.id, p) for p in db.session.query(TipoClaves).filter(TipoClaves.tipoClave != "Consumidor Final", TipoClaves.tipoClave != "Monotributista")]
-        self.update_redirect()
-        return render_template('agregarcliente.html', base_template=appbuilder.base_template, appbuilder=appbuilder, form=form)
+    add_columns = ["tipoPersona",'tipoClave','tipoDocumento','documento', 'nombre', 'apellido','direccion','localidad']
+    list_columns = ["tipoPersona",'tipoClave','documento', 'nombre', 'apellido','tipoDocumento','estadorender']
+    show_columns = ["tipoPersona",'tipoClave','documento', 'nombre', 'apellido','tipoDocumento','estadorender','direccion','localidad']
+    edit_columns = ["tipoPersona",'tipoClave','tipoDocumento','documento', 'nombre', 'apellido','estado','direccion','localidad']
+    add_template = "clienteaddedit.html"
+    edit_template = "editcliente.html"
 
 
 
@@ -629,7 +586,9 @@ class ClientesView(AuditedModelView):
         self.update_redirect()
 
 
-
+    validators_columns ={
+        'cuit':[InputRequired(),cuitvalidator]
+    }
 
 
 #aca agrego los manejadores de las vistas al appbuilder para que sean visuales

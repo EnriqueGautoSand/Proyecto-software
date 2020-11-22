@@ -54,40 +54,15 @@ class EmpresaDatos(Model):
              '" class="thumbnail"><img src="//:0" alt="logo" class="img-responsive"></a>')
 
 
-class RazonSocial(Model):
-    """
-    # creo clase que enumera los tipos de razon social
 
-    SRL, SA, Sociedad colectiva, Sociedad comandita por acciones
 
-    """
-    __tablename__ = 'razonSocial'
-    idRazonSocial = Column(Integer, primary_key=True)
-    razonSocial = Column(String(30), nullable=False, unique=True)
 
-    # defino como se representara al ser llamado
-    def __repr__(self):
-        return f'{self.razonSocial}'
-
-class Direccion(Model):
-    """
-    # creo clase que sirve para las direcciones
-
-    """
-    __tablename__ = 'direccion'
-    idDireccion = Column(Integer, primary_key=True)
-    direccion = Column(String(255), nullable=False, unique=True)
-    idLocalidad = Column(Integer, ForeignKey('localidad.idLocalidad'), nullable=True)
-    localidad = relationship("Localidad")
-    # defino como se representara al ser llamado
-    def __repr__(self):
-        return f'{self.direccion } Localidad: {self.localidad}'
 class Localidad (Model):
     """
     # creo clase que sirve para las localidades
     """
     __tablename__ = 'localidad'
-    idLocalidad = Column(Integer, primary_key=True)
+    idlocalidad = Column(Integer, primary_key=True)
     localidad = Column(String(55), nullable=False, unique=True)
 
     # defino como se representara al ser llamado
@@ -167,12 +142,17 @@ class Proveedor(Model):
     tipoClave = relationship("TipoClaves")
     idTipoPersona = Column(Integer, ForeignKey('tipoPersona.idTipoPersona'), nullable=False)
     tipoPersona = relationship("TipoPersona")
-    razonSocial_id = Column(Integer, ForeignKey('razonSocial.idRazonSocial'), nullable=True)
-    razonSocial = relationship("RazonSocial")
+    direccion = Column(String(100), nullable=True)
+    idlocalidad = Column(Integer, ForeignKey('localidad.idlocalidad'), nullable=True)
+    localidad = relationship("Localidad")
     # defino como se representara al ser llamado
     def __repr__(self):
         return f"Cuit {self.cuit} {self.apellido} {self.nombre}"
-
+    @renders('estado')
+    def estadorender(self):
+            if self.estado:
+                return Markup('<b> Activo </b>')
+            return Markup('<b> Desactivado</b>')
 
 
 class Clientes(Model):
@@ -192,10 +172,10 @@ class Clientes(Model):
     idTipoPersona = Column(Integer, ForeignKey('tipoPersona.idTipoPersona'), nullable=False)
     tipoPersona = relationship("TipoPersona")
     estado = Column(Boolean,default=True)
-    razonSocial_id = Column(Integer, ForeignKey('razonSocial.idRazonSocial'), nullable=True)
-    razonSocial = relationship("RazonSocial")
-    idDireccion = Column(Integer, ForeignKey('direccion.idDireccion'), nullable=True)
-    direccion = relationship("Direccion")
+    direccion = Column(String(100))
+    idlocalidad = Column(Integer, ForeignKey('localidad.idlocalidad'), nullable=True)
+    localidad = relationship("Localidad")
+
     #creo clave compuesta que no se pueden repetir dicha combinacion
     __table_args__ = (
         UniqueConstraint("documento","tipoDocumento_id"),
@@ -208,7 +188,11 @@ class Clientes(Model):
 
         return f"{self.nombre} {self.apellido} {self.tipoDocumento} {self.documento} "
 
-
+    @renders('estado')
+    def estadorender(self):
+            if self.estado:
+                return Markup('<b> Activo </b>')
+            return Markup('<b> Desactivado</b>')
 
 class CompaniaTarjeta(Model):
     """
@@ -246,7 +230,7 @@ class Compra(Model):
     """
     __tablename__= 'compras'
     id=Column(Integer, primary_key=True)
-    Estado=Column(Boolean)
+    estado=Column(Boolean)
     total=Column(Float, nullable=False)
     totalNeto = Column(Float, nullable=False)
     totaliva = Column(Float, nullable=True)
@@ -259,9 +243,10 @@ class Compra(Model):
     datosFormaPagos_id = Column(Integer, ForeignKey('datosFormaPagosCompra.id'), nullable=True)
     datosFormaPagos = relationship("DatosFormaPagosCompra")
     percepcion = Column(Float,default=0)
+
     # defino como se representara al ser llamado
     def __repr__(self):
-        return f'{self.proveedor} {self.total} {self.Estado} {self.fecha}'
+        return f'{self.proveedor} {self.total} {self.estado} {self.fecha}'
 
     def condicionFrenteIva(self):
         return self.proveedor.tipoClave
@@ -271,7 +256,7 @@ class Compra(Model):
          return Markup('<b> ' + str(self.fecha.strftime(" %d-%m-%Y ")) + '</b>')
     @renders('estado')
     def estadorender(self):
-            if self.Estado:
+            if self.estado:
                 return Markup('<b> Compra Realizada </b>')
             return Markup('<b> Compra Anulada </b>')
     @renders('renglones')
@@ -301,7 +286,7 @@ class Venta(Model):
     """
     __tablename__= 'ventas'
     id=Column(Integer, primary_key=True)
-    Estado=Column(Boolean)
+    estado=Column(Boolean)
     fecha = Column(Date, nullable=False,default=dt.now())
     totalNeto = Column(Float, nullable=False)
     totaliva = Column(Float, nullable=True)
@@ -337,7 +322,7 @@ class Venta(Model):
          return Markup(' $' + str(format(self.total, '.2f')) )
     @renders('estado')
     def estadorender(self):
-            if self.Estado:
+            if self.estado:
                 return Markup('<b> Venta Realizada </b>')
             return Markup('<b> Venta Anulada </b>')
     @renders('renglones')
@@ -363,7 +348,7 @@ class Venta(Model):
 
     # defino como se representara al ser llamado
     def __repr__(self):
-        return f'{self.cliente} {self.total} {self.Estado} {self.fecha}'
+        return f'{self.cliente} {self.total} {self.estado} {self.fecha}'
 
 class FormadePagoxVenta(Model):
     __tablename__ = 'FormadePago_Venta'
@@ -451,7 +436,7 @@ class Productos(Model):
     __tablename__ = 'productos'
     id = Column(Integer, primary_key=True)
     #producto=Column(String(30))
-    Estado=Column(Boolean,default=True, nullable=True)
+    estado=Column(Boolean,default=True, nullable=True)
 
     precio=Column(Float)
     stock=Column(Integer,default=0)
@@ -476,7 +461,7 @@ class Productos(Model):
         return f"{self.categoria} {self.marca} {self.medida} {self.unidad}"
     @renders('estado')
     def estadorender(self):
-            if self.Estado:
+            if self.estado:
                 return Markup('<b> Activo </b>')
             return Markup('<b> Desactivado</b>')
 class RenglonCompras(Model):

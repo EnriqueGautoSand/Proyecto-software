@@ -31,7 +31,8 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor.execute("PRAGMA foreign_keys=ON")
     cursor.close()
 """
-
 from .models import *
 from . import testdata
 from . import views
+from .modulos_inteligentes.pedido_presupuesto import start_scheduler
+start_scheduler()

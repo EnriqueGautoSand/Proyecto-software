@@ -16,6 +16,6 @@ class ClienteForm(Form):
     cuit = StringField("Cuit")
     tipoclavejuridica = SelectField('Cond Frente IVA', coerce=str, validators=[InputRequired()], widget=Select2Widget())
     denominacion = StringField("Denominacion", validators=[InputRequired()])
-    razonsocial = SelectField('Razon Social', coerce=str, widget=Select2Widget() )
+    razonsocial = StringField("Razon social")
 
 

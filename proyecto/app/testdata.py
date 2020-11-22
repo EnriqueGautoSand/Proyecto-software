@@ -1,5 +1,5 @@
 from app import db
-from app.models import Venta,Clientes,TipoClaves,TiposDocumentos,FormadePago,CompaniaTarjeta,EmpresaDatos,TipoPersona,RazonSocial,Localidad
+from app.models import Venta,Clientes,TipoClaves,TiposDocumentos,FormadePago,CompaniaTarjeta,EmpresaDatos,TipoPersona,Localidad
 
 from datetime import datetime as dt
 
@@ -17,13 +17,9 @@ datos_test=[
             EmpresaDatos(compania="Kiogestion",direccion="Avenida Roque Perez, 1522",tipoClave_id=3),
             TiposDocumentos(tipoDocumento="CUIT"),
             TipoPersona(tipoPersona="Fisica"),TipoPersona(tipoPersona="Juridica"),
-            RazonSocial(razonSocial="SRL"),
-            RazonSocial(razonSocial="SA"),
-            RazonSocial(razonSocial="Sociedad Colectiva"),
             Localidad(localidad="Apostoles"),
             Localidad(localidad="Posadas"),
             Localidad(localidad="Obera"),
-            RazonSocial(razonSocial="Sociedad Comandita por Acciones"),
             Clientes(documento="Consumidor Final",
                         tipoDocumento_id=1, estado=True,tipoClave_id=1,idTipoPersona=1),
             Clientes(documento="3905508741",idTipoPersona=1,

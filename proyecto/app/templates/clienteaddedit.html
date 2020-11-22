@@ -10,13 +10,8 @@
 
 
     {% endblock %}
-        {% block tail_js %}
+    {% block tail_js %}
     {{ super() }}
-    <script>
-    $(document).ready(function(){
-  $('#cuit').mask('00-00000000-0');
-});
-</script>
     <script>
 
 	$("#tipoPersona").click(function() {
@@ -28,7 +23,7 @@
 				document.querySelector("label[for='nombre']").innerText="Nombre"
 				for (i in tipoClave.options){
 						tipoClave.remove(i)}
-				fetch("http://localhost:8080/api/v1/clienteapi/proveedorfisico/")
+				fetch("http://localhost:8080/api/v1/clienteapi/condfisicacliente/")
 						    .then(data=>data.json())
 						    .then(response =>{ console.log('Success:', JSON.parse(response.message))
 						    dictmes=JSON.parse(response.message)
@@ -43,7 +38,22 @@
 							$(tipoClave).change();
 							for (i in tipoDocumento.options){
 						tipoDocumento.remove(i)}
+						fetch("http://localhost:8080/api/v1/clienteapi/dnicliente/")
+												    .then(data=>data.json())
+						    .then(response =>{ console.log('Success:', JSON.parse(response.message))
+						    dictmes=JSON.parse(response.message)
+						   for(var clave in dictmes){
+						   	var option = document.createElement("option");
+							option.value=dictmes[clave]
+							option.text =clave
+							tipoDocumento.add(option) 
+							
+						   }
 
+
+
+
+						})
 						})
 		}else{
 			document.querySelector("label[for='apellido']").innerText="Razon Social"
@@ -64,6 +74,10 @@
 						   //selecciono el primero
 						   	tipoClave[0].selected = true;
 							$(tipoClave).change();
+							//saco el dni y selecciono el cuit
+							tipoDocumento.remove(0)
+							tipoDocumento[0].selected = true;
+							$(tipoDocumento).change();
 
 
 
@@ -73,7 +87,28 @@
 
 		})
 
+	selectdocumento=document.getElementById("tipoDocumento")
 
+	if (selectdocumento.options[selectdocumento.selectedIndex].text=="CUIT"){
+				    $(document).ready(function(){
+    	  		$('#documento').mask('00-00000000-0');
+    	}	);
+		}else{
+			$('#documento').unmask();
+		}
+
+	selectdocumento.onchange=function(){
+		
+		if (selectdocumento.options[selectdocumento.selectedIndex].text=="CUIT"){
+				    $(document).ready(function(){
+    	  		$('#documento').mask('00-00000000-0');
+    	}	);
+		}else{
+			$('#documento').unmask();
+		}
+
+
+	}
 </script>
 
 {% endblock %}
