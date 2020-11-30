@@ -9,8 +9,12 @@ from flask_appbuilder.fieldwidgets import  Select2ManyWidget,BS3PasswordFieldWid
 from wtforms.validators import EqualTo
 from flask_appbuilder.security.registerviews import RegisterUserDBView, RegisterUserDBForm
 
+
+
 class MyRegisterUserDBView(RegisterUserDBView):
     email_template = 'email_template.html'
+
+
 
 
 def cuil_query():
@@ -31,7 +35,7 @@ class MyUserDBModelView(UserDBModelView):
         Override to implement your own custom view.
         Then override userdbmodelview property on SecurityManager
     """
-
+    login_template = 'login.html'
     show_fieldsets = [
         (lazy_gettext('User info'),
          {'fields': ['username', 'active', 'roles', 'login_count', 'cuil']}),

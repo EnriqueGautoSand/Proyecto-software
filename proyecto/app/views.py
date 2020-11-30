@@ -15,9 +15,9 @@ from flask_appbuilder.urltools import  Stack
 
 from wtforms import Form, BooleanField, StringField, validators, DateField, FloatField, IntegerField, FieldList, \
     SelectField, SubmitField
-from validadores import cuitvalidator, cuitvalidatorProveedores
+from validadores import cuitvalidator, cuitvalidatorProveedores,fechavalidador
 
-
+from twilio.twiml.messaging_response import MessagingResponse
 
 from wtforms.validators import DataRequired,InputRequired
 from flask_appbuilder.fieldwidgets import BS3TextFieldWidget, Select2Widget
@@ -26,11 +26,12 @@ from flask_appbuilder.urltools import get_filter_args
 from flask_appbuilder.widgets import ListWidget
 from .reportes import generarReporte
 import types
-
+from flask_babelpkg import lazy_gettext
 from fab_addon_audit.views import AuditedModelView
 from .modelo.ModelView import Modelovista
 AuditedModelView.__bases__=(Modelovista,)
 ModelView=Modelovista
+from datetimepicker  import DateTimePickerWidget
 #manejador en caso de que no se encuentre la pagina
 @appbuilder.app.errorhandler(404)
 def page_not_found(e):
@@ -41,6 +42,36 @@ def page_not_found(e):
         404,
     )
 
+class ModulosInteligentesView(ModelView):
+    datamodel = SQLAInterface(ModulosInteligentes)
+
+    list_columns = ['dias_atras','porcentaje_ventas','fecha_vencimiento']
+    show_columns = ['dias_atras','porcentaje_ventas','fecha_vencimiento']
+    base_permissions = ['can_edit','can_show','can_list']
+
+
+    edit_form_extra_fields = {
+        'dias_pedido': IntegerField('Dias Pedido', render_kw={'type': "number", 'min': '0'},
+                                   description="""Intervalo de cada cuantos dias se ejecutara el modulo de pedidos de presupuesto"""),
+        'dias_atras':  IntegerField('Dias Atras',  render_kw={'type': "number",'min':'0'},
+                                    description="""Numero de dias atras que mirara el modulo de pedidos de presupuesto 
+                                                             para realizar sus calculos"""),
+        'porcentaje_ventas':FloatField('Porcentaje de Ventas',  render_kw={'type': "number",'min':'0','max':'100','step':"0.01"},
+                                    description=lazy_gettext("""Numero de porcentaje minimo de ventas respecto compras para
+                                                                realizar el pedido de presupuesto""")),
+        'fecha_vencimiento': IntegerField('Fecha de Vencimiento',
+                                        render_kw={'type': "number", 'min': '0', 'max': '100'},
+                                        description=lazy_gettext("""Numero de dias que quedan antes de que se venza un producto para 
+                                                                realizar un pedido de presupuesto""")),
+        'dias_oferta': IntegerField('Dias Oferta', render_kw={'type': "number", 'min': '0'},
+                                    description="""Intervalo de cada cuantos dias se ejecutara el modulo de ofertas por whatsapp"""),
+        'fecha_vencimiento_oferta': IntegerField('Dias antes de vencer', render_kw={'type': "number", 'min': '0'},
+                                    description="""Numero de dias que quedan antes de que se venza un producto para 
+                                                                realizar  ofertas por whatsapp""")
+    }
+
+
+
 
 
 
@@ -48,10 +79,13 @@ class Empresaview(ModelView):
     datamodel = SQLAInterface(EmpresaDatos)
     label_columns ={'photo_img':'logo', 'photo_img_thumbnail':'logo','tipoClave':'Cond Frente Iva'}
     list_title = "Datos de La Empresa"
-    list_columns = ['compania','tipoClave','direccion','cuit','photo_img_thumbnail']
-    show_columns = ['compania','tipoClave','direccion','cuit','photo_img']
+    list_columns = ['compania','tipoClave','cuit','direccion','localidad','photo_img_thumbnail']
+    show_columns = ['compania','tipoClave','cuit','direccion','localidad','photo_img']
     base_permissions = ['can_show', 'can_list', 'can_edit']
-
+    edit_template = "editarempresa.html"
+    validators_columns ={
+        'cuit':[InputRequired(),cuitvalidatorProveedores]
+    }
 
 
 class CompaniaTarjetaview(ModelView):
@@ -219,7 +253,25 @@ class PrecioMdelview(AuditedModelView):
 
         else:
             return self.response(400, message="error")
-
+    class_permission_name = "PrecioMdelviewip"
+    method_permission_name = {
+        'add': 'access',
+        'delete': 'access',
+        'download': 'access',
+        'edit': 'access',
+        'list': 'access',
+        'muldelete': 'access',
+        'show': 'access',
+        'api': 'access',
+        'api_column_add': 'access',
+        'api_column_edit': 'access',
+        'api_create': 'access',
+        'api_delete': 'access',
+        'api_get': 'access',
+        'api_read': 'access',
+        'api_readvalues': 'access',
+        'api_update': 'access'
+    }
 class ReportesView(BaseView):
     default_view = 'reportes'
 
@@ -241,6 +293,22 @@ class RenglonVentas(ModelView):
     datamodel = SQLAInterface(Renglon)
     list_columns = ['producto', 'precioVenta', 'cantidad']
     edit_columns = ['producto', 'precioVenta', 'cantidad']
+class RenglonComprasView(ModelView):
+    datamodel = SQLAInterface(RenglonCompras)
+    label_columns = {'fecha_vencimiento':'Fecha de Vencimiento'}
+    list_columns = ['producto', 'precioCompra', 'cantidad','descuento','fecha_vencimiento']
+    edit_columns = ['fecha_vencimiento']
+    base_permissions = ['can_edit','can_list']
+    related_views = [super.__class__]
+    edit_template = 'appbuilder/general/model/edit_cascade.html'
+    edit_form_extra_fields = {
+        'fecha_vencimiento':    DateField('Fecha de Vencimiento',
+                                          widget= DateTimePickerWidget(),validators=[InputRequired(),fechavalidador] )
+    }
+    
+        
+
+
 def repre(self,labels=None,tabla=None,db=None):
     if labels!=None:
         self.labels=labels
@@ -269,7 +337,7 @@ def repre(self,labels=None,tabla=None,db=None):
 
 
             try:
-                if flt.column_name == "Estado" and value == "y":
+                if flt.column_name == "estado" and value == "y":
                     value = self.tabla().__class__.__name__ + " Realizada"
                 elif type(parse(value))==type(dt.now()) and flt.column_name=="fecha":
                     value=parse(value).strftime("%d/%m/%Y-%H:%M")
@@ -295,16 +363,17 @@ class VentaReportes(AuditedModelView):
     list_title = "Listado de Ventas"
     label_columns = {"formatofecha":"Fecha","totaliva":"Alicuota Iva","totalrender":"Total",'formadepago':'Forma de Pago','renglonesrender':'','estadorender':'Estado'}
     list_columns = ['cliente','totaliva',"percepcion", "totalrender", 'estadorender','formatofecha']
-    show_columns = ['cliente','totaliva',"percepcion", 'estadorender','formatofecha','renglonesrender']
+    show_columns = ['cliente','comprobante','totaliva',"percepcion", 'estadorender','formatofecha','renglonesrender']
     edit_columns = ['estado']
     base_order = ('fecha', 'dsc')
+
     #base_filters = [["id",FilterInFunction,tipoClave_queryventa],]
     base_permissions = ['can_show','can_list', 'can_edit','can_delete']
     #list_template = "reportes.html"
     #related_views = [RenglonVentas,MetododepagoVentas]
 
     #show_template = 'appbuilder/general/model/show_cascade.html'
-    show_template = "imprimirventa.html"
+    #show_template = "imprimirventa.html"
     list_widget = ListDownloadWidgetventa
 
     @expose('/csv', methods=['GET'])
@@ -329,7 +398,7 @@ class VentaReportes(AuditedModelView):
             ("cliente", "Cliente"),("condicionFrenteIva", "Cond. Frente Iva"),("fecha", "Fecha"),
             ("formadepago", "Forma de Pago"),("total", "Total"),
         )
-        generarReporte(titulo="Listado de ventas",cabecera=cabecera,buscar=Venta,nombre="Listado de ventas",datos=lst,filtros=self._filters)
+        generarReporte(titulo="Listado de ventas",cabecera=cabecera,buscar=Venta,nombre="Listado de ventas",datos=lst,filtros=self._filters,no_registros=count)
         return redirect(url_for('ReportesView.show_static_pdf',var="Listado de ventas" ))
 
 
@@ -339,12 +408,15 @@ class CompraReportes(AuditedModelView):
     datamodel = SQLAInterface(Compra)
     list_widget =ListDownloadWidgetcompra
     list_title = "Listado de Compras"
-    label_columns = {'renglonesrender':'',"totaliva":"Alicuota Iva", 'estadorender':'Estado','formatofecha':'Fecha',"percepcion":"Percepcion %"}
-    list_columns = ['proveedor',"totaliva", "total", 'estadorender', 'formadepago','formatofecha',"percepcion"]
-    show_columns = ['proveedor',"totaliva", 'total', 'estadorender','formadepago','formatofecha',"percepcion",'renglonesrender']
+    label_columns = {'formadepago':'Forma de Pago','formadepago.Metodo':'Forma de Pago','renglonesrender':'',"totaliva":"Alicuota Iva", 'estadorender':'Estado','formatofecha':'Fecha',"percepcion":"Percepcion %"}
+    list_columns = ['proveedor',"totaliva", "total", 'estadorender', 'formadepago.Metodo','formatofecha',"percepcion"]
+    show_columns = ['proveedor',"totaliva", 'total', 'estadorender','formadepago.Metodo','formatofecha',"percepcion",'renglonesrender']
     edit_columns = ['estado']
+    search_columns = ['proveedor',"totaliva", "total", 'estado', 'formadepago','fecha',"percepcion"]
     base_order = ('fecha', 'dsc')
-    base_permissions = ['can_show','can_list', 'can_edit','can_delete']
+    base_permissions = ['can_show','can_list', 'can_edit','can_delete','can_download_pdf']
+    related_views = [RenglonComprasView]
+
 
 
 
@@ -371,7 +443,7 @@ class CompraReportes(AuditedModelView):
         print( filtros.__repr__(self.label_columns,Compra))
 
 
-        generarReporte(titulo="Listado de Compras",cabecera=cabecera,buscar=Compra,nombre="Listado de Compras",datos=lst,filtros=self._filters)
+        generarReporte(titulo="Listado de Compras",cabecera=cabecera,buscar=Compra,nombre="Listado de Compras",datos=lst,filtros=self._filters,no_registros=count)
         return redirect(url_for('ReportesView.show_static_pdf',var="Listado de Compras" ))
 
 
@@ -386,19 +458,20 @@ class RenglonVenta(Form):
     Fecha = DateField('Fecha', format='%d-%m-%Y %H:%M:%S', default=dt.now(), render_kw={'disabled': ''},
                       validators=[DataRequired()])
     producto = SelectField('Producto', coerce=str, choices=[(p.id, p) for p in db.session.query(Productos)])
-    cantidad = IntegerField('Cantidad', widget=BS3TextFieldWidget())
+    cantidad = IntegerField('Cantidad', widget=BS3TextFieldWidget(), render_kw={'type': "number"})
     metodo = SelectField('Forma de Pago', coerce=str, choices=[(p.id, p) for p in db.session.query(FormadePago)])
     #condicionfrenteiva= SelectField('Condicion Frente Iva', coerce=TipoClaves.coerce, choices=TipoClaves.choices() )
-    Total = FloatField('Total $', render_kw={'disabled': '', 'type':"number"},
+    total = FloatField('Total $', render_kw={'disabled': ''},
                        validators=[DataRequired()], default=0)
     numeroCupon = IntegerField('Numero de cupon', widget=BS3TextFieldWidget())
     companiaTarjeta = SelectField('Compania de la Tarjeta', coerce=str, choices=[(p.id, p) for p in db.session.query(CompaniaTarjeta)] )
     credito = BooleanField("Credito", default=False)
-    descuento = FloatField("Descuento %", render_kw={ 'type':"number"}, default=0)
-    percepcion = FloatField("Percepcion %", render_kw={ 'type':"number", 'disabled':''}, default=0)
+    descuento = FloatField("Descuento %",  default=0)
+    percepcion = FloatField("Percepcion %", render_kw={'disabled':''}, default=0)
     cuotas = FloatField("Cuotas", render_kw={ 'type':"number"}, default=0)
     totalneto = FloatField("Total Neto $", render_kw={'disabled': ''},default=0)
     totaliva= FloatField("Total IVA $", render_kw={ 'disabled': '','type':"number"}, default=0)
+    comprobante = FloatField("Comprobante", render_kw={'type': "number"}, default=0)
 
 #creo clase manejadora de la vista de realizar venta
 class VentaView(BaseView):
@@ -427,7 +500,10 @@ class VentaView(BaseView):
         self.update_redirect()
         #renderizo el html y le paso el formulario
         return render_template('venta.html', base_template=appbuilder.base_template, appbuilder=appbuilder, form2=form2,responsableinscripto=responsableinscripto)
-
+    class_permission_name = "ventaclass"
+    method_permission_name = {
+        'venta': 'access'
+    }
 
 
 
@@ -438,7 +514,7 @@ class RenglonCompra(Form):
     producto = SelectField('Producto', coerce=str, choices=[(p.id, p) for p in db.session.query(Productos)])
     cantidad = IntegerField('Cantidad', render_kw={ 'type':"number"}, widget=BS3TextFieldWidget())
     metodo = SelectField('Metodo de Pago', coerce=str, choices=[(p.id, p) for p in db.session.query(FormadePago)])
-    Total = FloatField('Total', render_kw={'disabled': ''},
+    total = FloatField('Total', render_kw={'disabled': ''},
                        validators=[DataRequired()], default=0)
     #condicionfrenteiva = SelectField('Condicion Frente Iva', coerce=TipoClaves.coerce, choices=TipoClaves.choices())
     numeroCupon = IntegerField('Numero de cupon', render_kw={ 'type':"number"}, widget=BS3TextFieldWidget())
@@ -448,8 +524,10 @@ class RenglonCompra(Form):
     percepcion = IntegerField("Percepcion %", render_kw={ 'type':"number"}, default=0)
     descuento = FloatField("Descuento %", render_kw={ 'type':"number"}, default=0)
     totalneto = FloatField("Total Neto $", render_kw={'disabled': ''},default=0)
-    preciocompra = FloatField("Precio de Compra", render_kw={ 'type':"number"}, default=0)
+    preciocompra = FloatField("Precio de Compra", default=0)
     totaliva= FloatField("Total IVA $", render_kw={ 'disabled': '','type':"number"}, default=0)
+    fecha = DateField("Fecha",widget=DateTimePickerWidget())
+    comprobante = FloatField("Comprobante", render_kw={'type': "number"}, default=0)
 
 #creo clase manejadora de la vista de realizar compra
 class CompraView(BaseView):
@@ -499,11 +577,12 @@ class ProveedorView(AuditedModelView):
     related_views = [Compra]
     #le digo los permisos
 
-    base_permissions =['can_list','can_add','can_edit', 'can_delete' ]
+    base_permissions =['can_list','can_add','can_edit', 'can_delete' ,'can_show']
     label_columns = {'nombre':'Nombre/Denominacion','apellido':'Apellido/Razon Social','tipoClave': 'Cond. Frente Iva','estadorender': 'Estado',"tipoPersona":"Tipo de Persona"}
     add_columns = ["tipoPersona",'tipoClave','cuit', 'nombre', 'apellido', 'correo','direccion','localidad']
     list_columns = ["tipoPersona",'cuit', 'nombre', 'apellido','correo' ,'tipoClave','estadorender']
-    edit_columns = ["tipoPersona",'tipoClave','cuit', 'nombre', 'apellido', 'correo','direccion','localidad']
+    edit_columns = ["tipoPersona",'tipoClave','cuit', 'nombre', 'apellido', 'correo','direccion','localidad','estado']
+    show_columns =  ["tipoPersona",'tipoClave','cuit', 'nombre', 'apellido', 'correo','direccion','localidad','estadorender']
     add_template = "addproveedor.html"
     edit_template = "editproveedor.html"
 
@@ -527,7 +606,8 @@ class ProveedorView(AuditedModelView):
                        )
     }
 
-from formulariocliente import ClienteForm
+
+
 #creo clase de el manejador de clientes
 class ClientesView(AuditedModelView):
     datamodel = SQLAInterface(Clientes)
@@ -587,7 +667,7 @@ class ClientesView(AuditedModelView):
 
 
     validators_columns ={
-        'cuit':[InputRequired(),cuitvalidator]
+        'documento':[InputRequired(),cuitvalidator("tipoDocumento")]
     }
 
 
@@ -614,10 +694,14 @@ appbuilder.add_view(VentaReportes, "Reporte Ventas",icon="fa-save", category='Ve
 appbuilder.add_view(CompraReportes, "Reporte Compras",icon="fa-save", category='Compras' )
 
 appbuilder.add_view(Sistemaview,'Datos Empresa',category='Security')
+appbuilder.add_view(ModulosInteligentesView,'Modulos Inteligentes',category='Security')
 
 appbuilder.add_view_no_menu(Empresaview)
 appbuilder.add_view_no_menu(CompaniaTarjetaview)
-from .auditoria import *
 appbuilder.add_view_no_menu(RenglonVentas)
+appbuilder.add_view_no_menu(RenglonComprasView)
+from whastsapp import smsreply
+appbuilder.add_view_no_menu(smsreply)
+
 
 

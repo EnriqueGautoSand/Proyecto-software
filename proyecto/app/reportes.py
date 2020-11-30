@@ -40,7 +40,7 @@ class reportePDF(object):
        archivo PDF."""
 
 
-    def __init__(self, titulo, cabecera, datos, nombrePDF,nombreautor,filtros):
+    def __init__(self, titulo, cabecera, datos, nombrePDF,nombreautor,filtros,no_registros):
         super(reportePDF, self).__init__()
         self.titulo = titulo
         self.cabecera = cabecera
@@ -49,7 +49,10 @@ class reportePDF(object):
         self.nombreautor=nombreautor
         self.filtros = filtros
         self.estilos = getSampleStyleSheet()
-        self.direccion=db.session.query(EmpresaDatos).first().direccion
+        self.empresadatos=db.session.query(EmpresaDatos).first()
+        self.direccion=self.empresadatos.direccion
+        self.localidad=self.empresadatos.localidad
+        self.no_registros=no_registros
 
 
 
@@ -72,7 +75,10 @@ class reportePDF(object):
             anchura, altura = escribirfiltros.wrap(archivoPDF.width, archivoPDF.topMargin)
             escribirfiltros.drawOn(canvas, archivoPDF.leftMargin, 680)
         if self.direccion != None:
-            escribirdireccion = Paragraph(self.direccion, estilos["Normal"])
+            localidad=""
+            if self.localidad!= None:
+                localidad=self.localidad.__repr__()
+            escribirdireccion = Paragraph(self.direccion+" "+localidad, estilos["Normal"])
             anchura, altura = escribirdireccion.wrap(archivoPDF.width, archivoPDF.topMargin)
             escribirdireccion.drawOn(canvas, archivoPDF.leftMargin, 705)
 
@@ -82,7 +88,6 @@ class reportePDF(object):
 
 
         if db.session.query(EmpresaDatos).first().logo!= None:
-
             fn = os.path.join(os.path.dirname(os.path.abspath(__file__)),"static\\uploads\\"+db.session.query(EmpresaDatos).first().logo)
             print(os.path.dirname(os.path.abspath(__file__)))
             print(os.getcwd() + url_for('static',filename='uploads/logo_thumb.jpg'))
@@ -97,6 +102,11 @@ class reportePDF(object):
         piePagina = Paragraph(largo,alineacion)
         anchura, altura = piePagina.wrap(archivoPDF.width, archivoPDF.topMargin)
         piePagina.drawOn(canvas, archivoPDF.leftMargin,720)
+        #numero de registros devueltos
+        largo = f"Registros devueltos: {self.no_registros}"
+        piePagina = Paragraph(largo,alineacion)
+        anchura, altura = piePagina.wrap(archivoPDF.width, archivoPDF.topMargin)
+        piePagina.drawOn(canvas, archivoPDF.leftMargin,705)
 
         # Suelta el lienzo
         canvas.restoreState()
@@ -195,8 +205,8 @@ class numeracionPaginas(canvas.Canvas):
                              "Página {} de {}".format(self._pageNumber, conteoPaginas))
 
     # ===================== FUNCIÓN generarReporte =====================
-def generarReporte(titulo,cabecera,buscar,nombre,datos=None,filtros=None):
-    """Ejecutar consulta a la base de datos (DB_USUARIOS) y llamar la función Exportar, la
+def generarReporte(titulo,cabecera,buscar,nombre,datos=None,filtros=None,no_registros=None):
+    """Ejecutar consulta a la base de datos ( y llamar la función Exportar, la
        cuál esta en la clase reportePDF, a esta clase le pasamos el título de la tabla, la
        cabecera y los datos que llevará."""
     from app import db
@@ -208,6 +218,11 @@ def generarReporte(titulo,cabecera,buscar,nombre,datos=None,filtros=None):
     # )
     total=0
     def row2dict(row):
+        """
+        configuro la fila con el formato adecuado
+        :param row: es la fila, objeto
+        :return: es un dicionario
+        """
         d={}
         claves, nombres = zip(*[[k, n] for k, n in cabecera])
         for titulo in claves:
@@ -219,7 +234,10 @@ def generarReporte(titulo,cabecera,buscar,nombre,datos=None,filtros=None):
                 print( fecha,d[titulo], type(fecha) )
                 d[titulo] =fecha
             if titulo == "total":
-                d[titulo] = "$"+str(getattr(row,titulo))
+                if getattr(row, "estado"):
+                    d[titulo] = "$"+str(getattr(row,titulo))
+                else:
+                    d[titulo] = "Anulado"
             elif titulo == "condicionFrenteIva" or titulo== "formadepago" :
                 print(buscar().__class__.__name__, titulo)
                 if buscar().__class__.__name__ == "Venta" or titulo == "condicionFrenteIva" :
@@ -231,9 +249,12 @@ def generarReporte(titulo,cabecera,buscar,nombre,datos=None,filtros=None):
 
         return d
     if datos!=None:
+        #recorro los datos
         for u in datos:
-
-            total += u.total
+            if u.estado:
+                total += u.total
+            else:
+                total += 0
             lista.append(row2dict(u))
     else:
         for u in db.session.query(buscar).all():
@@ -244,11 +265,12 @@ def generarReporte(titulo,cabecera,buscar,nombre,datos=None,filtros=None):
     claves, nombres = zip(*[[k, n] for k, n in cabecera])
     print(claves)
     d = {}
+    #configuro el total de los totales
     for clave in claves:
         if clave==claves[-2]:
             d[clave] = "Total"
         elif clave==claves[-1]:
-            d[clave] = '$'+str(total)
+            d[clave] = '$'+str(format(total, '.2f'))
         else:
             d[clave] = ""
     lista.append(d)
@@ -262,7 +284,7 @@ def generarReporte(titulo,cabecera,buscar,nombre,datos=None,filtros=None):
     nombrePDF = "./app/static/docs/"+ nombre +".pdf"
 
     nombreautor=db.session.query(EmpresaDatos).first().compania
-    reporte = reportePDF(titulo, cabecera, lista, nombrePDF,nombreautor,filtros).Exportar()
+    reporte = reportePDF(titulo, cabecera, lista, nombrePDF,nombreautor,filtros,no_registros).Exportar()
     print(reporte)
 
 

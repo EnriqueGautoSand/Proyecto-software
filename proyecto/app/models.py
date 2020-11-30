@@ -1,6 +1,6 @@
 
 import flask_appbuilder
-from sqlalchemy import Column, Integer, String, ForeignKey,Float,Date, Boolean, UniqueConstraint
+from sqlalchemy import Column, Integer, String, ForeignKey,Float,Date, Boolean, UniqueConstraint,BIGINT
 from sqlalchemy.orm import relationship
 from flask_appbuilder.models.decorators import renders
 from flask_appbuilder.models.mixins import  ImageColumn
@@ -14,6 +14,24 @@ from flask_appbuilder import Model
 from . import appbuilder, db
 
 print(flask_appbuilder.security.sqla.models)
+class ModulosInteligentes(Model):
+    """
+    # creo clase que sera mapeada como la tabla ModulosInteligentes
+    """
+    __tablename__ = 'modulos_inteligentes'
+    id = Column(Integer, primary_key=True)
+    modulo_pedido = Column(Boolean, default=True)
+    dias_pedido = Column(Integer, default=7)
+    dias_atras = Column(Integer,default=30)
+    porcentaje_ventas = Column(Float, default=80)
+    fecha_vencimiento=Column(Integer,default=7)
+
+    modulo_oferta = Column(Boolean, default=True)
+    dias_oferta= Column(Integer, default=7)
+    fecha_vencimiento_oferta = Column(Integer, default=7)
+
+
+
 
 
 class EmpresaDatos(Model):
@@ -28,6 +46,8 @@ class EmpresaDatos(Model):
     logo = Column(ImageColumn(size=(300, 300, True), thumbnail_size=(30, 30, True)))
     tipoClave_id = Column(Integer, ForeignKey('tiposClave.id'), nullable=False,default=3)
     tipoClave = relationship("TipoClaves")
+    idlocalidad = Column(Integer, ForeignKey('localidad.idlocalidad'), nullable=True)
+    localidad = relationship("Localidad")
     __table_args__ = (
         UniqueConstraint("compania","direccion"),
     )
@@ -243,7 +263,10 @@ class Compra(Model):
     datosFormaPagos_id = Column(Integer, ForeignKey('datosFormaPagosCompra.id'), nullable=True)
     datosFormaPagos = relationship("DatosFormaPagosCompra")
     percepcion = Column(Float,default=0)
-
+    comprobante = Column(BIGINT, nullable=False, unique=True)
+    __table_args__ = (
+        UniqueConstraint("comprobante","proveedor_id"),
+    )
     # defino como se representara al ser llamado
     def __repr__(self):
         return f'{self.proveedor} {self.total} {self.estado} {self.fecha}'
@@ -251,7 +274,7 @@ class Compra(Model):
     def condicionFrenteIva(self):
         return self.proveedor.tipoClave
 
-    @renders('formatofecha')
+    @renders('fecha')
     def formatofecha(self):
          return Markup('<b> ' + str(self.fecha.strftime(" %d-%m-%Y ")) + '</b>')
     @renders('estado')
@@ -295,12 +318,9 @@ class Venta(Model):
     cliente_id = Column(Integer, ForeignKey('clientes.id'), nullable=False)
     cliente = relationship("Clientes")
     percepcion = Column(Float)
-    #formadepago_id = Column(Integer, ForeignKey('formadepago.id'), nullable=False)
-    #formadepago = relationship("FormadePago")
-    #datosFormaPagos_id = Column(Integer, ForeignKey('datosFormaPagos.id'), nullable=True)
-    #datosFormaPagos = relationship("DatosFormaPagos").
+    comprobante = Column(BIGINT, nullable=False, unique=True)
 
-    @renders('formatofecha')
+    @renders('fecha')
     def formatofecha(self):
          return Markup('<b> ' + str(self.fecha.strftime(" %d-%m-%Y ")) + '</b>')
     def condicionFrenteIva(self):
@@ -476,6 +496,7 @@ class RenglonCompras(Model):
     producto_id = Column(Integer, ForeignKey('productos.id'), nullable=False)
     producto = relationship("Productos")
     descuento=Column(Float)
+    fecha_vencimiento = Column(Date)
 
     # defino como se representara al ser llamado
     def __repr__(self):

@@ -60,33 +60,110 @@ AUTH_ROLE_PUBLIC = 'Public'
 FAB_ROLES = {
     "Gerente": [
         ["CompraReportes",'can_show'],["CompraReportes",'can_list'],
-        ["CompraReportes", 'can_edit'],
+        ["CompraReportes", 'can_edit'],["CompraReportes", 'can_download_pdf'],
         ["compraclass","can_access"],
         ["productocrud", "can_access"],["comprarepo","can_access"],
         ["Productos", "menu_access"],
     ["Reporte Compras", "menu_access"],
     ["Compra", "menu_access"],
         ["Security","menu_access"],
-        ["UserInfoEditView","can_access" ],["UserInfoEditView","can_edit" ],["MyUserDBModelView",'can_edit'],
-["UserInfoEditView","can_list" ],["ResetMyPasswordView","can_this_form_post"],["ResetMyPasswordView","can_this_form_get"],
+       # ["UserInfoEditView","can_access" ],["MyUserDBModelView",'can_edit'],
+#["UserInfoEditView","can_list" ],["ResetMyPasswordView","can_this_form_post"],["ResetMyPasswordView","can_this_form_get"],
 
-["MyUserDBModelView",'can_add']
-        ,["MyUserDBModelView",'can_list']
-        ,["MyUserDBModelView",'can_show'],
+
 ["List Users","menu_access"],
 ["Proveedor","menu_access"],
+    ["ProveedorView","can_access"],
+["ProveedorView",'can_list'],
+["ProveedorView",'can_add'],
+["ProveedorView",'can_delete'],
+["ProveedorView",'can_show'],
+["ProveedorView",'can_edit'],
 ["Datos Empresa","menu_access"],["tarjeta","can_access"],
         ["Empresaview",'can_show'],["Empresaview",'can_list'],
         ["Empresaview", 'can_edit'],
 ["crudempresa","can_access"],
 ["RegisterUserModelView",'can_show'],["RegisterUserModelView",'can_list'],
 ["RegisterUserModelView",'can_delete'],
-        ["RegisterUserModelView","can_access" ]
-#["Audit Events","menu_access"]
+        ["RegisterUserModelView","can_access" ],
+["Clientes","menu_access"],
+["ClientesView",'can_list'],
+["ClientesView",'can_add'],
+["ClientesView",'can_delete'],
+["ClientesView",'can_show'],
+["Auditoria","menu_access"],
+["AuditLogView",'can_show'],
+["AuditLogView",'can_list'],
+["ReportesView" ,"can_show_static_pdf"],
+["PrecioMdelviewip",'can_access'],
+["Control de Precios","menu_access"],
+["MyUserDBModelView","can_userinfo"],
+["MyUserDBModelView","can_userinfoedit "],
+["MyUserDBModelView","can_this_form_post "],
+["MyUserDBModelView","can_this_form_post "],
+["MyUserDBModelView",'can_add'],
+ ["MyUserDBModelView",'can_list'],
+["MyUserDBModelView",'can_show'],
+["MyUserDBModelView",'can_edit'],
+#habilitar boton de rest pasword
+["MyUserDBModelView",'resetpasswords'],
+["MyUserDBModelView",'resetmypassword'],
+["MyUserDBModelView",'userinfoedit'],
+["ResetMyPasswordView","can_this_form_post"],
+["ResetMyPasswordView","can_this_form_get"],
+["UserInfoEditView","can_this_form_get"],
+["UserInfoEditView","can_this_form_post"],
+["UserInfoEditView","can_edit" ],
+#ventas
+["Reporte Ventas",'menu_access'],
+["VentaView",'can_access'],
+["VentaReportes",'can_list'],
+["VentaReportes",'can_delete'],
+["VentaReportes",'can_show'],
+["VentaReportes",'can_edit'],
+["Ventas","menu_access"],
+["ReportesView",'can_show_static_pdf'],
+    #Modulos inteligentes
+['Modulos Inteligentes',"menu_access"],
+ ["ModulosInteligentesView",'can_list'],
+["ModulosInteligentesView",'can_show'],
+["ModulosInteligentesView",'can_edit']
+
+    ],
+"Vendedor": [
+["MyUserDBModelView","can_userinfo"],
+["MyUserDBModelView","can_userinfoedit "],
+["MyUserDBModelView","can_this_form_post "],
+["MyUserDBModelView","can_this_form_post "],
+["MyUserDBModelView",'can_add'],
+ ["MyUserDBModelView",'can_list'],
+["MyUserDBModelView",'can_show'],
+["MyUserDBModelView",'can_edit'],
+["MyUserDBModelView",'resetpasswords'],
+["MyUserDBModelView",'resetmypassword'],
+["MyUserDBModelView",'userinfoedit'],
+#permisos para ir a los clientes
+["Clientes","menu_access"],
+["ClientesView",'can_list'],
+["ClientesView",'can_add'],
+["ClientesView",'can_show'],
+#permisos para vender
+["Realizar Ventas","menu_access"],
+["Reporte Ventas","menu_access"],
+["VentaView",'can_access'],
+["ventaclass",'can_access'],
+["Ventas","menu_access"],
+["VentaReportes",'can_list'],
+["VentaReportes",'can_show'],
 
 
 
-    ]
+
+
+
+]
+
+
 
 }
 

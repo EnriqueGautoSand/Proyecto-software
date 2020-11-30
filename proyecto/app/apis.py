@@ -7,6 +7,7 @@ from .models import *
 from flask import g
 from fab_addon_audit.views import AuditedModelView
 from .modelo.ModelView import Modelovista
+import psycopg2
 from flask import jsonify
 import json
 AuditedModelView.__bases__=(Modelovista,)
@@ -92,12 +93,13 @@ class ComprasApi(BaseApi,AuditedModelView):
             print(data)
             from .views import CompraReportes
             self.list_columns = CompraReportes.list_columns
+            self.show_columns = CompraReportes.show_columns
             try:
                 if "metododePago" in data and "proveedor" in data and "total" in data:
                     print(data["total"])
                     # creo la compra y agrego forma de pago
                     if int(data["metododePago"]) == 1:
-                        compra=Compra(percepcion=float(data["percepcion"]),totaliva=float(data["totaliva"]),totalNeto=float(data["totalneto"]),estado=True,total=float(data["total"]),proveedor_id=data["proveedor"],formadepago_id=data["metododePago"])
+                        compra=Compra(comprobante=float(data["comprobante"]),percepcion=float(data["percepcion"]),totaliva=float(data["totaliva"]),totalNeto=float(data["totalneto"]),estado=True,total=float(data["total"]),proveedor_id=data["proveedor"],formadepago_id=data["metododePago"])
                     else:
                         #en caso de que se hay apagado con tarjeta asocio los datos de la tarjeta a la compra
                         datosFormaPagos=DatosFormaPagosCompra(numeroCupon=data["numeroCupon"],
@@ -106,7 +108,7 @@ class ComprasApi(BaseApi,AuditedModelView):
                                               cuotas=data["cuotas"],formadepago_id=data["metododePago"]
                                               )
 
-                        compra = Compra(estado=True,totalNeto=float(data["totalneto"]),totaliva=float(data["totaliva"]),
+                        compra = Compra(comprobante=float(data["comprobante"]),estado=True,totalNeto=float(data["totalneto"]),totaliva=float(data["totaliva"]),
                                       total=float(data["total"]), proveedor_id=data["proveedor"],formadepago_id=data["metododePago"],
                                       datosFormaPagos=datosFormaPagos,percepcion=float(data["percepcion"]))
 
@@ -127,8 +129,10 @@ class ComprasApi(BaseApi,AuditedModelView):
                             db.session.add(RenglonCompras(precioCompra=p["precio"] , descuento=p["descuento"], cantidad=p["cantidad"],compra=compra,  producto=producto))
 
                         #Guardamos
+
                         db.session.commit()
                         self.post_add(compra)
+
                         print("compra Guardada")
                     else:
                         db.session.rollback()
@@ -170,7 +174,9 @@ class VentasApi(BaseApi,AuditedModelView):
         """
         if request.method == "POST":
             #verifico si soy responsable inscripto
-            responsableinscripto = str(db.session.query(EmpresaDatos).first().tipoClave) == "Responsable Inscripto"
+            tipoclave=str(db.session.query(EmpresaDatos).first().tipoClave)
+            responsableinscripto = tipoclave == "Responsable Inscripto"
+            monotributista= tipoclave == "Monotributista"
             # paso los datos de la peticion a json
             data = request.json
             #Solicito a ala base de datos el producto
@@ -178,6 +184,8 @@ class VentasApi(BaseApi,AuditedModelView):
             #si soy responsable y el que me compra no es responsable le agrego el iva en el precio
             if data["venta"] and data['cliente_condfrenteiva']!="Responsable Inscripto" and responsableinscripto:
                 return self.response(200, message=format(p.precio*(1+(p.iva/100)), '.2f') )
+            if data["venta"] and monotributista:
+                return self.response(200, message=format(p.precio * (1 + (p.iva / 100)), '.2f'))
             # retorno el precio del producto
             return self.response(200, message=format(p.precio, '.2f'))
         return self.response(400, message="error")
@@ -188,6 +196,7 @@ class VentasApi(BaseApi,AuditedModelView):
         """
         from .views import VentaReportes
         self.list_columns=VentaReportes.list_columns
+        self.show_columns =VentaReportes.show_columns
         if request.method == "POST":
             #paso los datos de la peticion a json
             data = request.json
@@ -197,7 +206,7 @@ class VentasApi(BaseApi,AuditedModelView):
                     print(data["total"])
                     # creo la venta
 
-                    venta=Venta(estado=True,percepcion=float(data["percepcion"]),totaliva=float(data["totaliva"]),totalNeto=float(data["totalneto"]), total=float(data["total"])
+                    venta=Venta(comprobante=float(data["comprobante"]),estado=True,percepcion=float(data["percepcion"]),totaliva=float(data["totaliva"]),totalNeto=float(data["totalneto"]), total=float(data["total"])
                                 ,cliente_id=int(data["cliente"]))
                     db.session.add(venta)
                     db.session.flush()
@@ -246,6 +255,12 @@ class VentasApi(BaseApi,AuditedModelView):
 
 
                 return self.response(200, message={'status':"sucess" ,'idventa':venta.id  })
+            except psycopg2.Error as e:
+                # get error code
+                error = e.pgcode
+                if error==23505:
+                    return self.response(400, message="Error el comprobante es repetido")
+
             except Exception as e:
                 print(e)
                 print(str(e))

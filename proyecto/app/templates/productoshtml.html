@@ -6,8 +6,11 @@
     <script>
     
         function cargarporcentaje(){
-        var porcentaje = prompt("Inserte el % a sumar o restar", "+10");
+        var porcentaje = prompt("Inserte el numero de  % a sumar o restar");
         console.log(typeof porcentaje, porcentaje == "")
+            if (porcentaje === null) {
+              return; //break out of the function early
+          }
 
         if ( !((parseFloat(porcentaje)>-100)) ||! parseFloat(porcentaje)|| porcentaje == "") {
           if ( porcentaje == ""){alert("No ha ingresado Nada !!!")}

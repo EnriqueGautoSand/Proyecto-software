@@ -3,7 +3,9 @@
 {% block head_js %}
     {{ super() }}
     {{ JSGlue.include() }}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
     <script src="https://kit.fontawesome.com/04f1870aa2.js" crossorigin="anonymous"></script>
+
 {% endblock %}
      {% block messages %}
         {% with messages = get_flashed_messages(category_filter=["nuevocliente"], with_categories=true) %}
@@ -73,6 +75,7 @@
 </table>
 </form >
 <table class="table table-bordered" id="neto">
+
         <tr>
         <td style="float:right: " align="right"> 
           {{ form2.totalneto.label }}
@@ -93,12 +96,15 @@
 <table class="table table-bordered" id="finalizar">
 
         <td style="float:right: " align="right"> 
-
+ 
+         {{ form2.comprobante.label }}
+            {{ form2.comprobante}}
+ 
 
             {{ form2.metodo.label }}
             {{ form2.metodo}}     
-        {{ form2.Total.label }}<b>$</b>
-            {{ form2.Total}}     </td >
+        {{ form2.total.label }}<b>$</b>
+            {{ form2.total}}     </td >
         <td id="botonagregar"align="center"> </td >
 
 </table>
@@ -135,6 +141,7 @@
 
 {% block tail_js %}
     {{ super() }}
+    <script src="{{url_for('static',filename='js/jquery.inputmask.js')}}"></script>
  <script src="{{url_for('static',filename='js/condfrenteivanegocio.js')}}"></script>
     <script src="{{url_for('static',filename='js/compra.js')}}"></script>
     <link href="{{url_for('static',filename='appbuilder/select2/select2.css')}}"rel="stylesheet"/>
@@ -147,10 +154,12 @@
          $(document).ready(function() { $("#proveedor").select2(); });
          $(document).ready(function() { $("#metodo").select2(); });
          $(document).ready(function() { $("#condicionfrenteiva").select2(); });
-
-
-
+          $('#cantidad').mask('00000000');
+          $('#comprobante').mask('0000000000000');
+        $("#total").inputmask({ 'alias': 'decimal', 'autoGroup': true, 'digits': 2, 'digitsOptional': false, 'placeholder': '0.00', rightAlign : false,clearMaskOnLostFocus: !1 });
+        $("#preciocompra").inputmask({ 'alias': 'decimal', 'autoGroup': true, 'digits': 2, 'digitsOptional': false, 'placeholder': '0.00', rightAlign : false,clearMaskOnLostFocus: !1 });
 
     </script>
+
 
 {% endblock %}

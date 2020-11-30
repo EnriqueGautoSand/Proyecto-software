@@ -126,7 +126,7 @@ var listaProductos = new Set();
 var resp
 var totalFila=0
 var totalColuma=0
-var totalhtml=document.getElementById("Total") 
+var totalhtml=document.getElementById("total") 
 
 var jsonProductos={}
 var renglonseleccionado=NaN
@@ -333,6 +333,7 @@ boton.disabled=true
 			jsonventa["total"]=parseFloat(totalhtml.value);
 			jsonventa["totaliva"]=parseFloat(totaliva.value);
 			jsonventa["percepcion"]=parseFloat(percepcion.value);
+			jsonventa["comprobante"]=parseFloat(comprobante.value).toFixed(2);
 			//jsonventa["condicionfrenteiva"]=condicionfrenteiva.value
 	if (metododePago.value==1){
 			jsonventa["metododePago"]=metododePago.value;
@@ -366,6 +367,11 @@ boton.disabled=false
 }
 
 boton.onclick= function() {console.log('largo json ',jQuery.isEmptyObject(jsonProductos))
+						if (comprobante.value==0){
+							alert("ingrese el numero de comprobante!!!")
+							return;
+						}
+
 						if (jQuery.isEmptyObject(jsonProductos)){
 								alert("No hay poductos asociados a esta venta!!!")
 

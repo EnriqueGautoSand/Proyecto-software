@@ -11,8 +11,14 @@ return fetch(location.origin+Flask.url_for("VentasApi.apiusuario"))
     if (!responsableinscripto){
 percepcion.disabled=true
 percepcion.value=0}
+else{
+	percepcion.disabled=false
+}
+
     if (JSON.parse(proveedor.value).tipoclave=="Responsable Inscripto" ){
 percepcion.disabled=false}
+
+
 	})
 
 

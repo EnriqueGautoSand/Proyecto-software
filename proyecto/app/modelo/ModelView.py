@@ -37,7 +37,10 @@ class Modelovista(ModelView):
                     setattr(item, key, getattr(item, key).upper())
                 if type(getattr(item, key)) == type(10.0):
                     setattr(item, key, format(getattr(item, key), '.2f'))
-
+    def pre_pre_update(self, item):
+        self.preitem=item
+        print('prepre update',item)
+        return self.preitem
 
     def _edit(self, pk):
         """

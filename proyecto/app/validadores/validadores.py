@@ -1,5 +1,8 @@
 from wtforms.validators import ValidationError
-
+from datetime import datetime as dt
+def fechavalidador(form, field):
+    if field.data<dt.now().date():
+        raise ValidationError(f'Fecha de vencimiento no valido, no debe ser menor a la fecha actual')
 def cuitvalidator(dato):
     def _cuitvalidator(form, field):
 
@@ -7,6 +10,7 @@ def cuitvalidator(dato):
         sCUIT=""
         for i in arrsinguion:
             sCUIT+=i
+
         print(type(form[dato].data),form[dato].data,type(form[dato].data))
         if str(form[dato].data) == "CUIT":
             if len(sCUIT)==11 :
@@ -29,9 +33,9 @@ def cuitvalidator(dato):
                     iResult = 9
 
                 if iResult != float(aCUIT[10]):
-                    raise ValidationError(f'{field.name.capitalize()} no valido')
+                    raise ValidationError(f'{form[dato].data} no valido')
             else:
-                raise ValidationError(f'{field.name.capitalize()} incompleto!!! El {field.name.capitalize()} debe estar compuesto por 11 numeros y 2 guiones')
+                raise ValidationError(f'{form[dato].data} incompleto!!! El {form[dato].data} debe estar compuesto por 11 numeros y 2 guiones')
 
 
 
