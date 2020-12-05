@@ -51,10 +51,10 @@ class ModulosInteligentesView(ModelView):
 
 
     edit_form_extra_fields = {
-        'dias_pedido': IntegerField('Dias Pedido', render_kw={'type': "number", 'min': '0'},
+        'dias_pedido': IntegerField('Días Pedido', render_kw={'type': "number", 'min': '0'},
                                    description="""Intervalo de cada cuantos dias se ejecutara el modulo de pedidos de presupuesto"""),
-        'dias_atras':  IntegerField('Dias Atras',  render_kw={'type': "number",'min':'0'},
-                                    description="""Numero de dias atras que mirara el modulo de pedidos de presupuesto 
+        'dias_atras':  IntegerField('Días Anteriores',  render_kw={'type': "number",'min':'0'},
+                                    description="""Numero de dias anteriores que mirara el modulo de pedidos de presupuesto 
                                                              para realizar sus calculos"""),
         'porcentaje_ventas':FloatField('Porcentaje de Ventas',  render_kw={'type': "number",'min':'0','max':'100','step':"0.01"},
                                     description=lazy_gettext("""Numero de porcentaje minimo de ventas respecto compras para
@@ -63,7 +63,7 @@ class ModulosInteligentesView(ModelView):
                                         render_kw={'type': "number", 'min': '0', 'max': '100'},
                                         description=lazy_gettext("""Numero de dias que quedan antes de que se venza un producto para 
                                                                 realizar un pedido de presupuesto""")),
-        'dias_oferta': IntegerField('Dias Oferta', render_kw={'type': "number", 'min': '0'},
+        'dias_oferta': IntegerField('Días Oferta', render_kw={'type': "number", 'min': '0'},
                                     description="""Intervalo de cada cuantos dias se ejecutara el modulo de ofertas por whatsapp"""),
         'fecha_vencimiento_oferta': IntegerField('Dias antes de vencer', render_kw={'type': "number", 'min': '0'},
                                     description="""Numero de dias que quedan antes de que se venza un producto para 
