@@ -23,7 +23,7 @@
 				document.querySelector("label[for='nombre']").innerText="Nombre"
 				for (i in tipoClave.options){
 						tipoClave.remove(i)}
-				fetch("http://localhost:8080/api/v1/clienteapi/condfisicacliente/")
+				fetch("http://localhost.localdomain:8080/api/v1/clienteapi/condfisicacliente/")
 						    .then(data=>data.json())
 						    .then(response =>{ console.log('Success:', JSON.parse(response.message))
 						    dictmes=JSON.parse(response.message)
@@ -38,7 +38,7 @@
 							$(tipoClave).change();
 							for (i in tipoDocumento.options){
 						tipoDocumento.remove(i)}
-						fetch("http://localhost:8080/api/v1/clienteapi/dnicliente/")
+						fetch("http://localhost.localdomain:8080/api/v1/clienteapi/dnicliente/")
 												    .then(data=>data.json())
 						    .then(response =>{ console.log('Success:', JSON.parse(response.message))
 						    dictmes=JSON.parse(response.message)
@@ -60,7 +60,7 @@
 			document.querySelector("label[for='nombre']").innerText="Denominacion"
 				for (i in tipoClave.options){
 						tipoClave.remove(i)}
-				fetch("http://localhost:8080/api/v1/clienteapi/condjuridicacliente/")
+				fetch("http://localhost.localdomain:8080/api/v1/clienteapi/condjuridicacliente/")
 						    .then(data=>data.json())
 						    .then(response =>{ console.log('Success:', JSON.parse(response.message))
 						    dictmes=JSON.parse(response.message)

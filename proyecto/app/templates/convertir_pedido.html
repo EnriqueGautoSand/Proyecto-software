@@ -1,0 +1,78 @@
+{% extends "appbuilder/base.html" %}
+{% block head_js %}
+    {{ super() }}
+    {{ JSGlue.include() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
+    <script src="https://kit.fontawesome.com/04f1870aa2.js" crossorigin="anonymous"></script>
+
+{% endblock %}
+     {% block messages %}
+        {% with messages = get_flashed_messages(category_filter=["nuevocliente"], with_categories=true) %}
+  {% if messages %}
+    <div class="alert alert-success">
+        <button type="button" class="close" data-dismiss="alert" > x </button>
+    {% for category, message in messages %}
+      <li class="{{ category }}">{{ message }}</li>
+    {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+        {% with messages = get_flashed_messages(category_filter=["warning"], with_categories=true) %}
+  {% if messages %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert" > x </button>
+    {% for category, message in messages %}
+      <li class="{{ category }}">{{ message }}</li>
+    {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+      {% endblock %}
+{% block content %}
+<table class="table table-bordered">
+<tr><td>Producto</td><td>Precio</td><td>Cantidad</td><td>Descuento</td><td>Iva</td></tr>
+{% for renglon in renglones %}
+<tr><td>{{renglon.producto}}</td><td align="right">{{renglon.precioVenta}}</td><td align="right">{{renglon.cantidad}}</td><td align="right">{{renglon.descuento}}</td><td align="right">{{renglon.producto.iva}}</td></tr>
+{% endfor %}
+</table>
+
+<table class="table table-bordered">
+  <tr><td>Forma de Pago</td><td>Monto $</td><td>Numero Cupon</td></tr>
+{% for formadepago in formasdepago %}
+    <tr><td>{{formadepago.formadepago.Metodo}}
+{% if formadepago.formadepago.Metodo=="Tarjeta" %}
+           {{formadepago.datosformapago[0].companiaTarjeta}}
+        {% endif %} 
+        {% if formadepago.formadepago.Metodo=="Tarjeta" and  formadepago.datosformapago[0].credito %}
+           Credito Cuotas 
+           {% elif formadepago.formadepago.Metodo=="Tarjeta" %}
+Debito
+        {% endif %} 
+
+
+    </td>
+
+      <td align="right">{{formadepago.monto}}</td>
+
+      <td>{% if formadepago.formadepago.Metodo=="Tarjeta" %}
+            <input class="formadepago" id="formapago{{formadepago.datosformapago[0].id}}"  type="number" 
+            value="{{formadepago.datosformapago[0].numeroCupon}}" />
+
+          {% else %}
+        <a href="#">No Hace Falta agregar Cupon</a>
+        {% endif %} 
+      </td>
+    </tr>
+  {% endfor %}
+  </table>
+  
+  <table class="table table-bordered">
+    <label for=comprobanteventa>Comprobante de Venta</label>
+  <input id="comprobanteventa"  type="number" value="{{venta.comprobante}}"   />
+</table>
+<button onclick="convertirpedidoventa(this,{{pedido.id}});">Convertir Pedido a Venta</button>
+{% endblock %}
+{% block tail_js %}
+    {{ super() }}
+    <script src="{{url_for('static',filename='js/convertir_pedido_venta.js')}}"></script>
+{% endblock %}

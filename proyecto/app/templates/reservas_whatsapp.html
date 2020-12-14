@@ -1,0 +1,76 @@
+{% extends "appbuilder/base.html" %}
+
+{% import  "bootstrap/wtf.html" as wtf %}
+
+{% block head_js %}
+    {{ super() }}
+    {{ JSGlue.include() }}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
+    <script src="https://kit.fontawesome.com/04f1870aa2.js" crossorigin="anonymous"></script>
+
+{% endblock %}
+     {% block messages %}
+        {% with messages = get_flashed_messages(category_filter=["nuevopedido"], with_categories=true) %}
+  {% if messages %}
+    <div class="alert alert-success">
+        <button type="button" class="close" data-dismiss="alert" > x </button>
+    {% for category, message in messages %}
+      <li class="{{ category }}">{{ message }}</li>
+    {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+        {% with messages = get_flashed_messages(category_filter=["error"], with_categories=true) %}
+  {% if messages %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert" > x </button>
+    {% for category, message in messages %}
+      <li class="{{ category }}">{{ message }}</li>
+    {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+{% endblock %}
+{% block content %}
+  {% if not mensaje %}
+ 	{{ wtf.quick_form(form) }}
+{% endif %}
+
+{% endblock %}
+
+ {% block tail_js %}
+    {{ super() }}
+    <script type="text/javascript">
+    	
+    	function confirmacion(e){
+    		res=confirm("Esta seguro de realizar el pedido?")
+    		
+    		if (res){
+    			return true;
+    		}
+    		e.returnValue = false ;
+    		console.log(res)   	}
+var url = "http://"+location.host+Flask.url_for("VentasApi.obtenerprecio_oferta")
+var data = {p: producto.value, venta:true, cliente:cliente.value};
+
+
+ fetch(url, {
+  method: 'POST', // or 'PUT'
+  body: JSON.stringify(data), // data can be `string` or {object}!
+  headers:{
+    'Content-Type': 'application/json'
+  }
+}).then(res => res.json())
+.catch(error => { console.error('Error:', error)
+	alert('Error:', error)
+	element.disabled=true
+	} )
+.then(response =>{ console.log('Success:', response)
+	precio.value=(parseFloat(response.message)).toFixed(2)
+})
+cantidad.onchange= function(){total.value=((parseFloat(precio.value)*cantidad.value)*(1-(descuento.value/100))).toFixed(2)}
+$('#cantidad').mask('00000000');
+
+    </script>
+    {% endblock %}

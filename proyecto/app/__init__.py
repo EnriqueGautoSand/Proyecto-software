@@ -10,11 +10,15 @@ from .sec import MySecurityManager
 from flask_appbuilder.menu import Menu
 from flask_jsglue import JSGlue
 from .index import MyIndexView
+from flask_bootstrap import Bootstrap
+from flask_ngrok import run_with_ngrok
 logging.basicConfig(format="%(asctime)s:%(levelname)s:%(name)s:%(message)s")
 logging.getLogger().setLevel(logging.DEBUG)
 
 app = Flask(__name__)
 jsglue = JSGlue(app)
+bootstrap = Bootstrap(app)
+
 app.config.from_object("config")
 db = SQLA(app)
 appbuilder = AppBuilder(app, db.session,menu=Menu(reverse=False), security_manager_class=MySecurityManager,
@@ -38,4 +42,6 @@ from .models import *
 from . import testdata
 from . import views
 from .modulos_inteligentes.pedido_presupuesto import start_scheduler
+from .modulos_inteligentes.reservas_ofertas import start_scheduler_ofertas
 start_scheduler()
+start_scheduler_ofertas()

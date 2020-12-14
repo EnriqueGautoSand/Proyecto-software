@@ -295,7 +295,7 @@ try {
 	console.log('Success:', response)
 	if (response.message.status== "sucess"){
 		alert("Compra Realizada Satisfactoriamente")
-		window.location.href ="http://localhost:8080/compraview/compra/"
+		window.location.href ="http://localhost:8080/comprareportes/show/"+response.message.idcompra.toString()
 		//window.location.href = "http://localhost:8080/comprareportes/show/"+response.message.idventa.toString()
 	}else {
 		alert(response.message)

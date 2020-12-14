@@ -4,7 +4,7 @@ from flask_appbuilder import ModelRestApi, BaseView, expose, has_access, Multipl
 from flask_appbuilder.views import ModelView, CompactCRUDMixin, MasterDetailView
 from flask import flash
 from flask_appbuilder.models.sqla.filters import FilterEqualFunction
-
+from sqlalchemy import desc,asc
 
 from .apis import *
 from flask_appbuilder.models.sqla.filters import FilterEqualFunction,FilterEqual,FilterInFunction,FilterRelationManyToManyEqual
@@ -14,7 +14,7 @@ from flask_appbuilder.urltools import  Stack
 
 
 from wtforms import Form, BooleanField, StringField, validators, DateField, FloatField, IntegerField, FieldList, \
-    SelectField, SubmitField
+    SelectField, SubmitField, PasswordField
 from validadores import cuitvalidator, cuitvalidatorProveedores,fechavalidador
 
 from twilio.twiml.messaging_response import MessagingResponse
@@ -42,32 +42,64 @@ def page_not_found(e):
         404,
     )
 
-class ModulosInteligentesView(ModelView):
-    datamodel = SQLAInterface(ModulosInteligentes)
 
-    list_columns = ['dias_atras','porcentaje_ventas','fecha_vencimiento']
+class PedidosWhatsappView(ModelView):
+    datamodel = SQLAInterface(OfertaWhatsapp)
+    list_title = 'Lista de Ofertas por Whatsapp'
+    list_columns = ['fecha', 'expiracion','cliente','producto','cantidad','reservado','vendido']
+    base_permissions = ['can_list','can_delete']
+    @action("Confirmar_Venta","Confirmar Venta","Seguro de convertir este pedido en una venta?", "fa-backspace", single=False)
+    def Confirmar_Venta(self, item):
+         print(item)
+         renglonCompras=db.session.query(RenglonCompras).filter(RenglonCompras.id == item.renglon_compra_id).first()
+
+         self.update_redirect()
+         return redirect(self.get_redirect())
+    @expose("/delete/<pk>", methods=["GET", "POST"])
+    @has_access
+    def delete(self, pk):
+        self.update_redirect()
+        oferta = db.session.query(OfertaWhatsapp).filter(OfertaWhatsapp.id == pk).first()
+        if oferta.reservado == True:
+            oferta.reservado = False
+            oferta.vendido=False
+            oferta.renglon_compra.stock_lote += oferta.cantidad
+            oferta.renglon_compra.producto.stock += oferta.cantidad
+            db.session.commit()
+            flash('Oferta anulada','success')
+            return redirect(self.get_redirect())
+
+        flash('Oferta ya anulada', 'success')
+        return redirect(self.get_redirect())
+class ModulosInteligentesView(ModelView):
+    datamodel = SQLAInterface(ModulosConfiguracion)
+    label_columns = {'porcentaje_subida_precio':'Porcentaje de descuento de ofertas por WhatsApp','twilio_account_sid':'SID de la cuenta de Twilio','modulo_pedidor':'Modulo de Pedidos','modulo_ofertas':'Modulo Ofertas WhatsApp'}
+    list_columns = ['modulo_pedidor','modulo_ofertas']
     show_columns = ['dias_atras','porcentaje_ventas','fecha_vencimiento']
-    base_permissions = ['can_edit','can_show','can_list']
+    base_permissions = ['can_edit','can_list']
 
 
     edit_form_extra_fields = {
         'dias_pedido': IntegerField('Días Pedido', render_kw={'type': "number", 'min': '0'},
-                                   description="""Intervalo de cada cuantos dias se ejecutara el modulo de pedidos de presupuesto"""),
+                                   description="""Intervalo de cada cuantos días se ejecutara el modulo de pedidos de presupuesto"""),
         'dias_atras':  IntegerField('Días Anteriores',  render_kw={'type': "number",'min':'0'},
-                                    description="""Numero de dias anteriores que mirara el modulo de pedidos de presupuesto 
-                                                             para realizar sus calculos"""),
+                                    description="""Numero de días anteriores que mirara el modulo de pedidos de presupuesto 
+                                                             para realizar sus calculos; En caso de cambio es necesario reiniciar el servidor"""),
         'porcentaje_ventas':FloatField('Porcentaje de Ventas',  render_kw={'type': "number",'min':'0','max':'100','step':"0.01"},
                                     description=lazy_gettext("""Numero de porcentaje minimo de ventas respecto compras para
                                                                 realizar el pedido de presupuesto""")),
-        'fecha_vencimiento': IntegerField('Fecha de Vencimiento',
+        'fecha_vencimiento': IntegerField('Días antes de vencer',
                                         render_kw={'type': "number", 'min': '0', 'max': '100'},
-                                        description=lazy_gettext("""Numero de dias que quedan antes de que se venza un producto para 
+                                        description=lazy_gettext("""Numero de días que quedan antes de que se venza un producto para 
                                                                 realizar un pedido de presupuesto""")),
         'dias_oferta': IntegerField('Días Oferta', render_kw={'type': "number", 'min': '0'},
-                                    description="""Intervalo de cada cuantos dias se ejecutara el modulo de ofertas por whatsapp"""),
-        'fecha_vencimiento_oferta': IntegerField('Dias antes de vencer', render_kw={'type': "number", 'min': '0'},
+                                    description="""Intervalo de cada cuantos días se ejecutara el modulo de ofertas por whatsapp
+                                                    En caso de cambio es necesario reiniciar el servidor"""),
+        'fecha_vencimiento_oferta': IntegerField('Días antes de vencer', render_kw={'type': "number", 'min': '0'},
                                     description="""Numero de dias que quedan antes de que se venza un producto para 
-                                                                realizar  ofertas por whatsapp""")
+                                                                realizar  ofertas por whatsapp"""),
+        'twilio_auth_token': StringField('Clave de autentificacion de Twilio', render_kw={'type': "password"},
+                                                 description="""Clave de autentificacion de Twilio para whatsapp""")
     }
 
 
@@ -155,6 +187,8 @@ class ProductoModelview(AuditedModelView):
     add_columns = ['categoria', 'marca','unidad', 'medida', 'precio','iva', 'detalle']
     list_columns = ['categoria', 'marca', 'medida','unidad', 'precio', 'stock','iva','estadorender', 'detalle']
     edit_columns = ['categoria','medida','unidad','marca','precio','iva','estado','detalle']
+    show_exclude_columns = ['renglon_compra']
+    search_exclude_columns = ['renglon_compra']
     base_order = ('categoria.id', 'dsc')
     # search_columns = ['producto','unidad','medida','marca','precio','stock']
 
@@ -167,13 +201,16 @@ class ProductoModelview(AuditedModelView):
 class MarcasModelview(ModelView):
     list_title = "Listado de Marcas"
     datamodel = SQLAInterface(Marcas)
+    base_order = ('marca', 'asc')
     def post_add_redirect(self):
         self.update_redirect()
         return redirect(url_for("MarcasModelview.add"))
 
 class CategoriaModelview(ModelView):
-    list_title = "Listado de Categorias"
+    list_title = "Listado de Categorías"
     datamodel = SQLAInterface(Categoria)
+    label_columns = {'categoria':'Categoría'}
+    base_order =  ('categoria','asc')
 
     def post_add_redirect(self):
         self.update_redirect()
@@ -186,7 +223,7 @@ class unidadesModelView(ModelView):
     datamodel = SQLAInterface(UnidadMedida)
 #creo clases de manejador de una vista que incluya las vistas de marcas y unidad de medidas
 class CrudProducto(MultipleView):
-    views = [MarcasModelview, unidadesModelView, ProductoModelview,CategoriaModelview]
+    views = [MarcasModelview, unidadesModelView,CategoriaModelview]
     class_permission_name = "productocrud"
     method_permission_name = {
         'add': 'access',
@@ -211,14 +248,22 @@ class PrecioMdelview(AuditedModelView):
     datamodel = SQLAInterface(Productos)
     #configuro vistas de crear, listar y editar
     list_widget = ListWidgetProducto
-    label_columns = {'estadorender': 'Estado'}
+    label_columns = {'estadorender': 'Estado','categoria':'Categoría','categoria.categoria':'categoria'}
     list_title = "Listado de Productos"
     add_columns = ['categoria', 'marca','unidad', 'medida', 'precio','iva', 'detalle']
     list_columns = ['categoria', 'marca', 'medida','unidad', 'precio', 'stock','iva','estadorender', 'detalle']
     edit_columns = ['categoria','medida','unidad','marca','precio','iva','estado','detalle']
+    show_exclude_columns = ['renglon_compra']
+    search_exclude_columns = ['renglon_compra']
+    order_rel_fields = {'categoria': ('categoria', 'asc')}
 
 
 
+
+
+    def post_add_redirect(self):
+        self.update_redirect()
+        return redirect(url_for("PrecioMdelview.add"))
     @expose('/updateprecio/<var>/<signo>', methods=['GET'])
     def updateprecio(self,var,signo):
         get_filter_args(self._filters)
@@ -295,19 +340,91 @@ class RenglonVentas(ModelView):
     edit_columns = ['producto', 'precioVenta', 'cantidad']
 class RenglonComprasView(ModelView):
     datamodel = SQLAInterface(RenglonCompras)
-    label_columns = {'fecha_vencimiento':'Fecha de Vencimiento'}
-    list_columns = ['producto', 'precioCompra', 'cantidad','descuento','fecha_vencimiento']
+    label_columns = {'formatofecha':'Fecha de Vencimiento','precioCompra':'Precio de Compra'}
+    list_columns = ['producto','formatofecha']
     edit_columns = ['fecha_vencimiento']
     base_permissions = ['can_edit','can_list']
-    related_views = [super.__class__]
     edit_template = 'appbuilder/general/model/edit_cascade.html'
     edit_form_extra_fields = {
         'fecha_vencimiento':    DateField('Fecha de Vencimiento',
                                           widget= DateTimePickerWidget(),validators=[InputRequired(),fechavalidador] )
     }
-    
-        
+def query_ComprasxProucto_Vencer():
+    return[i.id for i in db.session.query(RenglonCompras).filter(RenglonCompras.fecha_vencimiento>=dt.now().date(), RenglonCompras.vendido ==False).all()]
+class RenglonComprasxVencer(ModelView):
+    datamodel = SQLAInterface(RenglonCompras)
+    label_columns = {'formatofecha': 'Fecha de Vencimiento','precioCompra':'Precio de Compra','stock_lote':'Stock','fechacompra':'Fecha de Compra'}
+    list_columns = ['producto', 'precioCompra', 'cantidad', 'descuento', 'formatofecha','fechacompra','vendido','stock_lote']
+    base_permissions = ['can_list']
+    base_filters = [["id", FilterInFunction, query_ComprasxProucto_Vencer], ]
+    list_title = "Detalle de Lotes por Producto"
+    #list_template = 'productos_vencidos.html'
+    @expose("/delete/<pk>", methods=["GET", "POST"])
+    @has_access
+    def delete(self, pk):
+        renglon=db.session.query(RenglonCompras).filter(RenglonCompras.id==pk).first()
+        renglon.vendido=True
+        self.datamodel.edit(renglon)
+        return redirect(self.get_redirect())
 
+def query_producto_por_Vencer():
+    return[i.id for i in db.session.query(Productos).join(RenglonCompras).filter(RenglonCompras.fecha_vencimiento>=dt.now().date() ,RenglonCompras.vendido==False).all()]
+class ProductoxVencer(ModelView):
+    datamodel = SQLAInterface(Productos)
+    list_title = "Listado de Lotes del Producto"
+    label_columns = {'__repr__': 'Producto','renglones':'Lote'}
+    list_columns = ['__repr__','renglones']
+    base_permissions = ['can_list','can_show']
+    base_filters = [["id", FilterInFunction, query_producto_por_Vencer], ]
+    show_exclude_columns = ['renglon_compra']
+
+    search_exclude_columns = ['renglon_compra']
+    order_columns = ['categoria']
+    related_views = [RenglonComprasxVencer]
+
+
+
+def query_producto_Vencido():
+    return[i.id for i in db.session.query(RenglonCompras).filter(RenglonCompras.fecha_vencimiento<=dt.now().date() , RenglonCompras.stock_lote>0 ).all()]
+class RenglonComprasVencidos(ModelView):
+    datamodel = SQLAInterface(RenglonCompras)
+    list_title = 'Lotes Vencidos'
+    label_columns = {'formatofecha': 'Fecha de Vencimiento','precioCompra':'Precio de Compra','stock_lote':'Stock','fechacompra':'Fecha de Compra'}
+    list_columns = ['producto', 'precioCompra', 'cantidad', 'descuento', 'formatofecha','fechacompra','vendido','stock_lote']
+    base_permissions = ['can_list','can_delete']
+
+    base_filters = [["id", FilterInFunction, query_producto_Vencido], ]
+    #list_template = 'productos_vencidos.html'
+
+
+    # @action("anular_vencido","Descontar vencido","Seguro de Decontar el stock de los productos seleccionados?", "fa-backspace", single=False)
+    #     # def anular_vencido(self, item):
+    #     #     print(item)
+    #     #     return redirect(self.get_redirect())
+    @expose("/delete/<pk>", methods=["GET", "POST"])
+    @has_access
+    def delete(self, pk):
+        try:
+            renglon=db.session.query(RenglonCompras).filter(RenglonCompras.id==pk).first()
+            producto=db.session.query(Productos).filter(Productos.id==RenglonCompras.producto_id).first()
+            #precioauditado=PrecioMdelview()
+            #precioauditado.datamodel=SQLAInterface(Productos,session=db.session)
+            #precioauditado.pre_pre_update(copy.copy(producto))
+            producto.stock-=renglon.stock_lote
+            renglon.stock_lote=0
+            db.session.commit()
+            #precioauditado.post_update(producto)
+
+
+
+        except Exception as e:
+            print(e)
+            print(str(e))
+            print(repr(e))
+            db.session.rollback()
+
+        self.update_redirect()
+        return redirect(self.get_redirect())
 
 def repre(self,labels=None,tabla=None,db=None):
     if labels!=None:
@@ -361,11 +478,11 @@ class VentaReportes(AuditedModelView):
     list_template = "list.html"
     datamodel = SQLAInterface(Venta)
     list_title = "Listado de Ventas"
-    label_columns = {"formatofecha":"Fecha","totaliva":"Alicuota Iva","totalrender":"Total",'formadepago':'Forma de Pago','renglonesrender':'','estadorender':'Estado'}
-    list_columns = ['cliente','totaliva',"percepcion", "totalrender", 'estadorender','formatofecha']
+    label_columns = {'percepcion':'Percepción',"formatofecha":"Fecha","totaliva":"Iva","totalrender":"Total",'formadepago':'Forma de Pago','renglonesrender':'','estadorender':'Estado'}
+    list_columns = ['formatofecha','comprobante','cliente','totaliva',"percepcion", "totalrender", 'estadorender',]
     show_columns = ['cliente','comprobante','totaliva',"percepcion", 'estadorender','formatofecha','renglonesrender']
     edit_columns = ['estado']
-    base_order = ('fecha', 'dsc')
+    base_order = ('comprobante', 'dsc')
 
     #base_filters = [["id",FilterInFunction,tipoClave_queryventa],]
     base_permissions = ['can_show','can_list', 'can_edit','can_delete']
@@ -408,13 +525,13 @@ class CompraReportes(AuditedModelView):
     datamodel = SQLAInterface(Compra)
     list_widget =ListDownloadWidgetcompra
     list_title = "Listado de Compras"
-    label_columns = {'formadepago':'Forma de Pago','formadepago.Metodo':'Forma de Pago','renglonesrender':'',"totaliva":"Alicuota Iva", 'estadorender':'Estado','formatofecha':'Fecha',"percepcion":"Percepcion %"}
-    list_columns = ['proveedor',"totaliva", "total", 'estadorender', 'formadepago.Metodo','formatofecha',"percepcion"]
-    show_columns = ['proveedor',"totaliva", 'total', 'estadorender','formadepago.Metodo','formatofecha',"percepcion",'renglonesrender']
-    edit_columns = ['estado']
+    label_columns = {'total':'Total $','formadepago':'Forma de Pago','formadepago.Metodo':'Forma de Pago','renglonesrender':'',"totaliva":"Iva $", 'estadorender':'Estado','formatofecha':'Fecha',"percepcion":"Percepción %"}
+    list_columns = ['formatofecha','comprobante','proveedor',"totaliva", "total", 'estadorender', 'formadepago',"percepcion"]
+    show_columns = ['proveedor',"totaliva", 'total', 'estadorender','formadepago','formatofecha',"percepcion",'renglonesrender']
     search_columns = ['proveedor',"totaliva", "total", 'estado', 'formadepago','fecha',"percepcion"]
+    order_columns =  ['proveedor',"totaliva", "total", 'estado', 'formadepago','fecha',"percepcion"]
     base_order = ('fecha', 'dsc')
-    base_permissions = ['can_show','can_list', 'can_edit','can_delete','can_download_pdf']
+    base_permissions = ['can_show','can_list','can_delete','can_download_pdf']
     related_views = [RenglonComprasView]
 
 
@@ -463,7 +580,7 @@ class RenglonVenta(Form):
     #condicionfrenteiva= SelectField('Condicion Frente Iva', coerce=TipoClaves.coerce, choices=TipoClaves.choices() )
     total = FloatField('Total $', render_kw={'disabled': ''},
                        validators=[DataRequired()], default=0)
-    numeroCupon = IntegerField('Numero de cupon', widget=BS3TextFieldWidget())
+    numeroCupon = IntegerField('Numero de cupon', render_kw={'type':'number'}, widget=BS3TextFieldWidget())
     companiaTarjeta = SelectField('Compania de la Tarjeta', coerce=str, choices=[(p.id, p) for p in db.session.query(CompaniaTarjeta)] )
     credito = BooleanField("Credito", default=False)
     descuento = FloatField("Descuento %",  default=0)
@@ -484,7 +601,9 @@ class VentaView(BaseView):
         form2 = RenglonVenta(request.form)
         #cargo las elecciones de producto
         responsableinscripto = str(db.session.query(EmpresaDatos).first().tipoClave) == "Responsable Inscripto"
-        form2.producto.choices = [('{"id": ' + f'{p.id}' + ', "iva":' + f'"{p.iva}"' + ', "representacion":' + f'"{p.__str__()}"' + '}',  p.__str__()) for p  in db.session.query(Productos).filter(Productos.estado == True).all()]
+
+        form2.producto.choices = [('{"id": ' + f'{p.id}' + ', "iva":' + f'"{p.iva}"' + ', "representacion":' + f'"{p.__str__()}"' + '}',  p.__str__()) for p  in db.session.query(Productos).filter(Productos.estado == True,Productos.stock>0 )
+            .join(Productos.categoria).join(Productos.marca).order_by(asc(Categoria.categoria),asc(Marcas.marca)).all()]
 
         form2.Fecha.data = dt.now()
         # cargo las elecciones de cliente
@@ -493,7 +612,7 @@ class VentaView(BaseView):
         form2.metodo.choices = [(c.id, c) for c in db.session.query(FormadePago)]
         # cargo las elecciones de las tarjetas
 
-        form2.companiaTarjeta.choices = [(c.id, c) for c in db.session.query(CompaniaTarjeta)]
+        form2.companiaTarjeta.choices = [(c.id, c) for c in db.session.query(CompaniaTarjeta).filter(CompaniaTarjeta.estado==True)]
         # le digo que guarde la url actual en el historial
         #esto sirve para cuando creas un cliente que te redirija despues a la venta
 
@@ -542,17 +661,18 @@ class CompraView(BaseView):
         form2 = RenglonCompra(request.form)
         #cargo las elecciones de producto
         form2.producto.choices = [('{"id": ' + f'{p.id}' + ', "iva":' + f'"{p.iva}"' + ', "representacion":' + f'"{p.__str__()}"' + '}', p.__str__()) for p
-                                  in db.session.query(Productos).filter(Productos.estado==True).all()]
+                                  in db.session.query(Productos).filter(Productos.estado==True).join(Productos.categoria).join(Productos.marca).order_by(asc(Categoria.categoria),asc(Marcas.marca)).all()]
 
         # cargo las elecciones de cliente
-        form2.proveedor.choices = [('{"id": ' + f'{c.id}' + ', "tipoclave":' +f'"{c.tipoClave}"'+'}', c) for c in db.session.query(Proveedor)]
+        form2.proveedor.choices = [('{"id": ' + f'{c.id}' + ', "tipoclave":' +f'"{c.tipoClave}"'+'}', c) for c in db.session.query(Proveedor).filter(Proveedor.estado==True)]
         # cargo las elecciones de metodo de pago
         form2.metodo.choices = [(c.id, c) for c in db.session.query(FormadePago)]
-        form2.companiaTarjeta.choices = [(c.id, c) for c in db.session.query(CompaniaTarjeta)]
+        form2.companiaTarjeta.choices = [(c.id, c) for c in db.session.query(CompaniaTarjeta).filter(CompaniaTarjeta.estado==True)]
         # le digo que guarde la url actual en el historial
         #esto sirve para cuando creas un cliente que te redirija despues a la venta
         self.update_redirect()
         #renderizo el html y le paso el formulario
+        self.update_redirect()
         iva=str(db.session.query(EmpresaDatos).first().tipoClave)=="Responsable Inscripto"
         return render_template('compra.html', base_template=appbuilder.base_template, appbuilder=appbuilder, form2=form2,iva=iva)
     class_permission_name = "compraclass"
@@ -578,7 +698,7 @@ class ProveedorView(AuditedModelView):
     #le digo los permisos
 
     base_permissions =['can_list','can_add','can_edit', 'can_delete' ,'can_show']
-    label_columns = {'nombre':'Nombre/Denominacion','apellido':'Apellido/Razon Social','tipoClave': 'Cond. Frente Iva','estadorender': 'Estado',"tipoPersona":"Tipo de Persona"}
+    label_columns = {'direccion':'Dirección','nombre':'Nombre/Denominación','apellido':'Apellido/Razon Social','tipoClave': 'Cond. Frente Iva','estadorender': 'Estado',"tipoPersona":"Tipo de Persona"}
     add_columns = ["tipoPersona",'tipoClave','cuit', 'nombre', 'apellido', 'correo','direccion','localidad']
     list_columns = ["tipoPersona",'cuit', 'nombre', 'apellido','correo' ,'tipoClave','estadorender']
     edit_columns = ["tipoPersona",'tipoClave','cuit', 'nombre', 'apellido', 'correo','direccion','localidad','estado']
@@ -595,7 +715,9 @@ class ProveedorView(AuditedModelView):
                             'Cond. Frente Iva',
                             query_factory=tipoClave_query,
                             widget=Select2Widget("readonly")
-                       )
+                       ),
+        'telefono_celular': IntegerField('Numero de Celular', render_kw={'type': "number", 'min': '0'},
+                                         description="""Por defecto se toma el codigo pais +549 (Argentina) usted solo debe ingresar caracteristica+numero del celular sin espacios""")
     }
 
     edit_form_extra_fields = {
@@ -603,7 +725,10 @@ class ProveedorView(AuditedModelView):
                             'Cond. Frente Iva',
                             query_factory=tipoClave_query,
                             widget=Select2Widget("readonly")
-                       )
+                       ),
+        'telefono_celular': IntegerField('Numero de Celular', render_kw={'type': "number", 'min': '0'},
+                                         description="""Por defecto se toma el codigo pais +549 (Argentina) usted solo debe ingresar caracteristica+numero del celular sin espacios""")
+
     }
 
 
@@ -622,13 +747,18 @@ class ClientesView(AuditedModelView):
     #base_filters = [['estado', FilterEqual, True]]#descomentar para que filtre solo los activos
 
     #configurando las columnas de las vistas crear listar y editar
-    add_columns = ["tipoPersona",'tipoClave','tipoDocumento','documento', 'nombre', 'apellido','direccion','localidad']
-    list_columns = ["tipoPersona",'tipoClave','documento', 'nombre', 'apellido','tipoDocumento','estadorender']
-    show_columns = ["tipoPersona",'tipoClave','documento', 'nombre', 'apellido','tipoDocumento','estadorender','direccion','localidad']
-    edit_columns = ["tipoPersona",'tipoClave','tipoDocumento','documento', 'nombre', 'apellido','estado','direccion','localidad']
+    add_columns = ["tipoPersona",'tipoClave','tipoDocumento','documento', 'nombre', 'apellido','telefono_celular','direccion','localidad']
+    list_columns = ["tipoPersona",'tipoClave','documento', 'nombre', 'apellido','tipoDocumento','telefono_celular','estadorender']
+    show_columns = ["tipoPersona",'tipoClave','documento', 'nombre', 'apellido','tipoDocumento','estadorender','telefono_celular','direccion','localidad']
+    edit_columns = ["tipoPersona",'tipoClave','tipoDocumento','documento', 'nombre', 'apellido','estado','telefono_celular','direccion','localidad']
     add_template = "clienteaddedit.html"
     edit_template = "editcliente.html"
-
+    edit_form_extra_fields = {
+        'telefono_celular': StringField('Numero de Celular', render_kw={'type': "number"},
+                                    description="""Por defecto se toma el codigo pais +549 (Argentina) usted solo debe ingresar caracteristica+numero del celular sin espacios""")}
+    add_form_extra_fields = {
+        'telefono_celular': StringField('Numero de Celular', render_kw={'type': "number"},
+                                    description="""Por defecto se toma el codigo pais +549 (Argentina) usted solo debe ingresar caracteristica+numero del celular sin espacios""")}
 
 
 
@@ -654,7 +784,7 @@ class ClientesView(AuditedModelView):
     def post_post_add(self, item):
         urlanterior =self.get_redirect_anterior()
         try:
-            url="http://localhost:8080"+url_for("VentaView.venta")
+            url="http://localhost.localdomain:8080"+url_for("VentaView.venta")
             if urlanterior== url:
                 flash("Cliente Creado", "nuevocliente")
         except Exception as e:
@@ -669,21 +799,115 @@ class ClientesView(AuditedModelView):
     validators_columns ={
         'documento':[InputRequired(),cuitvalidator("tipoDocumento")]
     }
-
+class RenglonPedidoView(ModelView):
+    datamodel = SQLAInterface(RenglonPedido)
+    list_columns = ["producto","cantidad"]
+    base_permissions = ['can_list']
+class PedidoView(ModelView):
+    datamodel = SQLAInterface(Pedido_Proveedor)
+    label_columns = {'id':'Numero de Pedido','proveedor.representacion':'Proveedor','formatofecha':'Fecha'}
+    list_columns = ["id","fecha",'proveedor.representacion']
+    show_columns = ['proveedor',"id","formatofecha"]
+    base_permissions = ['can_show','can_list']
+    order_columns =['id','fecha']
+    search_exclude_columns = ['renglones']
+    list_title = 'Lista de Pedidos de Presupesto'
+    show_title = 'Detalle de Pedido de Presupuesto'
+    related_views = [RenglonPedidoView]
 
 #aca agrego los manejadores de las vistas al appbuilder para que sean visuales
+class PediddosClientesView(ModelView):
+    datamodel = SQLAInterface(PedidoCliente)
+    related_views = [Venta]
+    label_columns = {'hash_activacion':'Codigo de reserva'}
+    list_columns = ['fecha','hash_activacion','cliente','reservado','vendido']
+    base_permissions = ['can_list','can_show','can_delete']
+
+    @expose("/show/<pk>", methods=["GET"])
+    @has_access
+    def show(self, pk):
+        pedido = db.session.query(PedidoCliente).filter(PedidoCliente.id == pk).first()
+        if pedido.reservado==False:
+            flash('Pedido NO reservado, no se puede convertir a venta', 'warning')
+            return redirect(self.get_redirect())
+        self.update_redirect()
+        return redirect(url_for('ConvertirVenta.convertir_pedido_venta', pk=pk))
+    @expose("/delete/<pk>", methods=["GET", "POST"])
+    @has_access
+    def delete(self, pk):
+        self.update_redirect()
+        pedido = db.session.query(PedidoCliente).filter(PedidoCliente.id == pk).first()
+        if pedido.reservado == True:
+            if pedido.venta !=None:
+                if pedido.venta.estado==True and pedido.vendido==True:
+                    flash('Pedido ya convertido a venta y realizado Para anular tendra que ir a a anular la venta directamente', 'warning')
+                    return redirect(self.get_redirect())
+                elif pedido.venta.estado==False and pedido.vendido==True:
+                    flash('A Ocurrido un error sobre el pedido que queriaanular por favor contacte con los tecnicos para solucionar esto', 'warning')
+                    return redirect(self.get_redirect())
+                else:
+                    try:
+                        pedido.reservado = False
+                        venta=pedido.venta
+                        venta.estado==False
+                        for renglon in venta.renglones:
+                            renglon.producto.stock+=renglon.cantidad
+                        db.session.commit()
+                    except Exception as e:
+                        print(e)
+                        print(str(e))
+                        print(repr(e))
+                        db.session.rollback()
+                        flash('Pedido NO anulado, algo a sucedido mientras se intentaba anular.', 'warning')
+                        return redirect(self.get_redirect())
+                    flash('Pedido anulado,los productos del pedido se sumaron al stock general','success')
+                    return redirect(self.get_redirect())
+        else:
+            flash('Pedido no reservado no hay nada que anular', 'warning')
+            return redirect(self.get_redirect())
+
+        flash('Pedido ya anulado', 'warning')
+        return redirect(self.get_redirect())
+class ConvertirVenta(AuditedModelView):
+    datamodel = SQLAInterface(Venta)
+    related_views = [RenglonVentas]
+    search_exclude_columns = ['venta']
+    @expose('/convertir_pedido_venta/<pk>', methods=["GET"])
+    def convertir_pedido_venta(self,pk):
+
+        pedido=db.session.query(PedidoCliente).get(pk)
+        if pedido.venta!=None:
+            return render_template("convertir_pedido.html",pedido=pedido,formasdepago=pedido.venta.formadepagos,renglones=pedido.venta.renglones,venta=pedido.venta, base_template=appbuilder.base_template,
+                                                   appbuilder=appbuilder)
+        else:
+            flash('No se puede ver el detalle porque no esta reservado','warning')
+            return redirect(self.get_redirect())
+
+
+
+    @expose('/convertir_pedido_oferta_venta/<pk>', methods=["GET"])
+    def convertirpedidoventa(self,pk):
+        # oferta = db.session.query(OfertaWhatsapp).filter(OfertaWhatsapp.id == int(pk)).first()
+        # renglonCompras = db.session.query(RenglonCompras).filter(RenglonCompras.id == oferta.renglon_compra_id).first()
+        # venta=Venta(fecha=dt.now())
+        #
+        # db.session.add(venta)
+        # db.session.add(Renglon(precioVenta=oferta.producto.precio, cantidad=p["cantidad"], venta=venta, producto=oferta.producto,
+        #                        descuento=oferta.descuento))
+        return "nada"
 
 
 appbuilder.add_view(VentaView, "Realizar Ventas", category='Ventas', category_icon='fa-tag' )
 
-appbuilder.add_view(CrudProducto, "Productos",icon="fa-archive", category='Productos', category_icon='fa-archive' )
+appbuilder.add_view( PrecioMdelview,"Producto" ,icon="fa-archive", category='Productos', category_icon='fa-archive' )
 
 appbuilder.add_view(CompraView, "Compra", category='Compras', category_icon="fa-cart-plus" )
 appbuilder.add_view(ClientesView, "Clientes")
-appbuilder.add_view(ProveedorView, "Proveedor")
+appbuilder.add_view(ProveedorView, "Proveedor" ,category='Proveedor', category_icon='fa-tag')
+appbuilder.add_view(PedidoView, "Pedidos de Presupesto", category='Proveedor')
+appbuilder.add_view_no_menu(RenglonPedidoView)
 
-
-appbuilder.add_view(PrecioMdelview, "Control de Precios",category='Productos',icon='fa-dollar-sign')
+appbuilder.add_view(CrudProducto,"Categoria Marca Unidad" ,category='Productos')
 appbuilder.add_view_no_menu(ProductoModelview)
 appbuilder.add_view_no_menu(MarcasModelview)
 appbuilder.add_view_no_menu(unidadesModelView)
@@ -691,6 +915,8 @@ appbuilder.add_view_no_menu(CategoriaModelview)
 appbuilder.add_view_no_menu(ReportesView)
 appbuilder.add_view_no_menu(MetododepagoVentas)
 appbuilder.add_view(VentaReportes, "Reporte Ventas",icon="fa-save", category='Ventas' )
+appbuilder.add_view(PedidosWhatsappView,"Ofertas de Ventas Whtasapp", category='Ventas' )
+appbuilder.add_view(PediddosClientesView,"Pedidos de Ventas Whtasapp", category='Ventas' )
 appbuilder.add_view(CompraReportes, "Reporte Compras",icon="fa-save", category='Compras' )
 
 appbuilder.add_view(Sistemaview,'Datos Empresa',category='Security')
@@ -700,8 +926,16 @@ appbuilder.add_view_no_menu(Empresaview)
 appbuilder.add_view_no_menu(CompaniaTarjetaview)
 appbuilder.add_view_no_menu(RenglonVentas)
 appbuilder.add_view_no_menu(RenglonComprasView)
-from whastsapp import smsreply
+appbuilder.add_view(RenglonComprasVencidos,'Vencidos',category='Productos')
+appbuilder.add_view(ProductoxVencer,'Por Vencer',category='Productos')
+appbuilder.add_view_no_menu(RenglonComprasxVencer)
+from .whatsapp.whastsapp import smsreply
+from .modulos_inteligentes.modelo_whatsapp import ModeloWhatsapp,ModeloWhatsappPedido
 appbuilder.add_view_no_menu(smsreply)
+appbuilder.add_view_no_menu(ModeloWhatsapp)
+appbuilder.add_view_no_menu(ModeloWhatsappPedido)
+appbuilder.add_view_no_menu(ConvertirVenta)
+
 
 
 

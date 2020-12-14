@@ -6,9 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/proyecto/app/auditoria" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/proyecto/app/modelo" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/proyecto/app/formularios" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/proyecto/app/modulos_inteligentes" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/proyecto/app/widgets" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/proyecto/app/whatsapp" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

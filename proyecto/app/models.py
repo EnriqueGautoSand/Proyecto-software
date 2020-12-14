@@ -1,6 +1,6 @@
 
 import flask_appbuilder
-from sqlalchemy import Column, Integer, String, ForeignKey,Float,Date, Boolean, UniqueConstraint,BIGINT
+from sqlalchemy import Column, Integer, String, ForeignKey,Float,Date, Boolean, UniqueConstraint,BIGINT,DateTime
 from sqlalchemy.orm import relationship
 from flask_appbuilder.models.decorators import renders
 from flask_appbuilder.models.mixins import  ImageColumn
@@ -14,11 +14,70 @@ from flask_appbuilder import Model
 from . import appbuilder, db
 
 print(flask_appbuilder.security.sqla.models)
-class ModulosInteligentes(Model):
+class OfertaWhatsapp(Model):
+    __tablename__ = 'oferta_whatsapp'
+    id = Column(Integer, primary_key=True,nullable=False)
+    fecha = Column(DateTime,default=dt.now(),nullable=False)
+    expiracion = Column(DateTime, default=dt.now(),nullable=False)
+    producto_id = Column(Integer, ForeignKey('productos.id'), nullable=False)
+    producto = relationship("Productos")
+    cliente_id = Column(Integer, ForeignKey('clientes.id'), nullable=False)
+    cliente = relationship("Clientes")
+    descuento=Column(Float,nullable=False,default=0)
+    cantidad = Column(Integer, nullable=False,default=0)
+    totalNeto= Column(Float,nullable=False,default=0)
+    totaliva=Column(Float,nullable=False,default=0)
+    percepcion=Column(Float,nullable=False,default=0)
+    percepcion_porcentaje=Column(Float,nullable=False,default=0)
+    hash_activacion=Column(String(255),nullable=False)
+    reservado=Column(Boolean,nullable=False,default=False)
+    vendido=Column(Boolean,nullable=False,default=False)
+    renglon_compra_id = Column(Integer, ForeignKey('renglon_compras.id'), nullable=False)
+    renglon_compra = relationship("RenglonCompras")
+
+
+class PedidoCliente(Model):
+    __tablename__ = 'pedido_cliente'
+    id = Column(Integer, primary_key=True,nullable=False)
+    fecha = Column(DateTime,default=dt.now(),nullable=False)
+    expiracion = Column(DateTime, default=dt.now(),nullable=False)
+    vendido = Column(Boolean, nullable=False, default=False)
+    hash_activacion = Column(String(255), nullable=False,unique=True)
+    cliente_id = Column(Integer, ForeignKey('clientes.id'), nullable=False)
+    cliente = relationship("Clientes")
+    reservado = Column(Boolean, nullable=False, default=False)
+    venta_id = Column(Integer, ForeignKey('ventas.id'), nullable=True)
+    venta = relationship("Venta")
+
+class Pedido_Proveedor(Model):
     """
-    # creo clase que sera mapeada como la tabla ModulosInteligentes
+    creo clase que sera mapeada como la tabla pedido_proveedor
     """
-    __tablename__ = 'modulos_inteligentes'
+    __tablename__ = 'pedido_proveedor'
+    id = Column(Integer, primary_key=True)
+    fecha = Column(DateTime,default=dt.now())
+    proveedor_id = Column(Integer, ForeignKey('proveedor.id'), nullable=False)
+    proveedor = relationship("Proveedor")
+    @renders('fecha')
+    def formatofecha(self):
+         return str(self.fecha.strftime(" %d-%m-%Y %H:%M "))
+class RenglonPedido(Model):
+    """
+    creo clase que sera mapeada como la tabla renglon_pedido
+    """
+    __tablename__ = 'renglon_pedido'
+    id = Column(Integer, primary_key=True)
+    cantidad = Column(Integer)
+    pedido_proveedor_id = Column(Integer, ForeignKey('pedido_proveedor.id'), nullable=False)
+    pedido_proveedor = relationship("Pedido_Proveedor", backref='renglones')
+    producto_id = Column(Integer, ForeignKey('productos.id'), nullable=False)
+    producto = relationship("Productos")
+
+class ModulosConfiguracion(Model):
+    """
+    # creo clase que sera mapeada como la tabla modulos_configuracion
+    """
+    __tablename__ = 'modulos_configuracion'
     id = Column(Integer, primary_key=True)
     modulo_pedido = Column(Boolean, default=True)
     dias_pedido = Column(Integer, default=7)
@@ -26,17 +85,31 @@ class ModulosInteligentes(Model):
     porcentaje_ventas = Column(Float, default=80)
     fecha_vencimiento=Column(Integer,default=7)
 
-    modulo_oferta = Column(Boolean, default=True)
+    modulo_ofertas_whatsapp = Column(Boolean, default=False)
     dias_oferta= Column(Integer, default=7)
     fecha_vencimiento_oferta = Column(Integer, default=7)
+    porcentaje_subida_precio=Column(Integer, default=30)
+    twilio_account_sid=Column(String(50))
+    twilio_auth_token=Column(String(50))
+    descuento=Column(Float, default=30)
+    @renders('modulo_pedido')
+    def modulo_pedidor(self):
+        if self.modulo_pedido==True:
+            return 'Pedidos Proveedor Inteligente se encuentra Activado'
+        else:
+            return 'Pedidos Proveedor Inteligente se encuentra Desactivado'
 
-
-
+    @renders('modulo_ofertas_whatsapp')
+    def modulo_ofertas(self):
+        if self.modulo_ofertas_whatsapp==True:
+            return 'Ofertas Por WhatsApp se encuentra Activado'
+        else:
+            return 'Ofertas Por WhatsApp se encuentra Desactivado'
 
 
 class EmpresaDatos(Model):
     """
-    # creo clase que sera mapeada como la tabla companiaTarjeta
+    # creo clase que sera mapeada como la tabla datosEmpresa
     """
     __tablename__ = 'datosEmpresa'
     id = Column(Integer, primary_key=True)
@@ -165,6 +238,7 @@ class Proveedor(Model):
     direccion = Column(String(100), nullable=True)
     idlocalidad = Column(Integer, ForeignKey('localidad.idlocalidad'), nullable=True)
     localidad = relationship("Localidad")
+    telefono_celular = Column(String(30))
     # defino como se representara al ser llamado
     def __repr__(self):
         return f"Cuit {self.cuit} {self.apellido} {self.nombre}"
@@ -173,6 +247,9 @@ class Proveedor(Model):
             if self.estado:
                 return Markup('<b> Activo </b>')
             return Markup('<b> Desactivado</b>')
+    @property
+    def representacion(self):
+        return f"Cuit {self.cuit} {self.apellido} {self.nombre}"
 
 
 class Clientes(Model):
@@ -192,6 +269,7 @@ class Clientes(Model):
     idTipoPersona = Column(Integer, ForeignKey('tipoPersona.idTipoPersona'), nullable=False)
     tipoPersona = relationship("TipoPersona")
     estado = Column(Boolean,default=True)
+    telefono_celular = Column(String(30))
     direccion = Column(String(100))
     idlocalidad = Column(Integer, ForeignKey('localidad.idlocalidad'), nullable=True)
     localidad = relationship("Localidad")
@@ -221,6 +299,7 @@ class CompaniaTarjeta(Model):
     __tablename__ = 'companiaTarjeta'
     id = Column(Integer, primary_key=True)
     compania = Column(String(50), unique=True)
+    estado=Column(Boolean,default=True)
 
     def __repr__(self):
         return f'{self.compania}'
@@ -254,7 +333,7 @@ class Compra(Model):
     total=Column(Float, nullable=False)
     totalNeto = Column(Float, nullable=False)
     totaliva = Column(Float, nullable=True)
-    fecha=Column(Date, nullable=False,default=dt.now())
+    fecha=Column(DateTime, nullable=False,default=dt.now())
 
     proveedor_id = Column(Integer, ForeignKey('proveedor.id'), nullable=False)
     proveedor = relationship("Proveedor")
@@ -264,6 +343,7 @@ class Compra(Model):
     datosFormaPagos = relationship("DatosFormaPagosCompra")
     percepcion = Column(Float,default=0)
     comprobante = Column(BIGINT, nullable=False, unique=True)
+
     __table_args__ = (
         UniqueConstraint("comprobante","proveedor_id"),
     )
@@ -276,7 +356,7 @@ class Compra(Model):
 
     @renders('fecha')
     def formatofecha(self):
-         return Markup('<b> ' + str(self.fecha.strftime(" %d-%m-%Y ")) + '</b>')
+         return Markup('<b> ' + str(self.fecha.strftime(" %d-%m-%Y %H:%M ")) + '</b>')
     @renders('estado')
     def estadorender(self):
             if self.estado:
@@ -290,18 +370,19 @@ class Compra(Model):
         total=0
         for i in  self.renglones:
             if i.compra_id == self.id:
-                unrenglon=f"<tr><td>{i.producto}</td> <td>${i.precioCompra}</td><td>{i.cantidad}</td><td>{i.producto.iva}%</td><td>{i.descuento} %</td><td>${i.precioCompra*i.cantidad*(1-i.descuento/100)}</td></tr> "
-                unrenglon=f"<tr><td>{i.producto}</td> <td>${i.precioCompra}</td><td>{i.cantidad}</td><td>{i.producto.iva}%</td><td>{i.descuento} %</td><td>${i.precioCompra*i.cantidad*(1-i.descuento/100)}</td></tr> "
+                subtotal=(i.precioCompra*i.cantidad*(1-i.descuento/100))
+                unrenglon=f"<tr><td>{i.producto}</td> <td align='right'>${i.precioCompra:.2f}</td><td align='right'>{i.cantidad}</td><td align='right'>{i.producto.iva:.2f}%</td><td align='right'>{i.descuento:.2f} %</td><td align='right'>${subtotal:.2f}</td></tr> "
                 renglones+=unrenglon+'\n'
                 total+=i.precioCompra*i.cantidad
             else:
                 print('equibocado',i)
 
-        renglones += f"<tr><td></td><td></td><td></td><td></td><td>Total Neto</td> <td>${self.totalNeto}</td></tr>"
-        renglones+=f"<tr><td></td><td></td><td></td><td></td><td>Total</td> <td>${self.total}</td></tr>"
+        renglones += f"<tr><td></td><td></td><td></td><td></td><td>Total Neto</td> <td align='right'>${self.totalNeto:.2f}</td></tr>"
+        renglones+=f"<tr><td></td><td></td><td></td><td></td><td>Total</td> <td align='right'>${self.total:.2f}</td></tr>"
         print(renglones)
         renglones+="</table>"
         return Markup( renglones )
+
 
 class Venta(Model):
     """
@@ -330,7 +411,7 @@ class Venta(Model):
 
         if len(self.formadepagos)>1:
             for i in self.formadepagos:
-                pagos+= str(i) + " $"+ str(i.monto)+ "\n"
+                pagos+= str(i) + f" ${format(i.monto, '.2f')}\n"
             return pagos
         else:
             return str(self.formadepagos[0])
@@ -347,7 +428,7 @@ class Venta(Model):
             return Markup('<b> Venta Anulada </b>')
     @renders('renglones')
     def renglonesrender(self):
-    # will render this columns as lista
+    # will render this columns as lista agregar que solo se vean 2 digitos despues de la coma
         print(self.renglones)
         renglones="</table> <table class='table table-bordered'> <tr><td>Producto</td> <td>Precio</td><td>Cantidad</td><td>IVA</td><td>Descuento</td><td>Subtotal</td></tr>"
         from .views import RenglonVentas
@@ -356,22 +437,22 @@ class Venta(Model):
             print(type(i))
             print(f'{redirect(url_for("RenglonVentas.edit",pk=i.id))}')
 
-            unrenglon=f"<tr><td>{i.producto}</td> <td>${i.precioVenta}</td><td>{i.cantidad}</td><td>{i.producto.iva}%</td><td>{i.descuento} %</td><td>${(i.precioVenta*i.cantidad)*(1-i.descuento/100)}</td></tr> "
+            unrenglon=f"<tr><td>{i.producto}</td> <td>${i.precioVenta:.2f}</td><td>{i.cantidad}</td><td>{i.producto.iva}%</td><td>{i.descuento} %</td><td>${(i.precioVenta*i.cantidad)*(1-i.descuento/100)}</td></tr> "
             renglones+=unrenglon+'\n'
             total+=i.precioVenta*i.cantidad
 
-        renglones += f"<tr><td></td><td></td><td></td><td></td><td>Total Neto</td> <td>${self.totalNeto}</td></tr>"
-        renglones+=f"<tr><td></td><td></td><td></td><td></td><td>Total</td> <td>${self.total}</td></tr>"
+        renglones += f"<tr><td></td><td></td><td></td><td></td><td>Total Neto</td> <td>${self.totalNeto:.2f}</td></tr>"
+        renglones+=f"<tr><td></td><td></td><td></td><td></td><td>Total</td> <td>${self.total:.2f}</td></tr>"
         print(renglones)
         renglones+="</table>"
         return Markup( renglones )
 
     # defino como se representara al ser llamado
     def __repr__(self):
-        return f'{self.cliente} {self.total} {self.estado} {self.fecha}'
+        return f'{self.cliente} {self.total:.2f} {self.estado} {self.fecha}'
 
 class FormadePagoxVenta(Model):
-    __tablename__ = 'FormadePago_Venta'
+    __tablename__ = 'forma_pago_venta'
     id = Column(Integer, primary_key=True)
     monto = Column(Float, nullable=False)
     venta_id = Column(Integer, ForeignKey('ventas.id'), nullable=False)
@@ -386,7 +467,7 @@ class DatosFormaPagosCompra(Model):
     """
     __tablename__ = 'datosFormaPagosCompra'
     id = Column(Integer, primary_key=True)
-    numeroCupon = Column(String(50), unique=True, nullable=False)
+    numeroCupon = Column(BIGINT, unique=True, nullable=False)
     credito = Column(Boolean, default=False)
     cuotas = Column(Integer)
     companiaTarjeta_id = Column(Integer, ForeignKey('companiaTarjeta.id'), nullable=False)
@@ -401,13 +482,13 @@ class DatosFormaPagos(Model):
     """
     __tablename__ = 'datosFormaPagos'
     id = Column(Integer, primary_key=True)
-    numeroCupon = Column(String(50), unique=True)
+    numeroCupon = Column(BIGINT, unique=True, nullable=False)
     credito = Column(Boolean, default=False)
     cuotas = Column(Integer)
     companiaTarjeta_id = Column(Integer, ForeignKey('companiaTarjeta.id'), nullable=False)
     companiaTarjeta = relationship("CompaniaTarjeta")
-    formadepago_id = Column(Integer, ForeignKey('FormadePago_Venta.id'), nullable=False)
-    formadepago = relationship("FormadePagoxVenta")
+    formadepago_id = Column(Integer, ForeignKey('forma_pago_venta.id'), nullable=False)
+    formadepago = relationship("FormadePagoxVenta",backref='datosformapago')
     def __repr__(self):
         return f'{self.numeroCupon}'
 
@@ -471,19 +552,32 @@ class Productos(Model):
     detalle=Column(String(255))
     # creo clave compuesta que no se pueden repetir dicha combinacion
     __table_args__ = (
-        UniqueConstraint("categoria_id","marcas_id","unidad_id","medida"),
+        UniqueConstraint("categoria_id","marcas_id","unidad_id","medida","detalle"),
     )
 
     # defino como se representara al ser llamado
     def __repr__(self):
-        return f"{self.categoria} ${self.precio} {self.marca} {self.medida} {self.unidad}"
+        return f"{self.categoria} ${self.precio:.2f} {self.marca} {self.medida} {self.unidad}"
+
+
     def __str__(self):
-        return f"{self.categoria} {self.marca} {self.medida} {self.unidad}"
+        return f"{self.categoria} {self.marca} {self.medida} {self.unidad} {self.detalle}"
     @renders('estado')
     def estadorender(self):
             if self.estado:
                 return Markup('<b> Activo </b>')
             return Markup('<b> Desactivado</b>')
+
+    @renders('renglon_compra')
+    def renglones(self):
+        respuesta=""
+        for i in self.renglon_compra:
+            if i.fecha_vencimiento!=None:
+                if not i.vendido and dt.now().date()<=i.fecha_vencimiento:
+                    respuesta+= f"{i.__str__()} <br>"
+        return Markup(respuesta)
+
+
 class RenglonCompras(Model):
     """
     creo clase que sera mapeada como la tabla renglon en la base de datos
@@ -494,14 +588,26 @@ class RenglonCompras(Model):
     compra_id = Column(Integer, ForeignKey('compras.id'), nullable=False)
     compra = relationship("Compra", backref='renglones')
     producto_id = Column(Integer, ForeignKey('productos.id'), nullable=False)
-    producto = relationship("Productos")
+    producto = relationship("Productos",backref="renglon_compra")
     descuento=Column(Float)
     fecha_vencimiento = Column(Date)
-
+    vendido=Column(Boolean, nullable=False,default=False)
+    stock_lote=Column(Integer, nullable=False)
     # defino como se representara al ser llamado
     def __repr__(self):
-        return f"{self.producto} ${self.precioCompra} {self.compra} {self.producto} {self.cantidad} "
+        return f"{self.producto} ${self.precioCompra:.2f} {self.compra} {self.cantidad} "
+    def __str__(self):
+        return f"STOCK {self.stock_lote} VENCE {self.formatofecha()} "
+    @renders('fecha_vencimiento')
+    def formatofecha(self):
+        if self.fecha_vencimiento == None:
+            return ""
+        return str(self.fecha_vencimiento.strftime(" %d-%m-%Y  "))
 
+    def fechacompra(self):
+        if self.compra.fecha == None:
+            return ""
+        return str(self.compra.fecha.strftime(" %d-%m-%Y  "))
 class Renglon(Model):
     """
     creo clase que sera mapeada como la tabla renglon en la base de datos
@@ -512,12 +618,12 @@ class Renglon(Model):
     venta_id = Column(Integer, ForeignKey('ventas.id'), nullable=False)
     venta = relationship("Venta", backref='renglones')
     producto_id = Column(Integer, ForeignKey('productos.id'), nullable=False)
-    producto = relationship("Productos")
+    producto = relationship("Productos")#,backref="renglon_venta")
     descuento = Column(Float)
 
     # defino como se representara al ser llamado
     def __repr__(self):
-        return f"{self.producto} ${self.precioVenta} {self.venta} {self.producto} {self.cantidad} "
+        return f"{self.producto} ${self.precioVenta:.2f} {self.venta} {self.producto} {self.cantidad} "
 
 
 

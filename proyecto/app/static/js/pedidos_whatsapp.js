@@ -45,8 +45,8 @@ var percepcion= document.getElementById('percepcion')
 tarjeta=document.getElementById('unmetodo')
 var ultimoElemento=tarjeta
 condfrenteivanego()
-var cupon= document.getElementById('numeroCupon')
-cupon.className="form-inline"
+//var cupon= document.getElementById('numeroCupon')
+//cupon.className="form-inline"
 var companiaTarjeta= document.getElementById('companiaTarjeta')
 companiaTarjeta.className="form-control"
 
@@ -215,8 +215,11 @@ var contadorfilas=0
 
 function agregarRenglon(element){
 	//estafuncion sirve para agregar un renglon de producto
+	descuento.value=0
 	renglonseleccionado=NaN
 	botonborrar.disabled=true
+	percepcion.value=0
+	percepcion.disabled=true
 
 	element.disabled=true
 
@@ -244,7 +247,7 @@ function agregarRenglon(element){
       
 
 var url = "http://"+location.host+Flask.url_for("VentasApi.obtenerprecio")
-var data = {p: productosel.id, venta:true, cliente_condfrenteiva:JSON.parse(cliente.value).tipoclave};
+var data = {p: productosel.id, venta:true, cliente_condfrenteiva:JSON.parse(cliente.value).tipoclave,cliente:parseInt(JSON.parse(cliente.value).id)};
 try {
 	// statements
 
@@ -262,9 +265,10 @@ try {
 .then(response =>{ console.log('Success:', response)
 	
 
-	console.log('Success:', response.message,'  ',typeof totalFila)
+	console.log('Success:', response.message,response.message,'  ',typeof totalFila)
 	
-	totalFila=cantidadpos()*(parseFloat( response.message)*( 1-descuento.value/100))
+	descuento.value=0
+	totalFila=cantidadpos()*(parseFloat(response.message)*( 1-descuento.value/100))
 	agregarTd(hilera,response.message)
       agregarTd(hilera,cantidadpos())
       agregarTd(hilera, porcentajepositivo(descuento,true))
@@ -281,17 +285,10 @@ try {
       addRowHandlers()
       //busco el monto y si no esta desabiliado lo cargo en el 
       //primer monto de froma de pago
-      let montos=document.getElementById('monto')
+         let montos=document.getElementById('monto')
       if (!montos.disabled){
       		montos.value=totalhtml.value
       }
-      
-      
-      
-
-
-
-      
 
       element.disabled=false
       
@@ -311,6 +308,7 @@ try {
 
 
 }
+
 function cancelar(){
 	  var bool=confirm("Seguro de cancelar la venta?");
   if(bool){
@@ -321,7 +319,7 @@ function cancelar(){
 
 
 function conectarVentaapi(jsonventa){
-	var url = "http://"+location.host+Flask.url_for("VentasApi.greeting2")//"http://localhost:8080/api/v1/ventasapi/realizarventa/"
+	var url = "http://"+location.host+Flask.url_for("VentasApi.realizarpedido_whatsapp")//"http://localhost:8080/api/v1/ventasapi/realizarventa/"
 var data = jsonventa;
 try {
 	fetch(url, {
@@ -336,7 +334,7 @@ try {
 	console.log('Success:', response)
 	if (response.message.status== "sucess"){
 		alert("Venta Realizada Satisfactoriamente")
-		window.location.href ="http://localhost:8080/ventaview/venta/"//"http://localhost:8080/ventaview/venta/"
+		window.location.href ="http://localhost.localdomain:8080/ventaview/venta/"//"http://localhost:8080/ventaview/venta/"
 		//window.location.href = "http://localhost:8080/ventareportes/show/"+response.message.idventa.toString()
 	}else {
 		alert(response.message)
@@ -374,7 +372,8 @@ boton.disabled=true
 			jsonventa["totalneto"]=parseFloat(totalneto.value).toFixed(2);
 			jsonventa["totaliva"]=parseFloat(totaliva.value).toFixed(2);
 			jsonventa["percepcion"]=parseFloat(percepcion.value).toFixed(2);
-			jsonventa["comprobante"]=parseFloat(comprobante.value).toFixed(2)
+			jsonventa['activation_hash']=window.location.pathname.split("/")[window.location.pathname.split("/").length-1]
+			//jsonventa["comprobante"]=parseFloat(comprobante.value).toFixed(2)
 			//jsonventa["condicionfrenteiva"]=condicionfrenteiva.value
 
 			//validar si la suma de los pagos no supera el total del la venta
@@ -490,7 +489,7 @@ function crearFormadePago(element){
 	if (numerodepago==0){
 	montos=document.getElementById('monto')
 	metododePago=metododePago
-	cupons=document.getElementById('numeroCupon')
+	
 	creditos=document.getElementById('credito')
 	companiaTarjetas=document.getElementById('companiaTarjeta')
 	cuota=document.getElementById('cuotas')
@@ -523,9 +522,9 @@ function crearFormadePago(element){
 							return;
 					}
 					else{
-						if ( cupons.value!=""  ){
+						
 							//alert("entro1")
-								jsonMetodo["numeroCupon"]=cupons.value;
+								//jsonMetodo["numeroCupon"]=cupons.value;
 								jsonMetodo["companiaTarjeta"]=companiaTarjetas.value;
 								jsonMetodo["credito"]=creditos.checked
 								jsonMetodo["cuotas"]=parseInt(cuota.value) 
@@ -533,12 +532,8 @@ function crearFormadePago(element){
 								$('#'+ unmetodo.id +' *').prop('disabled',true);
 
 								document.getElementById(borraro.id).disabled=false
-						}
-						else{
-							alert("Completar todos los datos de la Tarjeta")
-							element.disabled=false
-							return;
-						}
+						
+
 
 					}
 		}
@@ -547,7 +542,7 @@ function crearFormadePago(element){
 	else{
 
 	let metododePago1=document.getElementById('metodo'+ numerodepago.toString())
-	let cupon1=document.getElementById('numeroCupon'+ numerodepago.toString())
+
 	let companiaTarjeta1=document.getElementById('companiaTarjeta'+ numerodepago.toString())
 	let credito1=document.getElementById('credito'+ numerodepago.toString())
 	let cuotas1=document.getElementById('cuotas'+ numerodepago.toString())
@@ -580,21 +575,14 @@ function crearFormadePago(element){
 							return;
 					}
 					else{
-						if ( cupon1.value!=""  ){
+						
 							//alert("entro1")
-								jsonMetodo["numeroCupon"]=cupon1.value;
+								//jsonMetodo["numeroCupon"]=cupon1.value;
 								jsonMetodo["companiaTarjeta"]=companiaTarjeta1.value;
 								jsonMetodo["credito"]=credito1.checked
 								jsonMetodo["cuotas"]=parseInt(cuotas1.value) 
 								jsonMetodo["monto"]=parseFloat(monto1.value) 
 
-								
-						}
-						else{
-							alert("Completar todos los datos de la Tarjeta",jsonMetodo)
-							element.disabled=false
-							return;
-						}
 
 					}
 			}
@@ -661,7 +649,7 @@ aclonar.querySelector("#borrar").remove()
 
 }
 
-sumaridclon(aclonar,"numeroCupon")
+//sumaridclon(aclonar,"numeroCupon")
 sumaridclon(aclonar,"companiaTarjeta")
 sumaridclon(aclonar,"credito")
 sumaridclon(aclonar,"cuotas")
@@ -696,10 +684,6 @@ ultimoElemento=aclonar
 }
 
 boton.onclick= function() {console.log('largo json ',jQuery.isEmptyObject(jsonProductos))
-						if (comprobante.value==0){
-							alert("ingrese el numero de comprobante!!!")
-							return;
-						}
 						if (jQuery.isEmptyObject(jsonProductos)){
 								alert("No hay poductos asociados a esta venta!!!")
 
@@ -726,10 +710,10 @@ $("#metodo").click(function() {
 cliente.onchange= (event)=> {
 console.log(JSON.parse(event.target.value).tipoclave=="Responsable Inscripto",event.target.value)
     if(JSON.parse(event.target.value).tipoclave=="Responsable Inscripto" && responsableinscripto){
-    	    percepcion.disabled=false
+    	    percepcion.disabled=true
     	    iva=true
 	}else if (JSON.parse(event.target.value).tipoclave=="Monotributista" && responsableinscripto) {
-		percepcion.disabled=false
+		percepcion.disabled=true
 		iva=false
 	}else{
 		percepcion.disabled=true

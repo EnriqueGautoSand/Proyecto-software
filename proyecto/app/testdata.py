@@ -1,6 +1,6 @@
 from app import db
 from app.models import Venta,Clientes,TipoClaves,TiposDocumentos,FormadePago,CompaniaTarjeta,EmpresaDatos,TipoPersona,Localidad,\
-                    ModulosInteligentes
+                    ModulosConfiguracion
 
 from datetime import datetime as dt
 
@@ -8,7 +8,7 @@ from datetime import datetime as dt
 
 
 datos_test=[
-    ModulosInteligentes(id=1),
+    ModulosConfiguracion(id=1),
     CompaniaTarjeta(compania="Visa"),
             CompaniaTarjeta(compania="Mastercard"),
             FormadePago(Metodo="Contado"),

@@ -50,7 +50,7 @@ class AuditedModelView(ModelView):
         try:
             print("buscando error")
             diccionario=self.mostraritem(message)
-            print(diccionario)
+            #print(diccionario)
             strings=""
             for key in diccionario:
                 try:
@@ -62,7 +62,7 @@ class AuditedModelView(ModelView):
                                 strings += "ESTADO" + " " + str(getattr(message, key)()).replace("<b>","").replace("</b>","") + " "
                             else:
                                 strings += key.upper() + " " + str(getattr(message,key) ()) + " "
-                    print(key,inspect.ismethod(getattr(message,key) ), inspect.isfunction(diccionario[key]) ,strings)
+                    #print(key,inspect.ismethod(getattr(message,key) ), inspect.isfunction(diccionario[key]) ,strings)
 
                 except Exception as e:
                     print(e.__str__())
@@ -70,32 +70,36 @@ class AuditedModelView(ModelView):
             cambios = ""
             anterior = ""
             if operation.name == "UPDATE":
-                diccionario = self.mostraritem(self.preitem)
-                for key in diccionario:
+                diccionario2 = self.mostraritem(self.preitem)
+                #print('diccionario2 ',diccionario2)
+                for key in diccionario2:
                     try:
-                        if not inspect.ismethod(getattr(message, key)):
-                            anterior += key.upper() + " " + diccionario[key].__str__() + " "
+
+                        #print('clave foranea ',set([Column.name for Column in self.datamodel.obj.__table__.columns if Column.foreign_keys]))
+
+                        if not inspect.ismethod(getattr(self.preitem, key)):
+                            anterior += key.upper() + " " + diccionario2[key].__str__() + " "
                         if inspect.ismethod(
-                                getattr(message, key)) and key != 'formatofecha' and key != 'renglonesrender':
+                                getattr(self.preitem, key)) and key != 'formatofecha' and key != 'renglonesrender':
                             if key == "estadorender":
-                                anterior += "ESTADO" + " " + str(getattr(message, key)()).replace("<b>", "").replace(
+                                anterior += "ESTADO" + " " + str(getattr(self.preitem, key)()).replace("<b>", "").replace(
                                     "</b>", "") + " "
                             else:
-                                anterior += key.upper() + " " + str(getattr(message, key)()) + " "
+                                anterior += key.upper() + " " + str(getattr(self.preitem, key)()) + " "
                     except Exception as e:
                         print(e.__str__())
                         print(e)
 
                 if len(self.modificado)>0:
-                    diccionario=self.modificado
-                    for key in diccionario:
-                        if not inspect.ismethod(getattr(message,key) ) :
-                            cambios += key.upper() + " " + diccionario[key].__str__() + " "
-                        if inspect.ismethod(getattr(message,key) ) and  key !='formatofecha' and  key !='renglonesrender' :
+                    diccionario2=self.modificado
+                    for key in diccionario2:
+                        if not inspect.ismethod(getattr(self.preitem,key) ) :
+                            cambios += key.upper() + " " + diccionario2[key].__str__() + " "
+                        if inspect.ismethod(getattr(self.preitem,key) ) and  key !='formatofecha' and  key !='renglonesrender' :
                                 if key=="estadorender":
-                                    cambios += "ESTADO" + " " + str(getattr(message, key)()).replace("<b>","").replace("</b>","") + " "
+                                    cambios += "ESTADO" + " " + str(getattr(self.preitem, key)()).replace("<b>","").replace("</b>","") + " "
                                 else:
-                                    cambios += key.upper() + " " + str(getattr(message,key)()) + " "
+                                    cambios += key.upper() + " " + str(getattr(self.preitem,key)()) + " "
 
             auditlog = Auditoria(message=strings, anterior=anterior,username=g.user.username, operation=operation, target=self.__class__.datamodel.model_name)
             try:
@@ -114,13 +118,13 @@ class AuditedModelView(ModelView):
     def post_update(self, item):
         operation = self.update_operation()
         try:
-            print(self.mostraritem(self.preitem))
-            print(item.id,'\n',self.mostraritem(item))
+            #print('post update',self.mostraritem(self.preitem))
+            #print(item.id,'\n',self.mostraritem(item))
             same, modified =self.dict_compare(self.preitem,item)
-            print('modified: ',modified )
+            #print('modified: ',modified )
             self.modificado=modified
 
-            print('same: ', same, self.mostraritem(self.preitem)==self.mostraritem(item))
+            #print('same: ', same, self.mostraritem(self.preitem)==self.mostraritem(item))
 
         except Exception as e:
             print(e.__str__())
@@ -140,20 +144,16 @@ class AuditedModelView(ModelView):
         operation = self.delete_operation()
         self.add_log_event(item, operation)
 
-    def pre_pre_update(self, item):
-        """
-        session=self.datamodel.session
-        objeto=self.__class__.datamodel.obj
-        self.preitem=session.query(objeto).filter(objeto.id==item.id).first()
-        self.preitem=self.mostraritem(self.preitem)
-        """
-        self.preitem=item
-        return self.preitem
 
     def mostraritem(self, item):
         """Returns a json-able dict for show"""
+        lista = [self.list_columns,self.show_columns]
+        result = list({city for cities in lista for city in cities})
+        result=self.datamodel.obj.__table__.columns.keys()
+        print('self.datamodel.__table__.columns.keys() ',result)
+        #print('combinacion de ambas',result)
         d = {}
-        for col in self.list_columns:
+        for col in result:
             v = getattr(item, col)
             if not isinstance(v, (int, float, string_types)):
                 v = str(v)
@@ -178,8 +178,8 @@ class AuditLogView(ModelView):
     base_order = ('created_on','dsc')
     list_widget = ListLinkWidget
     list_title = "Registro de Auditoria"
-    label_columns = {'username':'Usuario','created_on':'Fecha de Creacion','operation.name':'Operacion','target':'Tabla','message':'Mensaje' }
-    list_columns = ['created_on', 'username', 'operation.name', 'target', 'message']
+    label_columns = {'username':'Usuario','formatofecha':'Fecha de Creación','operation':'Operación','target':'Tabla','message':'Mensaje' }
+    list_columns = ['formatofecha', 'username', 'operation', 'target', 'message']
     base_permissions = ['can_list','can_show']
 
 
@@ -192,7 +192,7 @@ class AuditLogChartView(GroupByChartView):
         {
             'group' : 'operation',
             'formatter': str,
-            'series': [(aggregate_count,'operation')]
+            'series': [(aggregate_count,'operacion')]
         },
         {
             'group' : 'username',
@@ -200,4 +200,3 @@ class AuditLogChartView(GroupByChartView):
             'series': [(aggregate_count,'username')]
         }
     ]
-

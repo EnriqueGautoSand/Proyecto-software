@@ -46,12 +46,11 @@ create function sumarstockenventanulada() returns Trigger
 as
 $$
 begin
-if not new."estado" then
-update productos  set stock=stock+renglon.cantidad from  
- renglon where renglon.venta_id=new.id  and productos.id =renglon.producto_id;
-else
-update productos  set stock=stock-renglon.cantidad from  
- renglon where renglon.venta_id=new.id  and productos.id =renglon.producto_id;
+if new."estado" != old."estado" then
+	if not new."estado" then
+	update productos  set stock=stock+renglon.cantidad from  
+	 renglon where renglon.venta_id=new.id  and productos.id =renglon.producto_id;
+	end if;
 end if;
 return new;
 
@@ -69,12 +68,12 @@ create function actualiarstockencompranulada() returns Trigger
 as
 $$
 begin
-if not new."estado" then
-update productos  set stock=stock-renglon_compras.cantidad from  
- renglon_compras where renglon_compras.compra_id=new.id  and productos.id =renglon_compras.producto_id;
-else
-update productos  set stock=stock+renglon_compras.cantidad from  
- renglon_compras where renglon_compras.compra_id=new.id  and productos.id =renglon_compras.producto_id;
+if new."estado" != old."estado" then
+	if not new."estado" then
+	update productos  set stock=stock-renglon_compras.cantidad from  
+	 renglon_compras where renglon_compras.compra_id=new.id  and productos.id =renglon_compras.producto_id;
+
+	end if;
 end if;
 return new;
 

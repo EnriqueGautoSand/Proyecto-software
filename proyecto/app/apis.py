@@ -1,5 +1,6 @@
 from flask_appbuilder.api import BaseApi, expose
-from flask import request
+from flask import request,session
+from flask_appbuilder.urltools import Stack
 from . import appbuilder
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 from flask_appbuilder.api import ModelRestApi
@@ -9,10 +10,21 @@ from fab_addon_audit.views import AuditedModelView
 from .modelo.ModelView import Modelovista
 import psycopg2
 from flask import jsonify
+import copy
 import json
 AuditedModelView.__bases__=(Modelovista,)
 def get_user():
     return g.user
+
+from sqlalchemy.sql import func
+class Auditar(AuditedModelView):
+        datamodel = SQLAInterface(obj=Productos,session=db.session)
+        def __init__(self,datamodel):
+            self.datamodel=SQLAInterface(datamodel)
+
+
+
+        
 class Clienteapi(BaseApi,AuditedModelView):
     datamodel = SQLAInterface(Clientes)
     @expose('/condfisicacliente/', methods=['POST', 'GET'])
@@ -36,49 +48,6 @@ class Clienteapi(BaseApi,AuditedModelView):
         res=json.dumps(respuesta )
         return self.response(200, message=res )
 
-    @expose('/creacliente/', methods=['POST', 'GET'])
-    def crear(self):
-        """
-        ver si la borro
-        """
-        if request.method == "POST":
-            data = request.json
-            print(data)
-            from .views import ClientesView
-            self.list_columns = ClientesView.list_columns
-            print(self.list_columns)
-            try:
-                global cliente
-                if "direccion" in data and "localidad" in data:
-                    direccion=Direccion(direccion=data['direccion'],idLocalidad=int(data['localidad']))
-                    db.session.add(direccion)
-                    db.session.flush()
-                else:
-                    db.session.rollback()
-                    return self.response(400, message="error no hay direccion")
-                if int(data['tipopersona'])==1:
-                    print('entro')
-                    cliente = Clientes(documento=data['documento'], nombre=data['nombre'], apellido=data['apellido'],
-                            tipoDocumento_id=int(data['tipodocumento']),tipoClave_id=int(data['condiva']),idTipoPersona=int(data['tipopersona']), direccion=direccion)
-                    db.session.add(cliente)
-                    db.session.flush()
-                else:
-                    cliente = Clientes(documento=data['cuit'],nombre=data['denominacion'],apellido=data['razonsocial'],
-                                        tipoDocumento_id = 2,tipoClave_id=int(data['condiva']),idTipoPersona=int(data['tipopersona']), direccion=direccion)
-                    print(cliente)
-                    db.session.add(cliente)
-                    db.session.flush()
-                print(self.mostraritem(cliente))
-                self.post_add(cliente)
-                db.session.commit()
-                return self.response(200, message={'status': "sucess", 'idcliente': cliente.id})
-            except Exception as e:
-                print(e)
-                print(str(e))
-                print(repr(e))
-                db.session.rollback()
-                return self.response(400, message="error")
-        return self.response(400, message="error")
 class ComprasApi(BaseApi,AuditedModelView):
     datamodel = SQLAInterface(Compra)
     @expose('/realizarcompra/', methods=['POST', 'GET'])
@@ -92,14 +61,18 @@ class ComprasApi(BaseApi,AuditedModelView):
             data = request.json
             print(data)
             from .views import CompraReportes
+            from .views import ProductoModelview
             self.list_columns = CompraReportes.list_columns
             self.show_columns = CompraReportes.show_columns
             try:
                 if "metododePago" in data and "proveedor" in data and "total" in data:
                     print(data["total"])
                     # creo la compra y agrego forma de pago
+                    compracomprobacion = db.session.query(Compra).filter(Compra.comprobante == float(data["comprobante"])).first()
+                    if compracomprobacion != None:
+                        return self.response(400, message="Error el Nro de comprobante es incorrecto o repetido")
                     if int(data["metododePago"]) == 1:
-                        compra=Compra(comprobante=float(data["comprobante"]),percepcion=float(data["percepcion"]),totaliva=float(data["totaliva"]),totalNeto=float(data["totalneto"]),estado=True,total=float(data["total"]),proveedor_id=data["proveedor"],formadepago_id=data["metododePago"])
+                        compra=Compra(fecha=dt.now(),comprobante=float(data["comprobante"]),percepcion=float(data["percepcion"]),totaliva=float(data["totaliva"]),totalNeto=float(data["totalneto"]),estado=True,total=float(data["total"]),proveedor_id=data["proveedor"],formadepago_id=data["metododePago"])
                     else:
                         #en caso de que se hay apagado con tarjeta asocio los datos de la tarjeta a la compra
                         datosFormaPagos=DatosFormaPagosCompra(numeroCupon=data["numeroCupon"],
@@ -110,11 +83,14 @@ class ComprasApi(BaseApi,AuditedModelView):
 
                         compra = Compra(comprobante=float(data["comprobante"]),estado=True,totalNeto=float(data["totalneto"]),totaliva=float(data["totaliva"]),
                                       total=float(data["total"]), proveedor_id=data["proveedor"],formadepago_id=data["metododePago"],
-                                      datosFormaPagos=datosFormaPagos,percepcion=float(data["percepcion"]))
+                                      datosFormaPagos=datosFormaPagos,percepcion=float(data["percepcion"]),fecha=dt.now())
 
                     #agrego la compra
                     db.session.add(compra)
                     db.session.flush()
+
+
+
                     #verifico si tiene productos
                     if "productos" in data:
                         #por cada producto me genera un renglon en la compra
@@ -126,12 +102,25 @@ class ComprasApi(BaseApi,AuditedModelView):
 
                             #crea el renglon en la compra sino cancela transaccion y manda error
 
-                            db.session.add(RenglonCompras(precioCompra=p["precio"] , descuento=p["descuento"], cantidad=p["cantidad"],compra=compra,  producto=producto))
+                            db.session.add(RenglonCompras(precioCompra=p["precio"] , descuento=p["descuento"], cantidad=p["cantidad"],compra=compra,  producto=producto,stock_lote=p["cantidad"]))
+                            porcentaje_subida=db.session.query(ModulosConfiguracion).first().porcentaje_subida_precio
+                            productoanterior=copy.copy(producto)
+                            producto.precio=format(float(p["precio"])+((float(p["precio"])/100) * float(porcentaje_subida)), '.2f')
+
+                            # auditacion=Auditar(Productos)
+                            # auditacion.list_columns=ProductoModelview.list_columns
+                            # auditacion.show_columns=ProductoModelview.show_columns
+                            # self.appbuilder.add_view_no_menu(auditacion)
+                            # auditacion.pre_pre_update(productoanterior)
+                            # auditacion.post_update(producto)
 
                         #Guardamos
 
                         db.session.commit()
                         self.post_add(compra)
+                        page_history = Stack(session.get("page_history", []))
+                        page_history.push("http://localhost.localdomain:8080"+url_for("CompraView.compra"))
+                        session["page_history"] = page_history.to_json()
 
                         print("compra Guardada")
                     else:
@@ -153,7 +142,14 @@ class ComprasApi(BaseApi,AuditedModelView):
 
 class VentasApi(BaseApi,AuditedModelView):
     datamodel = SQLAInterface(Venta)
-
+    @expose('/venta_whatsapp/', methods=["GET", "POST"])
+    def venta_whatsapp(self):
+        """
+        obtengo el precio de un producto
+        """
+        if request.method == "POST":
+            data = request.json
+            print(data)
 
     @expose('/obtenerusuario/', methods=["GET", "POST"])
     def apiusuario(self):
@@ -189,6 +185,47 @@ class VentasApi(BaseApi,AuditedModelView):
             # retorno el precio del producto
             return self.response(200, message=format(p.precio, '.2f'))
         return self.response(400, message="error")
+    @expose('/obtenerprecio_oferta/', methods=["GET", "POST"])
+    def obtenerprecio_oferta(self):
+        """
+        obtengo el precio de un producto
+        """
+        if request.method == "POST":
+            # verifico si soy responsable inscripto
+            tipoclave = str(db.session.query(EmpresaDatos).first().tipoClave)
+
+            responsableinscripto = tipoclave == "Responsable Inscripto"
+            monotributista = tipoclave == "Monotributista"
+            # paso los datos de la peticion a json
+            data = request.json
+            # Solicito a ala base de datos el producto
+            cliente= db.session.query(Clientes).filter(Clientes.id==int(data['cliente'])).first()
+            p  =db.session.query(Productos).join(OfertaWhatsapp.producto).join(Clientes,Clientes.id==OfertaWhatsapp.cliente_id).\
+                                            filter(Clientes.id==cliente.id).\
+                                            filter(Productos.id==int(data['p'])).first()
+            if p!=None:
+                oferta = db.session.query(OfertaWhatsapp).join(Productos).join(Clientes).filter(Clientes.id == cliente.id,
+                                                                                           Productos.id == OfertaWhatsapp.producto_id,
+                                                                                           OfertaWhatsapp.cliente_id == cliente.id,
+                                                                                                Productos.id==int(data['p'])).first()
+                # si soy responsable y el que me compra no es responsable le agrego el iva en el precio
+                respuesta={'precio':format(p.precio * (1 + (p.iva / 100)), '.2f'),'descuento':oferta.descuento }
+                if data["venta"] and data['cliente_condfrenteiva'] != "Responsable Inscripto" and responsableinscripto:
+                    return self.response(200, message=json.dumps(respuesta))
+                if data["venta"] and monotributista:
+                    return self.response(200, message=json.dumps(respuesta))
+            else:
+
+                p = db.session.query(Productos).get(data['p'])
+                respuesta = {'precio': format(p.precio * (1 + (p.iva / 100)), '.2f'), 'descuento': 0}
+                # si soy responsable y el que me compra no es responsable le agrego el iva en el precio
+                if data["venta"] and data['cliente_condfrenteiva'] != "Responsable Inscripto" and responsableinscripto:
+                    return self.response(200, message=json.dumps(respuesta))
+                if data["venta"] and monotributista:
+                    return self.response(200, message=json.dumps(respuesta))
+            # retorno el precio del producto
+            return self.response(200, message=format(p.precio, '.2f'))
+        return self.response(400, message="error")
     @expose('/realizarventa/', methods=['POST', 'GET'])
     def greeting2(self):
         """
@@ -205,9 +242,12 @@ class VentasApi(BaseApi,AuditedModelView):
                 if  "cliente" in data and "total" in data:
                     print(data["total"])
                     # creo la venta
-
+                    ventacomp=db.session.query(Venta).filter(Venta.comprobante==float(data["comprobante"])).first()
+                    print(ventacomp)
+                    if ventacomp!= None:
+                        return self.response(400, message="Error el Nro de comprobante es incorrecto o repetido")
                     venta=Venta(comprobante=float(data["comprobante"]),estado=True,percepcion=float(data["percepcion"]),totaliva=float(data["totaliva"]),totalNeto=float(data["totalneto"]), total=float(data["total"])
-                                ,cliente_id=int(data["cliente"]))
+                                ,cliente_id=int(data["cliente"]),fecha=dt.now())
                     db.session.add(venta)
                     db.session.flush()
                     #creo los metodos de pagos
@@ -233,12 +273,26 @@ class VentasApi(BaseApi,AuditedModelView):
                         for p in data["productos"]:
                            #solicita el producto a ala base de datos
                            producto = db.session.query(Productos).get(p["producto"])
-                           print(producto.stock, p["cantidad"])
-                           print(producto)
+                           #print(producto.stock, p["cantidad"])
+                           #print(producto)
                            #aca verifica si el stock es mayor a la cantidad a comprar
                            #crea el renglon en la venta sino cancela transaccion y manda error
-                           if producto.stock>p["cantidad"]:
-                                db.session.add(Renglon(precioVenta=producto.precio , cantidad=p["cantidad"],venta=venta,producto=producto,descuento=p["descuento"]))
+                           if producto.stock>=p["cantidad"]:
+                               renglones=db.session.query(RenglonCompras).join(Compra).filter(Compra.id==RenglonCompras.compra_id,RenglonCompras.vendido==False,producto.id==RenglonCompras.producto_id).order_by(Compra.fecha).all()
+                               print(renglones,'renglones')
+                               loteado=p["cantidad"]
+                               for i in renglones:
+                                   print('es III ',i,'stock lote',i.stock_lote,'stock to',loteado)
+                                   if i.stock_lote>loteado:
+                                       i.stock_lote=i.stock_lote-loteado
+                                       break
+                                   else:
+                                       loteado =loteado-i.stock_lote
+                                       i.stock_lote=0
+                                       i.vendido=True
+
+
+                               db.session.add(Renglon(precioVenta=producto.precio , cantidad=p["cantidad"],venta=venta,producto=producto,descuento=p["descuento"]))
                            else:
                                db.session.rollback()
                                return self.response(400, message=f"error {producto} stock insuficiente posee {producto.stock} y trata de vender {p['cantidad']}")
@@ -269,11 +323,151 @@ class VentasApi(BaseApi,AuditedModelView):
                 return self.response(400, message="error")
         return self.response(400, message="error")
 
-class ProductoApi(ModelRestApi):
-    resource_name = 'produ'
-    datamodel = SQLAInterface(Productos)
+    @expose('/realizarpedido_whatsapp/', methods=['POST', 'GET'])
+    def realizarpedido_whatsapp(self):
+        """
+        realizo la venta
+        """
+        from .views import VentaReportes
+        self.list_columns=VentaReportes.list_columns
+        self.show_columns =VentaReportes.show_columns
+        if request.method == "POST":
+            #paso los datos de la peticion a json
+            data = request.json
+            print(data)
+            try:
+                if  "cliente" in data and "total" in data:
+                    print(data["total"])
+                    # creo la venta
 
-appbuilder.add_api(ProductoApi)
+                    comprobante_alto=db.session.query(func.max(Venta.comprobante)).first()
+                    print(comprobante_alto, 'comprobante altos')
+                    if comprobante_alto==None:
+
+                        venta=Venta(comprobante=float(9999999),estado=False,percepcion=float(data["percepcion"]),totaliva=float(data["totaliva"]),totalNeto=float(data["totalneto"]), total=float(data["total"])
+                                ,cliente_id=int(data["cliente"]),fecha=dt.now())
+                    else:
+                        venta = Venta(comprobante=float(comprobante_alto[0]+1), estado=False, percepcion=float(data["percepcion"]),
+                                      totaliva=float(data["totaliva"]), totalNeto=float(data["totalneto"]),
+                                      total=float(data["total"])
+                                      , cliente_id=int(data["cliente"]), fecha=dt.now())
+                    db.session.add(venta)
+                    db.session.flush()
+                    #creo los metodos de pagos
+                    for i in data["metodos"]:
+                        formadePagoxVenta=FormadePagoxVenta(monto=i["monto"],venta=venta,formadepago_id=  int(i["metododePago"]))
+                        db.session.add(formadePagoxVenta)
+                        db.session.flush()
+                        print(db.session.query( FormadePago).get( int(i["metododePago"])),type(db.session.query( FormadePago).get( int(i["metododePago"])).Metodo))
+                        dato_formadepago_alto = db.session.query(func.max(DatosFormaPagos.numeroCupon)).first()
+                        if db.session.query(FormadePago).get(int(i["metododePago"])).Metodo == "Tarjeta":
+                            if dato_formadepago_alto == None:
+                                    datosFormaPagos=DatosFormaPagos(numeroCupon=99999999,
+                                                          companiaTarjeta_id=i["companiaTarjeta"],
+                                                          credito=i["credito"],
+                                                          cuotas=i["cuotas"],formadepago=formadePagoxVenta
+                                                          )
+                                    db.session.add(datosFormaPagos)
+                            else:
+                                    datosFormaPagos=DatosFormaPagos(numeroCupon=dato_formadepago_alto[0]+1,
+                                                          companiaTarjeta_id=i["companiaTarjeta"],
+                                                          credito=i["credito"],
+                                                          cuotas=i["cuotas"],formadepago=formadePagoxVenta
+                                                          )
+                                    db.session.add(datosFormaPagos)
+
+
+
+                    #verifico si hay productos
+
+                    if "productos" in data:
+                        #por cada producto me genera un renglon en la venta
+                        for p in data["productos"]:
+                           #solicita el producto a ala base de datos
+                           producto = db.session.query(Productos).get(p["producto"])
+                           #print(producto.stock, p["cantidad"])
+                           #print(producto)
+                           #aca verifica si el stock es mayor a la cantidad a comprar
+                           #crea el renglon en la venta sino cancela transaccion y manda error
+                           if producto.stock>=p["cantidad"]:
+                               renglones=db.session.query(RenglonCompras).join(Compra).filter(Compra.id==RenglonCompras.compra_id,RenglonCompras.vendido==False,producto.id==RenglonCompras.producto_id).order_by(Compra.fecha).all()
+                               print(renglones,'renglones')
+                               loteado=p["cantidad"]
+                               for i in renglones:
+                                   print('es III ',i,'stock lote',i.stock_lote,'stock to',loteado)
+                                   if i.stock_lote>loteado:
+                                       i.stock_lote=i.stock_lote-loteado
+                                       break
+                                   else:
+                                       loteado =loteado-i.stock_lote
+                                       i.stock_lote=0
+                                       i.vendido=True
+
+
+                               db.session.add(Renglon(precioVenta=producto.precio , cantidad=p["cantidad"],venta=venta,producto=producto,descuento=p["descuento"]))
+                           else:
+                               db.session.rollback()
+                               return self.response(400, message=f"error {producto} stock insuficiente posee {producto.stock} y trata de vender {p['cantidad']}")
+                        #Guardamos
+
+                        pedido = db.session.query(PedidoCliente).filter(PedidoCliente.hash_activacion == data["activation_hash"]).first()
+                        pedido.venta_id=venta.id
+                        pedido.reservado=True
+                        db.session.commit()
+                        print("Pedido Guardada")
+                        self.post_add(venta)
+                    else:
+                        db.session.rollback()
+                        return self.response(400, message="error")
+                else:
+                    db.session.rollback()
+                    return self.response(400, message="error")
+
+
+                return self.response(200, message={'status':"sucess" ,'idventa':venta.id  })
+            except psycopg2.Error as e:
+                # get error code
+                error = e.pgcode
+                if error==23505:
+                    return self.response(400, message="Error el comprobante es repetido")
+
+            except Exception as e:
+                print(e)
+                print(str(e))
+                print(repr(e))
+                db.session.rollback()
+                return self.response(400, message="error")
+        return self.response(400, message="error")
+    @expose('/convertir_pedido_venta', methods=['POST'])
+    def convertir_pedido_venta(self):
+        try:
+            data = request.json
+            print(data)
+            pedido = db.session.query(PedidoCliente).get(int(data['pk']))
+            pedido.venta.estado=True
+            pedido.venta.comprobante=int(data['comprobante'])
+            tarjeta=False
+            for i in pedido.venta.formadepagos:
+                if i.formadepago.Metodo=='Tarjeta':
+                    tarjeta=True
+            if tarjeta:
+                for i in data['formasdepago']:
+                    formadepago=db.session.query(DatosFormaPagos).get(int(i['idformapago']))
+                    formadepago.numeroCupon=int(i['numerocupon'])
+            pedido.vendido=True
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            print(str(e))
+            print(repr(e))
+            db.session.rollback()
+            return self.response(400, message={'ok':'Error'})
+
+
+
+
+        return self.response(200, message={'ok':'ok','id':pedido.venta.id})
+
 appbuilder.add_api(Clienteapi)
 
 appbuilder.add_api(VentasApi)

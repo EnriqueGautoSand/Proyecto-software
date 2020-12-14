@@ -22,8 +22,8 @@ class AuditAddOnManager(BaseManager):
             This method is called by AppBuilder when initializing, use it to add you views
         """
         self.appbuilder.add_separator("Security")
-        self.appbuilder.add_view(AuditLogView, "Auditoria",icon = "fa-user-secret",category = "Security")
-        self.appbuilder.add_view(AuditLogChartView, "Graficos de Auditoria",icon = "fa-area-chart",category = "Security")
+        self.appbuilder.add_view(AuditLogView, "Auditoría",icon = "fa-user-secret",category = "Security")
+        #self.appbuilder.add_view(AuditLogChartView, "Graficos de Auditoria",icon = "fa-area-chart",category = "Security")
 
     def pre_process(self):
         for operation in self.operations:

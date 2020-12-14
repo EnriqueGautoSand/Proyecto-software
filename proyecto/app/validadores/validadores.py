@@ -41,6 +41,8 @@ def cuitvalidator(dato):
 
     return _cuitvalidator
 
+
+
 def cuitvalidatorProveedores(form, field):
     arrsinguion = field.data.split("-")
     sCUIT = ""

@@ -247,6 +247,7 @@ def generarReporte(titulo,cabecera,buscar,nombre,datos=None,filtros=None,no_regi
                     d[titulo] = getattr(row, titulo)
 
 
+
         return d
     if datos!=None:
         #recorro los datos

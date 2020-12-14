@@ -14,6 +14,8 @@ class listwitgetall(ListWidget):
 class Modelovista(ModelView):
     list_template = "list.html"
     list_widget = listwitgetall
+    edit_template = 'modelo_detalle.html'
+    show_template = 'modelo_detalle_lista.html'
     def _init_titles(self):
         """
             Init Titles if not defined

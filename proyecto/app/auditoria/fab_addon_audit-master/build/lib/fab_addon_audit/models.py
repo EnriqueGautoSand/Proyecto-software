@@ -4,7 +4,7 @@ from flask_appbuilder.models.mixins import AuditMixin, FileColumn, ImageColumn
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Sequence
 from sqlalchemy.orm import relationship
 from sqlalchemy import event
-
+from flask_appbuilder.models.decorators import renders
 
 class Operacion(Model):
     __tablename__ = 'operacion'
@@ -23,5 +23,8 @@ class Auditoria(Model):
     operation_id = Column(Integer, ForeignKey('operacion.id'), nullable=False)
     operation = relationship("Operacion")
     target = Column(String(150), nullable=False)
+    @renders('created_on')
+    def formatofecha(self):
+         return str(self.created_on.strftime(" %d-%m-%Y %H:%M:%S "))
 
 

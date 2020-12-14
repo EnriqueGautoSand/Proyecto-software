@@ -1,0 +1,41 @@
+{% import 'lib.html' as lib %}
+{% extends "base.html" %}
+
+{% block head_js %}
+    {{ super() }}
+    {{ JSGlue.include() }}
+        <script src="https://kit.fontawesome.com/04f1870aa2.js" crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block content %}
+{% import 'lib.html' as lib %}
+
+      <h3 >Ingrese Producto vencido a Descontar Stock</h3>
+    
+
+  
+<table class="table table-bordered" id="agregar">
+<tbody><tr><td><label>Producto</label></td> <td><input type="" name="producto"></div></td></tr>
+    <tr><td><label>Cantidad</label> </td> <td><input type="" name="cantidad"></div></td></tr>
+</tbody>
+<table>
+
+
+
+
+{{ lib.panel_begin(title) }}
+
+    {% block list_search scoped %}
+        {% call lib.accordion_tag("accordion1",_("Search"), False) %}
+            {{ widgets.get('search')()|safe }}
+        {% endcall %}
+    {% endblock %}
+
+    {% block list_list scoped %}
+        <div>
+            {{ widgets.get('list')()|safe }}
+        </div>
+    {% endblock %}
+
+{{ lib.panel_end() }}
+{% endblock %}

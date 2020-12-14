@@ -10,7 +10,7 @@ from flask_appbuilder.security.manager import (
 basedir = os.path.abspath(os.path.dirname(__file__))
 #addon de auditoria
 ADDON_MANAGERS = ['fab_addon_audit.manager.AuditAddOnManager']
-
+#SERVER_NAME ='localhost.localdomain:8080'
 # Your App secret key
 SECRET_KEY = "jhgcjkfjlfckjyfkjvhlkukufux"
 
@@ -217,7 +217,7 @@ IMG_UPLOAD_URL = "/static/uploads/"
 # Theme configuration
 # these are located on static/appbuilder/css/themes
 # you can create your own and easily use them placing them on the same dir structure to override
-#APP_THEME = "bootstrap-theme.css"  # default bootstrap
+APP_THEME = "bootstrap-theme.css"  # default bootstrap
 # APP_THEME = "cerulean.css"# azul y blanco pero el blanco de listProduct no se lee
 #APP_THEME = "amelia.css"#amarillo y celio
 #APP_THEME = "cosmo.css"#parecido a yeti
@@ -226,7 +226,7 @@ IMG_UPLOAD_URL = "/static/uploads/"
 # APP_THEME = "journal.css"#Naranja y blanco
 # APP_THEME = "readable.css"
 # APP_THEME = "simplex.css"
-APP_THEME = "slate.css"#dark theme
+#APP_THEME = "slate.css"#dark theme
 #APP_THEME = "spacelab.css"
 #APP_THEME = "united.css"
 #APP_THEME = "yeti.css"#Basatante Empresario
