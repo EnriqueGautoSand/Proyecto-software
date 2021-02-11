@@ -1,0 +1,26 @@
+{% import 'lib.html' as lib %}
+{% extends 'listwitget.html' %}
+
+{% block list_header scoped %}
+   {{ super() }}
+    <a href="{{url_for('ProductoxVencer' + '.download_csv', **request.args)}}" data-original-title="Imprimir" data-original-title="imprimir" class="btn btn-sm btn-default">
+       <i class="fas fa-file-pdf"></i>
+    </a>
+{% endblock %}
+
+
+{% block begin_content scoped %}
+{{ super() }}
+{% endblock %}
+
+{% block begin_loop_header scoped %}
+{{ super() }}
+{% endblock %}
+
+{% block begin_loop_values %}
+{{ super() }}
+{% endblock %}
+
+{% block end_content scoped %}
+{{ super() }}
+{% endblock %}

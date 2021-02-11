@@ -128,18 +128,9 @@ class reportePDF(object):
 
         encabezado = [Paragraph(nombre, estiloEncabezado) for nombre in nombres]
         nuevosDatos = [tuple(encabezado)]
-        pageTextStyleCenter=getSampleStyleSheet()["Normal"]
-        pageTextStyleCenter.alignment = TA_RIGHT
 
-        print('claves:  ',claves)
         for dato in self.datos:
-            devolucion=[]
-            for clave in claves:
-                if clave=='total':
-                    devolucion.append(Paragraph(str(dato[clave]), pageTextStyleCenter))
-                else:
-                    devolucion.append( Paragraph(str(dato[clave]), estiloNormal))
-            nuevosDatos.append(devolucion )
+            nuevosDatos.append([Paragraph(str(dato[clave]), estiloNormal) for clave in claves])
 
         return nuevosDatos
 
@@ -214,7 +205,7 @@ class numeracionPaginas(canvas.Canvas):
                              "Página {} de {}".format(self._pageNumber, conteoPaginas))
 
     # ===================== FUNCIÓN generarReporte =====================
-def generarReporte(titulo,cabecera,buscar,nombre,datos=None,filtros=None,no_registros=None):
+def generarReporteStock(titulo,cabecera,buscar,nombre,datos=None,filtros=None,no_registros=None):
     """Ejecutar consulta a la base de datos ( y llamar la función Exportar, la
        cuál esta en la clase reportePDF, a esta clase le pasamos el título de la tabla, la
        cabecera y los datos que llevará."""
@@ -242,11 +233,10 @@ def generarReporte(titulo,cabecera,buscar,nombre,datos=None,filtros=None,no_regi
                 fecha=fecha.strftime(" %d-%m-%Y ")
                 print( fecha,d[titulo], type(fecha) )
                 d[titulo] =fecha
-            if titulo == "total":
-                if getattr(row, "estado"):
-                    d[titulo] = "$"+str(getattr(row,titulo))
-                else:
-                    d[titulo] = "Anulado"
+            if titulo == "detaller":
+                d[titulo] = getattr(row, titulo)()
+            if titulo == "rengloneslotesimprimir":
+                d[titulo] = getattr(row, titulo)()
             elif titulo == "condicionFrenteIva" or titulo== "formadepago" :
                 print(buscar().__class__.__name__, titulo)
                 if buscar().__class__.__name__ == "Venta" or titulo == "condicionFrenteIva" :
@@ -261,29 +251,17 @@ def generarReporte(titulo,cabecera,buscar,nombre,datos=None,filtros=None,no_regi
     if datos!=None:
         #recorro los datos
         for u in datos:
-            if u.estado:
-                total += u.total
-            else:
-                total += 0
-            lista.append(row2dict(u))
-    else:
-        for u in db.session.query(buscar).all():
 
-            total+=u.total
             lista.append(row2dict(u))
+    # else:
+    #     for u in db.session.query(buscar).all():
+    #
+    #         total+=u.total
+    #         lista.append(row2dict(u))
 
     claves, nombres = zip(*[[k, n] for k, n in cabecera])
     print(claves)
-    d = {}
-    #configuro el total de los totales
-    for clave in claves:
-        if clave==claves[-2]:
-            d[clave] = "Total"
-        elif clave==claves[-1]:
-            d[clave] = '$'+str(format(total, '.2f'))
-        else:
-            d[clave] = ""
-    lista.append(d)
+
     #titulo = "LISTADO DE USUARIOS"
 
     # cabecera = (

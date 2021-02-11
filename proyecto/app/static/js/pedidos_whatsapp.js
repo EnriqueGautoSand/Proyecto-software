@@ -333,7 +333,7 @@ try {
 .then(response =>{
 	console.log('Success:', response)
 	if (response.message.status== "sucess"){
-		alert("Venta Realizada Satisfactoriamente")
+		alert("Pedido Realizadado Satisfactoriamente ")
 		window.location.href ="http://localhost.localdomain:8080/ventaview/venta/"//"http://localhost:8080/ventaview/venta/"
 		//window.location.href = "http://localhost:8080/ventareportes/show/"+response.message.idventa.toString()
 	}else {

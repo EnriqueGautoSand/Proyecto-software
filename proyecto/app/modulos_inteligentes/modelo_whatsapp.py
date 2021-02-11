@@ -14,6 +14,7 @@ from wtforms.validators import DataRequired,InputRequired
 from flask_babelpkg import lazy_gettext
 from sqlalchemy import desc,asc
 from ..views import RenglonVenta
+import json
 class Formulariooferta(FlaskForm):
     producto = SelectField('Producto', render_kw={'readonly': "true"})
     cantidad_oferta=IntegerField('Cantidad disponible para la oferta', render_kw={'readonly': 'true'},
@@ -35,14 +36,14 @@ class ModeloWhatsappPedido(BaseView):
         if request.method == "GET":
             try:
                 pedido = db.session.query(PedidoCliente).filter(PedidoCliente.hash_activacion == hash).first()
-                if pedido.expiracion>=dt.now():
+                if pedido.expiracion<=dt.now():
                     form2 = RenglonVenta(request.form)
                     responsableinscripto = False
 
-                    form = Formulariooferta(request.form)
-                    mensaje = True
-                    flash("Ofertaa Invalida, ya finalizo el tiempo de la oferta", "warning")
-                    return render_template('pedidos_whatsapp.html', base_template=appbuilder.base_template,
+
+                    cargarform = False
+                    flash("Oferta Invalida, ya finalizo el tiempo de la oferta", "warning")
+                    return render_template('pedidos_whatsapp.html', base_template=appbuilder.base_template,cargarform=cargarform,
                                            appbuilder=appbuilder,
                                            form2=form2, responsableinscripto=responsableinscripto)
                 if pedido != None:
@@ -80,7 +81,8 @@ class ModeloWhatsappPedido(BaseView):
 
                         self.update_redirect()
                         # renderizo el html y le paso el formulario
-                        return render_template('pedidos_whatsapp.html', base_template=appbuilder.base_template,
+                        cargarform=True
+                        return render_template('pedidos_whatsapp.html', base_template=appbuilder.base_template,cargarform=cargarform,
                                                appbuilder=appbuilder,
                                                form2=form2, responsableinscripto=responsableinscripto)
                     else:
@@ -88,23 +90,30 @@ class ModeloWhatsappPedido(BaseView):
                         responsableinscripto = False
 
                         form = Formulariooferta(request.form)
-                        mensaje = True
-                        flash("Ofertaa Invalida, por favor copie correctamente el enlace de oferta", "warning")
-                        return render_template('pedidos_whatsapp.html', base_template=appbuilder.base_template,
+                        cargarform=False
+                        flash("Oferta Invalida, por favor copie correctamente el enlace de oferta", "warning")
+                        return render_template('pedidos_whatsapp.html', base_template=appbuilder.base_template,cargarform=cargarform,
                                                appbuilder=appbuilder,
                                                form2=form2, responsableinscripto=responsableinscripto)
             except Exception as e:
-                flash("Pedido Invalido, por favor copie correctamente el enlace de oferta", "warning")
                 print(e)
                 print(str(e))
+                form2 = RenglonVenta(request.form)
+                cargarform = False
+                flash("Pedido Invalido, por favor copie correctamente el enlace de oferta", "warning")
+                return render_template('pedidos_whatsapp.html', base_template=appbuilder.base_template,cargarform=cargarform,
+                                       appbuilder=appbuilder,
+                                       form2=form2, responsableinscripto=responsableinscripto)
+
 class ModeloWhatsapp(BaseView):
     default_view = 'activation'
     @expose("/reservawhatsapp/<string:hash>",methods=["GET", "POST"])
     def activation(self, hash):
+            import sys, os
             if request.method=="GET":
                 try:
                     oferta=db.session.query(OfertaWhatsapp).filter(OfertaWhatsapp.hash_activacion==hash).first()
-                    if oferta.expiracion >= dt.now():
+                    if oferta.expiracion <= dt.now():
                         form = Formulariooferta(request.form)
                         mensaje = True
                         flash("Ofertaa Invalida, ya finalizo el tiempo de la oferta", "error")
@@ -147,9 +156,10 @@ class ModeloWhatsapp(BaseView):
                     if oferta != None:
                         request.form['cantidad']
                         request.form['total']
-
+                        productoid=json.loads(request.form['producto'])['id']
+                        print(json.loads(request.form['producto'])['id'])
                         print(type(request.form['producto']),oferta.producto_id,request.form['producto']==oferta.producto_id,oferta.renglon_compra.stock_lote)
-                        if int(request.form['producto'])==oferta.producto_id:
+                        if int(productoid)==oferta.producto_id:
                             renglonCompras=db.session.query(RenglonCompras).filter(RenglonCompras.id == oferta.renglon_compra_id).first()
                             print(renglonCompras,oferta.reservado)
                             if renglonCompras.stock_lote >= int(request.form['cantidad']) and not oferta.reservado:
@@ -174,11 +184,15 @@ class ModeloWhatsapp(BaseView):
                         return render_template('reservas_whatsapp.html', form=form, base_template=appbuilder.base_template,mensaje=mensaje,
                                                appbuilder=appbuilder)
                 except Exception as e:
+                    import sys, os
                     form = Formulariooferta(request.form)
                     mensaje = True
                     flash("Pedido Invalido, por favor copie correctamente el enlace de oferta", "error")
                     print(e)
                     print(str(e))
+                    exc_type, exc_obj, exc_tb = sys.exc_info()
+                    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                    print(exc_type, fname, exc_tb.tb_lineno)
 
                     return render_template('reservas_whatsapp.html', form=form, mensaje=mensaje,
                                            base_template=appbuilder.base_template, appbuilder=appbuilder)

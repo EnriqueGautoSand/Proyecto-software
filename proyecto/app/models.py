@@ -48,7 +48,24 @@ class PedidoCliente(Model):
     reservado = Column(Boolean, nullable=False, default=False)
     venta_id = Column(Integer, ForeignKey('ventas.id'), nullable=True)
     venta = relationship("Venta")
-
+    @renders('fecha')
+    def formatofecha(self):
+         return Markup('<b> ' + str(self.fecha.strftime(" %d-%m-%Y %H:%M")) + '</b>')
+    @renders('expiracion')
+    def fechaexpiracion(self):
+         return Markup('<b> ' + str(self.expiracion.strftime(" %d-%m-%Y %H:%M")) + '</b>')
+    @renders('reservado')
+    def reservadorender(self):
+        if self.reservado:
+            return "SI"
+        else:
+            return "NO"
+    @renders('vendido')
+    def vendidorender(self):
+        if self.vendido:
+            return "SI"
+        else:
+            return "NO"
 class Pedido_Proveedor(Model):
     """
     creo clase que sera mapeada como la tabla pedido_proveedor
@@ -250,7 +267,11 @@ class Proveedor(Model):
     @property
     def representacion(self):
         return f"Cuit {self.cuit} {self.apellido} {self.nombre}"
-
+    @renders('telefono_celular')
+    def telefono(self):
+            if self.telefono_celular!=None or '':
+                return Markup(f'<b> {self.telefono_celular}</b>')
+            return Markup('<b> -</b>')
 
 class Clientes(Model):
     """
@@ -291,7 +312,11 @@ class Clientes(Model):
             if self.estado:
                 return Markup('<b> Activo </b>')
             return Markup('<b> Desactivado</b>')
-
+    @renders('telefono_celular')
+    def telefono(self):
+            if self.telefono_celular!=None or '':
+                return Markup(f'<b> {self.telefono_celular}</b>')
+            return Markup('<b> -</b>')
 class CompaniaTarjeta(Model):
     """
     # creo clase que sera mapeada como la tabla companiaTarjeta
@@ -329,11 +354,12 @@ class Compra(Model):
     """
     __tablename__= 'compras'
     id=Column(Integer, primary_key=True)
+
     estado=Column(Boolean)
     total=Column(Float, nullable=False)
     totalNeto = Column(Float, nullable=False)
     totaliva = Column(Float, nullable=True)
-    fecha=Column(DateTime, nullable=False,default=dt.now())
+    fecha=Column(Date, nullable=False,default=dt.now())
 
     proveedor_id = Column(Integer, ForeignKey('proveedor.id'), nullable=False)
     proveedor = relationship("Proveedor")
@@ -342,7 +368,8 @@ class Compra(Model):
     datosFormaPagos_id = Column(Integer, ForeignKey('datosFormaPagosCompra.id'), nullable=True)
     datosFormaPagos = relationship("DatosFormaPagosCompra")
     percepcion = Column(Float,default=0)
-    comprobante = Column(BIGINT, nullable=False, unique=True)
+    comprobante = Column(Integer, autoincrement=True, unique=True,default=db.Sequence('compras_comprobante_seq').next_value())
+
 
     __table_args__ = (
         UniqueConstraint("comprobante","proveedor_id"),
@@ -353,10 +380,12 @@ class Compra(Model):
 
     def condicionFrenteIva(self):
         return self.proveedor.tipoClave
-
+    @renders('total')
+    def totalrender(self):
+         return Markup( '<div align=right> $' + str(format(self.total, '.2f')) + '</div> ' )
     @renders('fecha')
     def formatofecha(self):
-         return Markup('<b> ' + str(self.fecha.strftime(" %d-%m-%Y %H:%M ")) + '</b>')
+         return Markup('<b> ' + str(self.fecha.strftime(" %d-%m-%Y  ")) + '</b>')
     @renders('estado')
     def estadorender(self):
             if self.estado:
@@ -399,7 +428,7 @@ class Venta(Model):
     cliente_id = Column(Integer, ForeignKey('clientes.id'), nullable=False)
     cliente = relationship("Clientes")
     percepcion = Column(Float)
-    comprobante = Column(BIGINT, nullable=False, unique=True)
+    comprobante = Column(Integer, autoincrement=True, unique=True,default=db.Sequence('ventas_comprobante_seq').next_value())
 
     @renders('fecha')
     def formatofecha(self):
@@ -420,7 +449,7 @@ class Venta(Model):
 
     @renders('total')
     def totalrender(self):
-         return Markup(' $' + str(format(self.total, '.2f')) )
+         return Markup( '<div align=right> $' + str(format(self.total, '.2f')) + '</div> ' )
     @renders('estado')
     def estadorender(self):
             if self.estado:
@@ -559,6 +588,8 @@ class Productos(Model):
     def __repr__(self):
         return f"{self.categoria} ${self.precio:.2f} {self.marca} {self.medida} {self.unidad}"
 
+    def detaller(self):
+            return f"{self.categoria} ${self.precio:.2f} {self.marca} {self.medida} {self.unidad} {self.detalle}"
 
     def __str__(self):
         return f"{self.categoria} {self.marca} {self.medida} {self.unidad} {self.detalle}"
@@ -576,7 +607,27 @@ class Productos(Model):
                 if not i.vendido and dt.now().date()<=i.fecha_vencimiento:
                     respuesta+= f"{i.__str__()} <br>"
         return Markup(respuesta)
+    @renders('renglon_stock')
+    def rengloneslotes(self):
+        respuesta=""
+        for i in self.renglon_compra:
+            if not i.vendido :
+                    respuesta+= f"{i.__str__()} <br>"
+        return Markup(respuesta)
+    def rengloneslotesimprimir(self):
+        respuesta=""
 
+        for i in range(0,len(self.renglon_compra)):
+
+
+            if not self.renglon_compra[i].vendido and len(self.renglon_compra)-1==i:
+                    respuesta += f"{self.renglon_compra[i].normal()} "
+            else:
+                if not self.renglon_compra[i].vendido:
+                    respuesta += f"{self.renglon_compra[i].normal()} ,"
+        if respuesta=='':
+            return '0'
+        return respuesta
 
 class RenglonCompras(Model):
     """
@@ -595,15 +646,23 @@ class RenglonCompras(Model):
     stock_lote=Column(Integer, nullable=False)
     # defino como se representara al ser llamado
     def __repr__(self):
-        return f"{self.producto} ${self.precioCompra:.2f} {self.compra} {self.cantidad} "
+         return f"{self.producto} ${self.precioCompra:.2f} {self.compra} {self.cantidad} "
     def __str__(self):
         return f"STOCK {self.stock_lote} VENCE {self.formatofecha()} "
+    def normal(self):
+        if self.formatofecha()!="":
+            return f"STOCK {self.stock_lote} VENCE {self.formatofecha()} "
+        return f"STOCK {self.stock_lote}"
     @renders('fecha_vencimiento')
     def formatofecha(self):
         if self.fecha_vencimiento == None:
             return ""
         return str(self.fecha_vencimiento.strftime(" %d-%m-%Y  "))
-
+    def vendidor(self):
+        if self.vendido:
+            return "SI"
+        else:
+            return "NO"
     def fechacompra(self):
         if self.compra.fecha == None:
             return ""

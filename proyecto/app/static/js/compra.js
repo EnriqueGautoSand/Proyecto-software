@@ -99,11 +99,11 @@ var tere=document.createElement("tr")
 
 
 
-function agregarTd(tere,texto){
+function agregarTd(tere,texto, alineacion){
 	titulo =document.createTextNode(texto)
 	tede= document.createElement("td")
 	tede.appendChild(titulo)
-	tede.align="center"
+	tede.align=alineacion
 	tere.appendChild(tede)
 }
 
@@ -231,16 +231,15 @@ function agregarRenglon(element){
 		
 		var textoCelda = document.createTextNode(producto[producto.selectedIndex].innerHTML );
 
-      agregarTd(hilera,producto[producto.selectedIndex].innerHTML)
-      agregarTd(hilera,cantidadpospreciocompra(true))
-      agregarTd(hilera,cantidadpos())
-      agregarTd(hilera, productosel['iva'])
-      agregarTd(hilera,porcentajepositivo(descuento,true))
+      agregarTd(hilera,producto[producto.selectedIndex].innerHTML,'center')
+      agregarTd(hilera,cantidadpospreciocompra(true) ,"right")
+      agregarTd(hilera,cantidadpos() ,"right")
+      agregarTd(hilera, productosel['iva'] ,"right")
+      agregarTd(hilera,porcentajepositivo(descuento,true) ,"right")
       
 
 	totalFila=cantidadpos()*(preciocompra.value*( 1-descuento.value/100))
-	agregarTd(hilera,"$" + totalFila.toFixed(2) )
-
+	agregarTd(hilera,"$" + totalFila.toFixed(2),"right")
 	  tebody.appendChild(hilera);
       listaProductos.add(productosel.id);
       console.log(listaProductos)
@@ -333,7 +332,7 @@ boton.disabled=true
 			jsonventa["total"]=parseFloat(totalhtml.value);
 			jsonventa["totaliva"]=parseFloat(totaliva.value);
 			jsonventa["percepcion"]=parseFloat(percepcion.value);
-			jsonventa["comprobante"]=parseFloat(comprobante.value).toFixed(2);
+			//comprobante jsonventa["comprobante"]=parseFloat(comprobante.value).toFixed(2);
 			//jsonventa["condicionfrenteiva"]=condicionfrenteiva.value
 	if (metododePago.value==1){
 			jsonventa["metododePago"]=metododePago.value;
@@ -367,10 +366,10 @@ boton.disabled=false
 }
 
 boton.onclick= function() {console.log('largo json ',jQuery.isEmptyObject(jsonProductos))
-						if (comprobante.value==0){
+						/*if (comprobante.value==0){
 							alert("ingrese el numero de comprobante!!!")
 							return;
-						}
+						}*/
 
 						if (jQuery.isEmptyObject(jsonProductos)){
 								alert("No hay poductos asociados a esta venta!!!")

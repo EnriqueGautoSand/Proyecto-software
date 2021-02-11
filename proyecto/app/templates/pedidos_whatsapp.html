@@ -35,7 +35,7 @@
     <h1>Realizar Pedido</h1>
 
 <br>
-
+  {% if cargarform %}
 
 <form class="form-group ">
 <table class="table table-bordered" id="agregar">
@@ -149,6 +149,7 @@
 
 </tr>
   </table >
+  {% endif %} 
 {% endblock %}
 
 {% block tail_js %}

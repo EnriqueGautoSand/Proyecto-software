@@ -27,24 +27,23 @@ class smsreply(BaseView):
             print(request.form.get('Head'))
             print(request.form.get('Body'),sender_phone_number.split("whatsapp:+549"))
             cliente=db.session.query(Clientes).filter(Clientes.telefono_celular==sender_phone_number.split("whatsapp:+549")[1]).first()
-            hash = get_random_string(15)
-            pedido=PedidoCliente(cliente=cliente,fecha=dt.now(),expiracion=(dt.now()+timedelta(hours=1)),hash_activacion=hash)
-            db.session.add(pedido)
-
-
-
-
-
-            # Create reply
-            resp = MessagingResponse()
-
-            if msg!='pedido':
-                resp.message("Hola {} Si desea realizar un pedido mande la palabra pedido".format(cliente))
-
+            if cliente==None:
+                resp = MessagingResponse()
+                resp.message('Su numero no se encuentra registrado como cliente, por favor vaya al negocio y registrese')
             else:
-                url='localhost:8080/modelowhatsapppedido/pedidowhatsapp/'+hash
-                resp.message("Valla al siguiente enlace para realizar un pedido {}".format(url))
-                db.session.commit()
+                hash = get_random_string(15)
+                pedido=PedidoCliente(cliente=cliente,fecha=dt.now(),expiracion=(dt.now()+timedelta(hours=1)),hash_activacion=hash)
+                db.session.add(pedido)
+                # Create reply
+                resp = MessagingResponse()
+
+                if msg.upper()!='PEDIDO':
+                    resp.message("Hola {} Si desea realizar un pedido mande la palabra pedido".format(cliente))
+
+                else:
+                    url='localhost:8080/modelowhatsapppedido/pedidowhatsapp/'+hash
+                    resp.message("Vaya al siguiente enlace para realizar un pedido {}".format(url))
+                    db.session.commit()
         except Exception as e:
             print(e)
             print(str(e))

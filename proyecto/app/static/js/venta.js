@@ -61,11 +61,11 @@ if (totalneto==undefined){
 var	tabla=document.createElement("table")
 
 var tebody=document.createElement("tbody")
-function agregarTd(tere,texto){
+function agregarTd(tere,texto,alineacion){
 	titulo =document.createTextNode(texto)
 	tede= document.createElement("td")
 	tede.appendChild(titulo)
-	tede.align="center"
+	tede.align=alineacion
 	tere.appendChild(tede)
 }
 function updateValue(e){
@@ -239,7 +239,7 @@ function agregarRenglon(element){
 
       
 
-      agregarTd(hilera,producto[producto.selectedIndex].innerHTML)
+      agregarTd(hilera,producto[producto.selectedIndex].innerHTML,"center")
 
       
 
@@ -265,11 +265,11 @@ try {
 	console.log('Success:', response.message,'  ',typeof totalFila)
 	
 	totalFila=cantidadpos()*(parseFloat( response.message)*( 1-descuento.value/100))
-	agregarTd(hilera,response.message)
-      agregarTd(hilera,cantidadpos())
-      agregarTd(hilera, porcentajepositivo(descuento,true))
-      agregarTd(hilera, productosel['iva'])
-		agregarTd(hilera, "$" + totalFila.toFixed(2) )
+	agregarTd(hilera,response.message,"right")
+      agregarTd(hilera,cantidadpos(),"right")
+      agregarTd(hilera, porcentajepositivo(descuento,true),"right")
+      agregarTd(hilera, productosel['iva'],"right")
+		agregarTd(hilera, "$" + totalFila.toFixed(2) ,"right")
 	  tebody.appendChild(hilera);
       listaProductos.add(productosel.id);
       console.log(listaProductos)
@@ -374,7 +374,7 @@ boton.disabled=true
 			jsonventa["totalneto"]=parseFloat(totalneto.value).toFixed(2);
 			jsonventa["totaliva"]=parseFloat(totaliva.value).toFixed(2);
 			jsonventa["percepcion"]=parseFloat(percepcion.value).toFixed(2);
-			jsonventa["comprobante"]=parseFloat(comprobante.value).toFixed(2)
+			// comprobante jsonventa["comprobante"]=parseFloat(comprobante.value).toFixed(2)
 			//jsonventa["condicionfrenteiva"]=condicionfrenteiva.value
 
 			//validar si la suma de los pagos no supera el total del la venta
@@ -696,10 +696,10 @@ ultimoElemento=aclonar
 }
 
 boton.onclick= function() {console.log('largo json ',jQuery.isEmptyObject(jsonProductos))
-						if (comprobante.value==0){
+						/*if (comprobante.value==0){
 							alert("ingrese el numero de comprobante!!!")
 							return;
-						}
+						}*/
 						if (jQuery.isEmptyObject(jsonProductos)){
 								alert("No hay poductos asociados a esta venta!!!")
 

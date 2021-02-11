@@ -68,11 +68,12 @@ class ComprasApi(BaseApi,AuditedModelView):
                 if "metododePago" in data and "proveedor" in data and "total" in data:
                     print(data["total"])
                     # creo la compra y agrego forma de pago
-                    compracomprobacion = db.session.query(Compra).filter(Compra.comprobante == float(data["comprobante"])).first()
-                    if compracomprobacion != None:
-                        return self.response(400, message="Error el Nro de comprobante es incorrecto o repetido")
+                    # compracomprobacion = db.session.query(Compra).filter(Compra.comprobante == float(data["comprobante"])).first()
+                    # if compracomprobacion != None:
+                    #     return self.response(400, message="Error el Nro de comprobante es incorrecto o repetido")
                     if int(data["metododePago"]) == 1:
-                        compra=Compra(fecha=dt.now(),comprobante=float(data["comprobante"]),percepcion=float(data["percepcion"]),totaliva=float(data["totaliva"]),totalNeto=float(data["totalneto"]),estado=True,total=float(data["total"]),proveedor_id=data["proveedor"],formadepago_id=data["metododePago"])
+                        #comprobante = float(data["comprobante"])
+                        compra=Compra(fecha=dt.now(),percepcion=float(data["percepcion"]),totaliva=float(data["totaliva"]),totalNeto=float(data["totalneto"]),estado=True,total=float(data["total"]),proveedor_id=data["proveedor"],formadepago_id=data["metododePago"])
                     else:
                         #en caso de que se hay apagado con tarjeta asocio los datos de la tarjeta a la compra
                         datosFormaPagos=DatosFormaPagosCompra(numeroCupon=data["numeroCupon"],
@@ -81,7 +82,7 @@ class ComprasApi(BaseApi,AuditedModelView):
                                               cuotas=data["cuotas"],formadepago_id=data["metododePago"]
                                               )
 
-                        compra = Compra(comprobante=float(data["comprobante"]),estado=True,totalNeto=float(data["totalneto"]),totaliva=float(data["totaliva"]),
+                        compra = Compra(estado=True,totalNeto=float(data["totalneto"]),totaliva=float(data["totaliva"]),
                                       total=float(data["total"]), proveedor_id=data["proveedor"],formadepago_id=data["metododePago"],
                                       datosFormaPagos=datosFormaPagos,percepcion=float(data["percepcion"]),fecha=dt.now())
 
@@ -199,27 +200,29 @@ class VentasApi(BaseApi,AuditedModelView):
             # paso los datos de la peticion a json
             data = request.json
             # Solicito a ala base de datos el producto
-            cliente= db.session.query(Clientes).filter(Clientes.id==int(data['cliente'])).first()
+            #cliente= db.session.query(Clientes).filter(Clientes.id==int(data['cliente'])).first()
+            cliente = db.session.query(Clientes).join(OfertaWhatsapp).filter(
+                Clientes.id==OfertaWhatsapp.cliente_id,OfertaWhatsapp.hash_activacion==data['hashoferta']).first()
             p  =db.session.query(Productos).join(OfertaWhatsapp.producto).join(Clientes,Clientes.id==OfertaWhatsapp.cliente_id).\
                                             filter(Clientes.id==cliente.id).\
-                                            filter(Productos.id==int(data['p'])).first()
+                                            filter(Productos.id==int(json.loads(data['p'])['id'])).first()
             if p!=None:
                 oferta = db.session.query(OfertaWhatsapp).join(Productos).join(Clientes).filter(Clientes.id == cliente.id,
                                                                                            Productos.id == OfertaWhatsapp.producto_id,
                                                                                            OfertaWhatsapp.cliente_id == cliente.id,
-                                                                                                Productos.id==int(data['p'])).first()
+                                                                                                Productos.id==int(json.loads(data['p'])['id'])).first()
                 # si soy responsable y el que me compra no es responsable le agrego el iva en el precio
                 respuesta={'precio':format(p.precio * (1 + (p.iva / 100)), '.2f'),'descuento':oferta.descuento }
-                if data["venta"] and data['cliente_condfrenteiva'] != "Responsable Inscripto" and responsableinscripto:
+                if data["venta"] and cliente.tipoClave != "Responsable Inscripto" and responsableinscripto:
                     return self.response(200, message=json.dumps(respuesta))
                 if data["venta"] and monotributista:
                     return self.response(200, message=json.dumps(respuesta))
             else:
 
-                p = db.session.query(Productos).get(data['p'])
+                p = db.session.query(Productos).get(int(json.loads(data['p'])['id']))
                 respuesta = {'precio': format(p.precio * (1 + (p.iva / 100)), '.2f'), 'descuento': 0}
                 # si soy responsable y el que me compra no es responsable le agrego el iva en el precio
-                if data["venta"] and data['cliente_condfrenteiva'] != "Responsable Inscripto" and responsableinscripto:
+                if data["venta"] and cliente.tipoClave != "Responsable Inscripto" and responsableinscripto:
                     return self.response(200, message=json.dumps(respuesta))
                 if data["venta"] and monotributista:
                     return self.response(200, message=json.dumps(respuesta))
@@ -242,12 +245,13 @@ class VentasApi(BaseApi,AuditedModelView):
                 if  "cliente" in data and "total" in data:
                     print(data["total"])
                     # creo la venta
-                    ventacomp=db.session.query(Venta).filter(Venta.comprobante==float(data["comprobante"])).first()
-                    print(ventacomp)
-                    if ventacomp!= None:
-                        return self.response(400, message="Error el Nro de comprobante es incorrecto o repetido")
-                    venta=Venta(comprobante=float(data["comprobante"]),estado=True,percepcion=float(data["percepcion"]),totaliva=float(data["totaliva"]),totalNeto=float(data["totalneto"]), total=float(data["total"])
-                                ,cliente_id=int(data["cliente"]),fecha=dt.now())
+                    # ventacomp=db.session.query(Venta).filter(Venta.comprobante==float(data["comprobante"])).first()
+                    # print(ventacomp)
+                    # if ventacomp!= None:
+                    #     return self.response(400, message="Error el Nro de comprobante es incorrecto o repetido")
+                    #comprobante=float(data["comprobante"]),
+                    venta=Venta(estado=True,percepcion=float(data["percepcion"]),totaliva=float(data["totaliva"]),totalNeto=float(data["totalneto"]), total=float(data["total"])
+                               ,cliente_id=int(data["cliente"]),fecha=dt.now())
                     db.session.add(venta)
                     db.session.flush()
                     #creo los metodos de pagos

@@ -44,7 +44,7 @@
     <script type="text/javascript">
     	
     	function confirmacion(e){
-    		res=confirm("Esta seguro de realizar el pedido?")
+    		res=confirm("Esta seguro de realizar el pedido de la Oferta?")
     		
     		if (res){
     			return true;
@@ -52,7 +52,7 @@
     		e.returnValue = false ;
     		console.log(res)   	}
 var url = "http://"+location.host+Flask.url_for("VentasApi.obtenerprecio_oferta")
-var data = {p: producto.value, venta:true, cliente:cliente.value};
+var data = {p: producto.value, venta:true, hashoferta:window.location.pathname.split("/")[window.location.pathname.split("/").length-1]};
 
 
  fetch(url, {
@@ -66,8 +66,11 @@ var data = {p: producto.value, venta:true, cliente:cliente.value};
 	alert('Error:', error)
 	element.disabled=true
 	} )
-.then(response =>{ console.log('Success:', response)
-	precio.value=(parseFloat(response.message)).toFixed(2)
+.then(response =>{
+response=JSON.parse( response.message)
+ console.log('Success:', response,response.precio)
+	precio.value=(parseFloat(response.precio)).toFixed(2)
+  decuento.value=(parseFloat(response.descuento)).toFixed(2)
 })
 cantidad.onchange= function(){total.value=((parseFloat(precio.value)*cantidad.value)*(1-(descuento.value/100))).toFixed(2)}
 $('#cantidad').mask('00000000');

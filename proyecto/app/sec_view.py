@@ -2,7 +2,7 @@ from flask_appbuilder.security.views import UserDBModelView
 from flask_babelpkg import lazy_gettext
 from wtforms.validators import InputRequired
 from wtforms import validators,PasswordField
-from validadores import  cuitvalidatorProveedores
+from .validadores.validadores import  cuitvalidatorProveedores
 from wtforms.ext.sqlalchemy.fields import QuerySelectMultipleField
 from wtforms import StringField
 from flask_appbuilder.fieldwidgets import  Select2ManyWidget,BS3PasswordFieldWidget,BS3TextFieldWidget

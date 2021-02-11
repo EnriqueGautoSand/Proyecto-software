@@ -15,7 +15,7 @@ from flask_appbuilder.urltools import  Stack
 
 from wtforms import Form, BooleanField, StringField, validators, DateField, FloatField, IntegerField, FieldList, \
     SelectField, SubmitField, PasswordField
-from validadores import cuitvalidator, cuitvalidatorProveedores,fechavalidador
+from .validadores.validadores import cuitvalidator, cuitvalidatorProveedores,fechavalidador
 
 from twilio.twiml.messaging_response import MessagingResponse
 
@@ -50,8 +50,11 @@ class PedidosWhatsappView(ModelView):
     base_permissions = ['can_list','can_delete']
     @action("Confirmar_Venta","Confirmar Venta","Seguro de convertir este pedido en una venta?", "fa-backspace", single=False)
     def Confirmar_Venta(self, item):
+
          print(item)
-         renglonCompras=db.session.query(RenglonCompras).filter(RenglonCompras.id == item.renglon_compra_id).first()
+         items=item
+         for oferta in items:
+            renglonCompras=db.session.query(RenglonCompras).filter(RenglonCompras.id == oferta.renglon_compra_id).first()
 
          self.update_redirect()
          return redirect(self.get_redirect())
@@ -73,9 +76,9 @@ class PedidosWhatsappView(ModelView):
         return redirect(self.get_redirect())
 class ModulosInteligentesView(ModelView):
     datamodel = SQLAInterface(ModulosConfiguracion)
-    label_columns = {'porcentaje_subida_precio':'Porcentaje de descuento de ofertas por WhatsApp','twilio_account_sid':'SID de la cuenta de Twilio','modulo_pedidor':'Modulo de Pedidos','modulo_ofertas':'Modulo Ofertas WhatsApp'}
+    label_columns = {'porcentaje_subida_precio':'Cuanto va a Subir el precio automaticamente despues de una Compra','descuento':'Porcentaje de descuento de ofertas por WhatsApp','twilio_account_sid':'SID de la cuenta de Twilio','modulo_pedidor':'Modulo de Pedidos','modulo_ofertas':'Modulo Ofertas WhatsApp'}
     list_columns = ['modulo_pedidor','modulo_ofertas']
-    show_columns = ['dias_atras','porcentaje_ventas','fecha_vencimiento']
+    show_columns = ['porcentaje_subida_precio','dias_atras','porcentaje_ventas','fecha_vencimiento']
     base_permissions = ['can_edit','can_list']
 
 
@@ -99,7 +102,12 @@ class ModulosInteligentesView(ModelView):
                                     description="""Numero de dias que quedan antes de que se venza un producto para 
                                                                 realizar  ofertas por whatsapp"""),
         'twilio_auth_token': StringField('Clave de autentificacion de Twilio', render_kw={'type': "password"},
-                                                 description="""Clave de autentificacion de Twilio para whatsapp""")
+                                                 description="""Clave de autentificacion de Twilio para whatsapp"""),
+
+        'descuento': IntegerField('Porcentaje de descuento de ofertas por WhatsApp',
+                                                              render_kw={'type': "number"},validators=[InputRequired()]),
+        'porcentaje_subida_precio':IntegerField('Cuanto va a Subir el precio automaticamente despues de una Compra',
+                                                              render_kw={'type': "number"},validators=[InputRequired()])
     }
 
 
@@ -168,10 +176,13 @@ class Sistemaview(MultipleView):
 
 class ListDownloadWidgetventa(ListWidget):
     template = 'reporteventa.html'
+class ListDownloadWidgetstock(ListWidget):
+    template = 'reportestock.html'
 class ListDownloadWidgetcompra(ListWidget):
     template = 'reportecompras.html'
 class ListWidgetProducto(ListWidget):
     template = 'productoshtml.html'
+
 
 #creo y configuro la clase de manejador de  vista de productos
 
@@ -317,6 +328,7 @@ class PrecioMdelview(AuditedModelView):
         'api_readvalues': 'access',
         'api_update': 'access'
     }
+
 class ReportesView(BaseView):
     default_view = 'reportes'
 
@@ -350,11 +362,12 @@ class RenglonComprasView(ModelView):
                                           widget= DateTimePickerWidget(),validators=[InputRequired(),fechavalidador] )
     }
 def query_ComprasxProucto_Vencer():
-    return[i.id for i in db.session.query(RenglonCompras).filter(RenglonCompras.fecha_vencimiento>=dt.now().date(), RenglonCompras.vendido ==False).all()]
+    #return[i.id for i in db.session.query(RenglonCompras).filter(RenglonCompras.fecha_vencimiento>=dt.now().date(), RenglonCompras.vendido ==False).all()]
+    return[i.id for i in db.session.query(RenglonCompras).filter( RenglonCompras.vendido ==False).all()]
 class RenglonComprasxVencer(ModelView):
     datamodel = SQLAInterface(RenglonCompras)
-    label_columns = {'formatofecha': 'Fecha de Vencimiento','precioCompra':'Precio de Compra','stock_lote':'Stock','fechacompra':'Fecha de Compra'}
-    list_columns = ['producto', 'precioCompra', 'cantidad', 'descuento', 'formatofecha','fechacompra','vendido','stock_lote']
+    label_columns = {'vendidor':'vendido','formatofecha': 'Fecha de Vencimiento','precioCompra':'Precio de Compra','stock_lote':'Stock','fechacompra':'Fecha de Compra'}
+    list_columns = ['producto', 'precioCompra', 'cantidad', 'descuento', 'formatofecha','fechacompra','vendidor','stock_lote']
     base_permissions = ['can_list']
     base_filters = [["id", FilterInFunction, query_ComprasxProucto_Vencer], ]
     list_title = "Detalle de Lotes por Producto"
@@ -368,21 +381,46 @@ class RenglonComprasxVencer(ModelView):
         return redirect(self.get_redirect())
 
 def query_producto_por_Vencer():
-    return[i.id for i in db.session.query(Productos).join(RenglonCompras).filter(RenglonCompras.fecha_vencimiento>=dt.now().date() ,RenglonCompras.vendido==False).all()]
+    #return[i.id for i in db.session.query(Productos).join(RenglonCompras).filter(RenglonCompras.fecha_vencimiento>=dt.now().date() ,RenglonCompras.vendido==False).all()]
+
+    return[i.id for i in db.session.query(Productos).join(RenglonCompras).filter(RenglonCompras.vendido==False).all()]
 class ProductoxVencer(ModelView):
     datamodel = SQLAInterface(Productos)
     list_title = "Listado de Lotes del Producto"
-    label_columns = {'__repr__': 'Producto','renglones':'Lote'}
-    list_columns = ['__repr__','renglones']
+    label_columns = {'detaller': 'Producto','rengloneslotes':'Lote'}
+    list_columns = ['detaller','rengloneslotes']
     base_permissions = ['can_list','can_show']
     base_filters = [["id", FilterInFunction, query_producto_por_Vencer], ]
     show_exclude_columns = ['renglon_compra']
-
+    list_widget = ListDownloadWidgetstock
     search_exclude_columns = ['renglon_compra']
     order_columns = ['categoria']
     related_views = [RenglonComprasxVencer]
 
+    @expose('/csv', methods=['GET'])
+    def download_csv(self):
 
+        get_filter_args(self._filters)
+        print(request.url)
+        if self.base_order==None:
+            count, lst = self.datamodel.query(self._filters)
+        else:
+           order_column, order_direction = self.base_order
+
+           count, lst = self.datamodel.query(self._filters, order_column, order_direction)
+           print(count , self.base_order)
+        print(lst)
+        print(request.url)
+        filtros=self._filters
+        filtros.__repr__ = types.MethodType(repre, filtros)
+        filtros.__str__ = types.MethodType(repre, filtros)
+        filtros.__repr__(self.label_columns,ProductoxVencer,db=db)
+        cabecera = (
+            ("detaller", "Producto"),("rengloneslotesimprimir", "Lote"),
+        )
+        from .reportestock import  generarReporteStock
+        generarReporteStock(titulo="Listado de Stock",cabecera=cabecera,buscar=Productos,nombre="Listado de Stock",datos=lst,filtros=self._filters,no_registros=count)
+        return redirect(url_for('ReportesView.show_static_pdf',var="Listado de Stock" ))
 
 def query_producto_Vencido():
     return[i.id for i in db.session.query(RenglonCompras).filter(RenglonCompras.fecha_vencimiento<=dt.now().date() , RenglonCompras.stock_lote>0 ).all()]
@@ -440,7 +478,7 @@ def repre(self,labels=None,tabla=None,db=None):
         for flt, value in self.get_filters_values():
             print(self.labels[flt.column_name],flt.arg_name, flt.name, value)
 
-            print(getattr(self.tabla, flt.column_name),type(getattr(self.tabla,flt.column_name)))
+            #print(getattr(self.tabla, flt.column_name),type(getattr(self.tabla,flt.column_name)))
             #print('prueba',getattr(self.db.session.query(self.tabla).filter(getattr(self.tabla, flt.column_name) == value).all()[0]))
             """
                         if flt.column_name=="Estado" and value=="y":
@@ -468,6 +506,7 @@ def repre(self,labels=None,tabla=None,db=None):
         return retstr
     else:
         return ""
+
 
 def tipoClave_queryventa():
     print(g.user.__dict__.keys(), g.user.roles)
@@ -525,12 +564,12 @@ class CompraReportes(AuditedModelView):
     datamodel = SQLAInterface(Compra)
     list_widget =ListDownloadWidgetcompra
     list_title = "Listado de Compras"
-    label_columns = {'total':'Total $','formadepago':'Forma de Pago','formadepago.Metodo':'Forma de Pago','renglonesrender':'',"totaliva":"Iva $", 'estadorender':'Estado','formatofecha':'Fecha',"percepcion":"Percepción %"}
-    list_columns = ['formatofecha','comprobante','proveedor',"totaliva", "total", 'estadorender', 'formadepago',"percepcion"]
-    show_columns = ['proveedor',"totaliva", 'total', 'estadorender','formadepago','formatofecha',"percepcion",'renglonesrender']
+    label_columns = {'total':'Total $','formadepago':'Forma de Pago','totalrender':'Total','formadepago.Metodo':'Forma de Pago','renglonesrender':'',"totaliva":"Iva $", 'estadorender':'Estado','formatofecha':'Fecha',"percepcion":"Percepción %"}
+    list_columns = ['formatofecha','comprobante','proveedor',"totaliva", "totalrender", 'estadorender', 'formadepago',"percepcion"]
+    show_columns = ['proveedor','comprobante',"totaliva", 'total', 'estadorender','formadepago','formatofecha',"percepcion",'renglonesrender']
     search_columns = ['proveedor',"totaliva", "total", 'estado', 'formadepago','fecha',"percepcion"]
     order_columns =  ['proveedor',"totaliva", "total", 'estado', 'formadepago','fecha',"percepcion"]
-    base_order = ('fecha', 'dsc')
+    base_order = ('id', 'dsc')
     base_permissions = ['can_show','can_list','can_delete','can_download_pdf']
     related_views = [RenglonComprasView]
 
@@ -578,7 +617,7 @@ class RenglonVenta(Form):
     cantidad = IntegerField('Cantidad', widget=BS3TextFieldWidget(), render_kw={'type': "number"})
     metodo = SelectField('Forma de Pago', coerce=str, choices=[(p.id, p) for p in db.session.query(FormadePago)])
     #condicionfrenteiva= SelectField('Condicion Frente Iva', coerce=TipoClaves.coerce, choices=TipoClaves.choices() )
-    total = FloatField('Total $', render_kw={'disabled': ''},
+    total = FloatField('Total $', render_kw={'disabled': '','align':'right'},
                        validators=[DataRequired()], default=0)
     numeroCupon = IntegerField('Numero de cupon', render_kw={'type':'number'}, widget=BS3TextFieldWidget())
     companiaTarjeta = SelectField('Compania de la Tarjeta', coerce=str, choices=[(p.id, p) for p in db.session.query(CompaniaTarjeta)] )
@@ -586,8 +625,8 @@ class RenglonVenta(Form):
     descuento = FloatField("Descuento %",  default=0)
     percepcion = FloatField("Percepcion %", render_kw={'disabled':''}, default=0)
     cuotas = FloatField("Cuotas", render_kw={ 'type':"number"}, default=0)
-    totalneto = FloatField("Total Neto $", render_kw={'disabled': ''},default=0)
-    totaliva= FloatField("Total IVA $", render_kw={ 'disabled': '','type':"number"}, default=0)
+    totalneto = FloatField("Total Neto $", render_kw={'disabled': '','align':'right'},default=0)
+    totaliva= FloatField("Total IVA $", render_kw={ 'disabled': '','type':"number",'align':'right'}, default=0)
     comprobante = FloatField("Comprobante", render_kw={'type': "number"}, default=0)
 
 #creo clase manejadora de la vista de realizar venta
@@ -633,7 +672,7 @@ class RenglonCompra(Form):
     producto = SelectField('Producto', coerce=str, choices=[(p.id, p) for p in db.session.query(Productos)])
     cantidad = IntegerField('Cantidad', render_kw={ 'type':"number"}, widget=BS3TextFieldWidget())
     metodo = SelectField('Metodo de Pago', coerce=str, choices=[(p.id, p) for p in db.session.query(FormadePago)])
-    total = FloatField('Total', render_kw={'disabled': ''},
+    total = FloatField('Total', render_kw={'disabled': '','align':'right'},
                        validators=[DataRequired()], default=0)
     #condicionfrenteiva = SelectField('Condicion Frente Iva', coerce=TipoClaves.coerce, choices=TipoClaves.choices())
     numeroCupon = IntegerField('Numero de cupon', render_kw={ 'type':"number"}, widget=BS3TextFieldWidget())
@@ -642,9 +681,9 @@ class RenglonCompra(Form):
     cuotas = IntegerField("Cuotas", render_kw={ 'type':"number"}, default=0)
     percepcion = IntegerField("Percepcion %", render_kw={ 'type':"number"}, default=0)
     descuento = FloatField("Descuento %", render_kw={ 'type':"number"}, default=0)
-    totalneto = FloatField("Total Neto $", render_kw={'disabled': ''},default=0)
+    totalneto = FloatField("Total Neto $", render_kw={'disabled': '','align':'right'},default=0)
     preciocompra = FloatField("Precio de Compra", default=0)
-    totaliva= FloatField("Total IVA $", render_kw={ 'disabled': '','type':"number"}, default=0)
+    totaliva= FloatField("Total IVA $", render_kw={ 'disabled': '','type':"number",'align':'right'}, default=0)
     fecha = DateField("Fecha",widget=DateTimePickerWidget())
     comprobante = FloatField("Comprobante", render_kw={'type': "number"}, default=0)
 
@@ -709,14 +748,14 @@ class ProveedorView(AuditedModelView):
     validators_columns ={
         'cuit':[InputRequired(),cuitvalidatorProveedores]
     }
-
+    from .validadores.validadortelefono import validadornumerotelefono
     add_form_extra_fields = {
         'tipoClave':  QuerySelectField(
                             'Cond. Frente Iva',
                             query_factory=tipoClave_query,
                             widget=Select2Widget("readonly")
                        ),
-        'telefono_celular': IntegerField('Numero de Celular', render_kw={'type': "number", 'min': '0'},
+        'telefono_celular': IntegerField('Numero de Celular', render_kw={'type': "number", 'min': '0'},validators=[validadornumerotelefono],
                                          description="""Por defecto se toma el codigo pais +549 (Argentina) usted solo debe ingresar caracteristica+numero del celular sin espacios""")
     }
 
@@ -726,7 +765,7 @@ class ProveedorView(AuditedModelView):
                             query_factory=tipoClave_query,
                             widget=Select2Widget("readonly")
                        ),
-        'telefono_celular': IntegerField('Numero de Celular', render_kw={'type': "number", 'min': '0'},
+        'telefono_celular': IntegerField('Numero de Celular', render_kw={'type': "number", 'min': '0'},validators=[validadornumerotelefono],
                                          description="""Por defecto se toma el codigo pais +549 (Argentina) usted solo debe ingresar caracteristica+numero del celular sin espacios""")
 
     }
@@ -742,22 +781,23 @@ class ClientesView(AuditedModelView):
     message="cliente creado"
 
     #presonalizando las etiquetas de las columnas
-    label_columns = {'nombre':'Nombre/Denominacion','apellido':'Apellido/Razon Social','tipoDocumento':'Tipo de Documento' ,'tipoClave':'Tipo de Clave',"tipoPersona":"Tipo de Persona",'estadorender': 'Estado'}
+    label_columns = {'telefono':'Celular','nombre':'Nombre/Denominacion','apellido':'Apellido/Razon Social','tipoDocumento':'Tipo de Documento' ,'tipoClave':'Tipo de Clave',"tipoPersona":"Tipo de Persona",'estadorender': 'Estado'}
     #filtrando los valores
     #base_filters = [['estado', FilterEqual, True]]#descomentar para que filtre solo los activos
 
     #configurando las columnas de las vistas crear listar y editar
     add_columns = ["tipoPersona",'tipoClave','tipoDocumento','documento', 'nombre', 'apellido','telefono_celular','direccion','localidad']
-    list_columns = ["tipoPersona",'tipoClave','documento', 'nombre', 'apellido','tipoDocumento','telefono_celular','estadorender']
-    show_columns = ["tipoPersona",'tipoClave','documento', 'nombre', 'apellido','tipoDocumento','estadorender','telefono_celular','direccion','localidad']
+    list_columns = ["tipoPersona",'tipoClave','documento', 'nombre', 'apellido','tipoDocumento','telefono','estadorender']
+    show_columns = ["tipoPersona",'tipoClave','documento', 'nombre', 'apellido','tipoDocumento','estadorender','telefono','direccion','localidad']
     edit_columns = ["tipoPersona",'tipoClave','tipoDocumento','documento', 'nombre', 'apellido','estado','telefono_celular','direccion','localidad']
     add_template = "clienteaddedit.html"
     edit_template = "editcliente.html"
+    from .validadores.validadortelefono import validadornumerotelefono
     edit_form_extra_fields = {
-        'telefono_celular': StringField('Numero de Celular', render_kw={'type': "number"},
+        'telefono_celular': StringField('Numero de Celular', render_kw={'type': "number"},validators=[validadornumerotelefono],
                                     description="""Por defecto se toma el codigo pais +549 (Argentina) usted solo debe ingresar caracteristica+numero del celular sin espacios""")}
     add_form_extra_fields = {
-        'telefono_celular': StringField('Numero de Celular', render_kw={'type': "number"},
+        'telefono_celular': StringField('Numero de Celular', render_kw={'type': "number"},validators=[validadornumerotelefono],
                                     description="""Por defecto se toma el codigo pais +549 (Argentina) usted solo debe ingresar caracteristica+numero del celular sin espacios""")}
 
 
@@ -806,7 +846,7 @@ class RenglonPedidoView(ModelView):
 class PedidoView(ModelView):
     datamodel = SQLAInterface(Pedido_Proveedor)
     label_columns = {'id':'Numero de Pedido','proveedor.representacion':'Proveedor','formatofecha':'Fecha'}
-    list_columns = ["id","fecha",'proveedor.representacion']
+    list_columns = ["id","formatofecha",'proveedor.representacion']
     show_columns = ['proveedor',"id","formatofecha"]
     base_permissions = ['can_show','can_list']
     order_columns =['id','fecha']
@@ -819,8 +859,8 @@ class PedidoView(ModelView):
 class PediddosClientesView(ModelView):
     datamodel = SQLAInterface(PedidoCliente)
     related_views = [Venta]
-    label_columns = {'hash_activacion':'Codigo de reserva'}
-    list_columns = ['fecha','hash_activacion','cliente','reservado','vendido']
+    label_columns = {'reservadorender':'Reservado','fechaexpiracion':'Fecha de Expiración','formatofecha':'Fecha','vendidorender':'Vendido','hash_activacion':'Codigo de reserva','expiracion':'Fecha de expiracíon'}
+    list_columns = ['formatofecha','fechaexpiracion','hash_activacion','cliente','reservadorender','vendidorender']
     base_permissions = ['can_list','can_show','can_delete']
 
     @expose("/show/<pk>", methods=["GET"])
@@ -897,8 +937,26 @@ class ConvertirVenta(AuditedModelView):
         return "nada"
 
 
-appbuilder.add_view(VentaView, "Realizar Ventas", category='Ventas', category_icon='fa-tag' )
 
+
+
+
+
+
+
+
+from flask_appbuilder.charts.views import TimeChartView
+
+
+class VentaTimeChartView(TimeChartView):
+    search_columns = ['fecha','cliente']
+    chart_title = 'Agrupado por ventas'
+    label_columns = VentaReportes.label_columns
+    group_by_columns = ['fecha']
+    datamodel = SQLAInterface(Venta)
+
+appbuilder.add_view(VentaTimeChartView, "Grafico de ventas", icon="fa-envelope", category="Estadistica")
+appbuilder.add_view(VentaView, "Realizar Ventas", category='Ventas', category_icon='fa-tag' )
 appbuilder.add_view( PrecioMdelview,"Producto" ,icon="fa-archive", category='Productos', category_icon='fa-archive' )
 
 appbuilder.add_view(CompraView, "Compra", category='Compras', category_icon="fa-cart-plus" )

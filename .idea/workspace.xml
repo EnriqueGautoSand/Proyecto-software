@@ -2,51 +2,30 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e6f9fc09-d089-4896-be04-4879e7efe7f0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/proyecto/app/whatsapp/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto/app/reportestock.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto/app/templates/reportestock.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto/app/validadores/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto/app/validadores/validadortelefono.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/Proyecto-software.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Proyecto-software.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/2backup.backup" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/3backuppostgres.backup" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ModeloProyectoFinal.DM1" beforeDir="false" afterPath="$PROJECT_DIR$/ModeloProyectoFinal.DM1" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backup-11-13" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backup.sql" beforeDir="false" afterPath="$PROJECT_DIR$/backup.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backup5-12.backup" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proyecto/app/apis.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/apis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/build/lib/fab_addon_audit/manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/build/lib/fab_addon_audit/manager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/build/lib/fab_addon_audit/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/build/lib/fab_addon_audit/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/build/lib/fab_addon_audit/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/build/lib/fab_addon_audit/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/dist/fab_addon_audit-0.0.1-py3.7.egg" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/dist/fab_addon_audit-0.0.1-py3.7.egg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/fab_addon_audit.egg-info/SOURCES.txt" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/fab_addon_audit.egg-info/SOURCES.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/fab_addon_audit.egg-info/dependency_links.txt" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/fab_addon_audit.egg-info/dependency_links.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/fab_addon_audit.egg-info/requires.txt" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/fab_addon_audit.egg-info/requires.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/fab_addon_audit.egg-info/top_level.txt" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/fab_addon_audit.egg-info/top_level.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/fab_addon_audit/manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/fab_addon_audit/manager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/fab_addon_audit/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/fab_addon_audit/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/fab_addon_audit/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/fab_addon_audit/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/modelo/ModelView.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/modelo/ModelView.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proyecto/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proyecto/app/modulos_inteligentes/modelo_whatsapp.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/modulos_inteligentes/modelo_whatsapp.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/modulos_inteligentes/pedido_presupuesto.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/modulos_inteligentes/pedido_presupuesto.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/modulos_inteligentes/reservas_ofertas.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/modulos_inteligentes/reservas_ofertas.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proyecto/app/reportes.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/reportes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proyecto/app/sec_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/sec_view.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proyecto/app/static/docs/Listado de Compras.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/static/docs/Listado de Compras.pdf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proyecto/app/static/docs/Listado de ventas.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/static/docs/Listado de ventas.pdf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proyecto/app/static/js/compra.js" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/static/js/compra.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proyecto/app/static/js/pedidos_whatsapp.js" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/static/js/pedidos_whatsapp.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proyecto/app/static/js/venta.js" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/static/js/venta.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/templates/addproveedor.html" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/templates/addproveedor.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/templates/editcliente.html" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/templates/editcliente.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/templates/editproveedor.html" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/templates/editproveedor.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/templates/pedidopresupuesto.html" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/templates/pedidopresupuesto.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/testdata.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/testdata.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proyecto/app/templates/compra.html" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/templates/compra.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proyecto/app/templates/pedidos_whatsapp.html" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/templates/pedidos_whatsapp.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proyecto/app/templates/productoshtml.html" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/templates/productoshtml.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proyecto/app/templates/reservas_whatsapp.html" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/templates/reservas_whatsapp.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proyecto/app/templates/venta.html" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/templates/venta.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proyecto/app/validadores/validadores.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/validadores/validadores.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proyecto/app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proyecto/app/whatsapp/whastsapp.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/whatsapp/whastsapp.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/run.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/sqlTriggers.txt" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/sqlTriggers.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schemaonly.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/~$datoscond frente iva.xlsx" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -57,10 +36,33 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/proyecto/app/validadores/validadores.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <folding>
+                <element signature="e#0#46#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/proyecto/app/sec_view.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1598">
+              <caret line="103" column="12" selection-start-line="103" selection-start-column="12" selection-end-line="103" selection-end-column="24" />
+              <folding>
+                <element signature="e#0#59#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/proyecto/app/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1054">
-              <caret line="90" column="28" selection-start-line="90" selection-start-column="4" selection-end-line="90" selection-end-column="28" />
+            <state relative-caret-position="310">
+              <caret line="34" column="21" selection-start-line="34" selection-start-column="4" selection-end-line="34" selection-end-column="21" />
               <folding>
                 <element signature="e#1#24#0" expanded="true" />
               </folding>
@@ -71,8 +73,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/proyecto/app/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="130">
-              <caret line="357" column="34" selection-start-line="357" selection-start-column="34" selection-end-line="357" selection-end-column="34" />
+            <state relative-caret-position="43">
+              <caret line="53" column="20" lean-forward="true" selection-start-line="53" selection-start-column="20" selection-end-line="53" selection-end-column="20" />
               <folding>
                 <element signature="e#0#95#0" expanded="true" />
               </folding>
@@ -80,14 +82,68 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/proyecto/app/modulos_inteligentes/pedido_presupuesto.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="256">
-              <caret line="166" column="65" selection-start-line="166" selection-start-column="61" selection-end-line="166" selection-end-column="65" />
+            <state relative-caret-position="286">
+              <caret line="151" column="52" selection-start-line="151" selection-start-column="52" selection-end-line="151" selection-end-column="52" />
               <folding>
                 <element signature="e#1#50#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/proyecto/app/modulos_inteligentes/reservas_ofertas.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="162">
+              <caret line="108" column="21" lean-forward="true" selection-start-line="108" selection-start-column="21" selection-end-line="108" selection-end-column="21" />
+              <folding>
+                <element signature="e#0#30#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/proyecto/app/apis.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="177">
+              <caret line="106" column="117" selection-start-line="106" selection-start-column="93" selection-end-line="106" selection-end-column="117" />
+              <folding>
+                <element signature="e#0#48#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/proyecto/app/modulos_inteligentes/modelo_whatsapp.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1279">
+              <caret line="158" column="34" selection-start-line="158" selection-start-column="24" selection-end-line="158" selection-end-column="34" />
+              <folding>
+                <element signature="e#2#66#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/proyecto/run.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="51">
+              <caret line="3" selection-start-line="3" selection-end-line="3" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/proyecto/app/__init__.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="85">
+              <caret line="8" selection-start-line="8" selection-end-line="8" />
             </state>
           </provider>
         </entry>
@@ -104,36 +160,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>cate</find>
-      <find>renders</find>
-      <find>prod</find>
-      <find>compro</find>
-      <find>datosforma</find>
-      <find>producto</find>
-      <find>formadepagos</find>
-      <find>flas</find>
-      <find>acti</find>
-      <find>delete</find>
-      <find>FormadePago</find>
-      <find>asc</find>
-      <find>RenglonVenta</find>
-      <find>join</find>
-      <find>renglon</find>
-      <find>venta_whatsapp</find>
-      <find>venta</find>
-      <find>ConvertirVenta</find>
-      <find>datosfor</find>
-      <find>FormadePagoxVenta</find>
-      <find>formadepago</find>
-      <find>RenglonComprasView</find>
-      <find>compra</find>
       <find>precio</find>
-      <find>categ</find>
-      <find>order_rel_fields</find>
-      <find>comprare</find>
-      <find>ventare</find>
-      <find>preciom</find>
-      <find>reng</find>
+      <find>ListDownloadWidgetventa</find>
+      <find>preciomd</find>
+      <find>listw</find>
+      <find>produc</find>
+      <find>listwidg</find>
+      <find>xventa</find>
+      <find>xvencer</find>
+      <find>cabecera</find>
+      <find>vence</find>
+      <find>detaller</find>
+      <find>cliente</find>
+      <find>validat</find>
+      <find>telefono</find>
+      <find>validators_columns</find>
+      <find>Lista de Pedidos de Presupesto</find>
+      <find>tele</find>
+      <find>cond</find>
+      <find>Clientes</find>
+      <find>tipoClave</find>
+      <find>iva</find>
+      <find>obtenerprecio_</find>
+      <find>porcentaj</find>
+      <find>Ofertas</find>
+      <find>porcentaje_subida_precio</find>
+      <find>descuento</find>
+      <find>producto</find>
+      <find>Oferta</find>
+      <find>expiracion</find>
+      <find>PedidosWhatsappView</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -154,7 +210,6 @@
         <option value="$PROJECT_DIR$/proyecto/app/templates/reportecompras.html" />
         <option value="$PROJECT_DIR$/proyecto/app/auditoria.py" />
         <option value="$PROJECT_DIR$/proyecto/app/audit.py" />
-        <option value="$PROJECT_DIR$/proyecto/app/templates/productoshtml.html" />
         <option value="$PROJECT_DIR$/proyecto/app/templates/list.html" />
         <option value="$PROJECT_DIR$/proyecto/app/formularios/formulariocliente.py" />
         <option value="K:/Users/USUARIO/Anaconda3/Lib/site-packages/fab_addon_audit/views.py" />
@@ -163,7 +218,6 @@
         <option value="$PROJECT_DIR$/proyecto/app/widgets/datetimepicker.py" />
         <option value="K:/Users/USUARIO/Anaconda3/Lib/site-packages/flask_appbuilder/models/sqla/interface.py" />
         <option value="K:/Users/USUARIO/Anaconda3/Lib/site-packages/fab_addon_audit-0.0.1-py3.7.egg/fab_addon_audit/views.py" />
-        <option value="$PROJECT_DIR$/proyecto/app/sec_view.py" />
         <option value="$PROJECT_DIR$/proyecto/app/sec.py" />
         <option value="$PROJECT_DIR$/proyecto/app/index.py" />
         <option value="$PROJECT_DIR$/proyecto/app/modelo/ModelView.py" />
@@ -173,26 +227,32 @@
         <option value="$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/fab_addon_audit/manager.py" />
         <option value="$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/fab_addon_audit/models.py" />
         <option value="$USER_HOME$/Anaconda3/Lib/site-packages/fab_addon_audit-0.0.1-py3.7.egg/fab_addon_audit/views.py" />
-        <option value="$PROJECT_DIR$/proyecto/app/reportes.py" />
-        <option value="$PROJECT_DIR$/proyecto/app/validadores/validadores.py" />
         <option value="$PROJECT_DIR$/proyecto/app/__init__.py" />
         <option value="$PROJECT_DIR$/proyecto/config.py" />
         <option value="$PROJECT_DIR$/proyecto/app/whatsapp/__init__.py" />
+        <option value="$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/fab_addon_audit/views.py" />
         <option value="$PROJECT_DIR$/proyecto/app/whatsapp/whastsapp.py" />
+        <option value="$PROJECT_DIR$/proyecto/app/modulos_inteligentes/pedido_presupuesto.py" />
         <option value="$PROJECT_DIR$/proyecto/run.py" />
+        <option value="$PROJECT_DIR$/proyecto/app/reportes.py" />
+        <option value="$PROJECT_DIR$/proyecto/app/templates/reportestock.html" />
+        <option value="$PROJECT_DIR$/proyecto/app/templates/productoshtml.html" />
+        <option value="$PROJECT_DIR$/proyecto/app/reportestock.py" />
+        <option value="$PROJECT_DIR$/proyecto/app/validadores/__init__.py" />
+        <option value="$PROJECT_DIR$/proyecto/app/sec_view.py" />
+        <option value="$PROJECT_DIR$/proyecto/app/validadores/validadores.py" />
+        <option value="$PROJECT_DIR$/proyecto/app/validadores/validadortelefono.py" />
         <option value="$PROJECT_DIR$/proyecto/app/models.py" />
         <option value="$PROJECT_DIR$/proyecto/app/apis.py" />
         <option value="$PROJECT_DIR$/proyecto/app/modulos_inteligentes/reservas_ofertas.py" />
         <option value="$PROJECT_DIR$/proyecto/app/modulos_inteligentes/modelo_whatsapp.py" />
-        <option value="$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/fab_addon_audit/views.py" />
         <option value="$PROJECT_DIR$/proyecto/app/views.py" />
-        <option value="$PROJECT_DIR$/proyecto/app/modulos_inteligentes/pedido_presupuesto.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-8" />
-    <option name="y" value="-8" />
+  <component name="ProjectFrameBounds" extendedState="7">
+    <option name="x" value="-124" />
+    <option name="y" value="78" />
     <option name="width" value="1382" />
     <option name="height" value="744" />
   </component>
@@ -233,13 +293,6 @@
               <item name="app" type="462c0819:PsiDirectoryNode" />
               <item name="validadores" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="Proyecto-software" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Proyecto-software" type="462c0819:PsiDirectoryNode" />
-              <item name="proyecto" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="whatsapp" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -250,7 +303,7 @@
   <component name="PropertiesComponent">
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../../../../pythons proyects/python proyects/crypto screener" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../../Python Scripts/flask/proyecto_tast_final" />
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RecentsManager">
@@ -417,12 +470,12 @@
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49756098" visible="true" weight="0.18601191" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49756098" visible="true" weight="0.20535715" />
       <window_info id="Structure" order="1" sideWeight="0.502439" side_tool="true" weight="0.18229167" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3289689" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49702382" visible="true" weight="0.22913256" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49702382" visible="true" weight="0.4304419" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.30605564" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -436,12 +489,12 @@
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
     <layout-to-restore>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49756098" visible="true" weight="0.2373512" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49756098" visible="true" weight="0.20535715" />
       <window_info id="Structure" order="1" sideWeight="0.502439" side_tool="true" weight="0.18229167" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3289689" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49702382" visible="true" weight="0.34369886" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49702382" visible="true" weight="0.3633388" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.30605564" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -456,50 +509,6 @@
     </layout-to-restore>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/flask_appbuilder/templates/appbuilder/init.html" />
-    <entry file="file://$PROJECT_DIR$/proyecto/app/templates/login.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" selection-start-line="1" selection-end-line="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/jinja2/environment.py" />
-    <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/flask_appbuilder/baseviews.py" />
-    <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/flask_appbuilder/views.py" />
-    <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/flask_appbuilder/security/__init__.py" />
-    <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/flask_appbuilder/base.py" />
-    <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/flask_appbuilder/security/sqla/manager.py" />
-    <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/flask_appbuilder/security/manager.py" />
-    <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/flask_appbuilder/security/views.py" />
-    <entry file="file://K:/Users/USUARIO/Anaconda3/Lib/site-packages/flask_appbuilder/security/registerviews.py" />
-    <entry file="file://$PROJECT_DIR$/proyecto/app/sec.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="18" selection-start-line="18" selection-end-line="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/tzlocal/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="30" column="39" selection-start-line="30" selection-start-column="37" selection-end-line="30" selection-end-column="39" />
-          <folding>
-            <element signature="e#24#35#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/templates/reportecompras.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="8" selection-start-line="8" selection-end-line="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/static/ab_actions.js">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/flask_appbuilder/actions.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
@@ -514,25 +523,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/sec_view.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" column="37" selection-start-line="13" selection-start-column="37" selection-end-line="13" selection-end-column="37" />
-          <folding>
-            <element signature="e#0#59#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Anaconda3/Lib/hashlib.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1125">
           <caret line="66" selection-start-line="66" selection-end-line="66" />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/modulos_inteligentes/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/flask/helpers.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -599,33 +595,6 @@
     <entry file="file://$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/fab_addon_audit/version.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/flask_appbuilder/models/sqla/interface.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="168">
-          <caret line="57" column="26" selection-start-line="57" selection-start-column="23" selection-end-line="57" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/testdata.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-173">
-          <caret line="10" selection-start-line="10" selection-end-line="10" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/reportes.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="899">
-          <caret line="273" column="43" selection-start-line="273" selection-start-column="43" selection-end-line="273" selection-end-column="51" />
-          <folding>
-            <element signature="e#510#537#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/proyecto/app/index.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="119">
@@ -659,97 +628,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/validadores/validadores.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="714">
-          <caret line="42" selection-start-line="42" selection-end-line="42" />
-          <folding>
-            <element signature="e#0#46#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="230">
-          <caret line="20" selection-start-line="20" selection-end-line="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="38" column="8" selection-start-line="38" selection-end-line="38" selection-end-column="8" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/flask_appbuilder/views.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="9146">
           <caret line="561" column="24" selection-start-line="561" selection-start-column="24" selection-end-line="561" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/whatsapp/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/apis.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="433" column="19" selection-start-line="433" selection-start-column="19" selection-end-line="433" selection-end-column="33" />
-          <folding>
-            <element signature="e#0#48#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/run.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="47" selection-start-line="2" selection-start-column="47" selection-end-line="2" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/modulos_inteligentes/reservas_ofertas.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="205">
-          <caret line="105" column="52" selection-start-line="105" selection-start-column="52" selection-end-line="105" selection-end-column="52" />
-          <folding>
-            <element signature="e#0#30#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/whatsapp/whastsapp.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="576">
-          <caret line="44" column="56" selection-start-line="44" selection-start-column="56" selection-end-line="44" selection-end-column="56" />
-          <folding>
-            <element signature="e#1#33#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1054">
-          <caret line="90" column="28" selection-start-line="90" selection-start-column="4" selection-end-line="90" selection-end-column="28" />
-          <folding>
-            <element signature="e#1#24#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/modulos_inteligentes/modelo_whatsapp.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1853">
-          <caret line="109" column="83" selection-start-line="109" selection-start-column="83" selection-end-line="109" selection-end-column="83" />
-          <folding>
-            <element signature="e#2#66#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -773,10 +655,229 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/templates/addCliente.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="19" selection-start-line="19" selection-end-line="19" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/templates/compra.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="17" lean-forward="true" selection-start-line="3" selection-start-column="17" selection-end-line="3" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/whatsapp/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/testdata.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="629">
+          <caret line="41" column="29" selection-start-line="41" selection-start-column="29" selection-end-line="41" selection-end-column="29" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/templates/login.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-119" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/whatsapp/whastsapp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="578">
+          <caret line="43" column="4" selection-start-line="43" selection-start-column="4" selection-end-line="43" selection-end-column="4" />
+          <folding>
+            <element signature="e#1#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/flask_appbuilder/charts/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="410" column="19" selection-start-line="410" selection-start-column="6" selection-end-line="410" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/sec_models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#54#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/templates/venta.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-697">
+          <caret line="22" column="37" selection-start-line="22" selection-start-column="37" selection-end-line="22" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/templates/reporteventa.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret selection-end-line="25" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/flask_appbuilder/models/sqla/interface.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="335" column="8" selection-start-line="335" selection-start-column="8" selection-end-line="335" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/reportes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2108">
+          <caret line="138" column="87" selection-start-line="138" selection-start-column="87" selection-end-line="138" selection-end-column="87" />
+          <folding>
+            <element signature="e#510#537#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/templates/reportestock.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="39" selection-start-line="5" selection-start-column="39" selection-end-line="5" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/templates/productoshtml.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="731">
+          <caret line="43" column="39" selection-start-line="43" selection-start-column="39" selection-end-line="43" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/reportestock.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4097">
+          <caret line="255" selection-start-line="255" selection-end-line="259" selection-end-column="39" />
+          <folding>
+            <element signature="e#510#537#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2278">
+          <caret line="141" column="9" selection-start-line="141" selection-start-column="9" selection-end-line="141" selection-end-column="9" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/formularios/formulariocliente.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#143#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/modulos_inteligentes/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/validadores/validadortelefono" />
+    <entry file="file://$PROJECT_DIR$/proyecto/app/sec.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" selection-start-line="4" selection-end-line="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/validadores/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/validadores/validadores.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#46#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/sec_view.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1598">
+          <caret line="103" column="12" selection-start-line="103" selection-start-column="12" selection-end-line="103" selection-end-column="24" />
+          <folding>
+            <element signature="e#0#59#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="8" selection-start-line="8" selection-end-line="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/validadores/validadortelefono.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" column="56" selection-start-line="9" selection-start-column="56" selection-end-line="9" selection-end-column="56" />
+          <folding>
+            <element signature="e#0#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/run.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" selection-start-line="3" selection-end-line="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/apis.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="177">
+          <caret line="106" column="117" selection-start-line="106" selection-start-column="93" selection-end-line="106" selection-end-column="117" />
+          <folding>
+            <element signature="e#0#48#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="310">
+          <caret line="34" column="21" selection-start-line="34" selection-start-column="4" selection-end-line="34" selection-end-column="21" />
+          <folding>
+            <element signature="e#1#24#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/modulos_inteligentes/reservas_ofertas.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="108" column="21" lean-forward="true" selection-start-line="108" selection-start-column="21" selection-end-line="108" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#30#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/proyecto/app/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="130">
-          <caret line="357" column="34" selection-start-line="357" selection-start-column="34" selection-end-line="357" selection-end-column="34" />
+        <state relative-caret-position="43">
+          <caret line="53" column="20" lean-forward="true" selection-start-line="53" selection-start-column="20" selection-end-line="53" selection-end-column="20" />
           <folding>
             <element signature="e#0#95#0" expanded="true" />
           </folding>
@@ -785,10 +886,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/proyecto/app/modulos_inteligentes/pedido_presupuesto.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="256">
-          <caret line="166" column="65" selection-start-line="166" selection-start-column="61" selection-end-line="166" selection-end-column="65" />
+        <state relative-caret-position="286">
+          <caret line="151" column="52" selection-start-line="151" selection-start-column="52" selection-end-line="151" selection-end-column="52" />
           <folding>
             <element signature="e#1#50#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/modulos_inteligentes/modelo_whatsapp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1279">
+          <caret line="158" column="34" selection-start-line="158" selection-start-column="24" selection-end-line="158" selection-end-column="34" />
+          <folding>
+            <element signature="e#2#66#0" expanded="true" />
           </folding>
         </state>
       </provider>
