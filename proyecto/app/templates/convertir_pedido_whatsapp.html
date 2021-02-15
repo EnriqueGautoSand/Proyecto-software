@@ -32,16 +32,16 @@
 {% block content %}
 
 
-    <h1>Realizar Venta</h1>
+    <h1>Convertir Pedido a Venta</h1>
 
 <br>
-
+  {% if cargarform %}
 
 <form class="form-group ">
 <table class="table table-bordered" id="agregar">
 <tr>
-              <td>{{ form2.cliente.label }}   </td>
- <td>    {{ form2.cliente}}       <a id="crearCliente" href="{{url_for('ClientesView.add')}}" > Crear Cliente<a /></td>  
+              <td>{{ form2.clienteidentificador.label }}   </td>
+ <td>    {{ form2.clienteidentificador}}       </td>  
                  <td>{{ form2.producto.label }}</td>
         <td> {{ form2.producto}}        </td>   
 
@@ -68,6 +68,18 @@
        </td >
     </tr>
 </table>
+
+<table class="table table-bordered" id='tablaproductos'>
+<tbody id='tbodyproductos'>
+<tr ><td>Producto</td><td>Precio</td><td>Cantidad</td><td>Descuento %</td><td>Iva</td><td>SubTotal</td></tr>
+{% for renglon in renglones %}
+<tr id='fila{{renglones.index(renglon)+1}}'><td align='center'>{{renglon.producto}}</td><td align="right">{{renglon.precioVenta}}</td><td align="right">{{renglon.cantidad}}</td><td align="right">{{renglon.descuento}}</td><td align="right">{{renglon.producto.iva}}</td><td align="right"> 
+
+  ${{(renglon.precioVenta*renglon.cantidad)*(1-renglon.descuento/100)}} </td></tr>
+{% endfor %}
+</tbody>
+</table>
+
 </form >
 {% if responsableinscripto %}
 <table class="table table-bordered" id="neto">
@@ -141,20 +153,18 @@
     Faltante
     <input id="faltante" title="Faltante" disabled=true type="entry" value=""  />
 <input id="nuevaFormadePago" class="btn  btn-info btn-sm" type="button" onclick="agregarFormadePago();" value="Nueva Forma de Pago"  />
- <!--- </td>
-    <td align="right" >
-         {{ form2.comprobante.label }}
-            {{ form2.comprobante}}
-  </td --->
+  </td>
+
   <td align="right" >
          {{ form2.total.label }}
             {{ form2.total}}
-    <input id="finalizarVenta" class="btn  btn-info btn-sm" type="button" value="Finalizar Venta"  />
+    <input id="finalizarVenta" class="btn  btn-info btn-sm" type="button" value="Convertir Pedidoa a Venta"  />
 <input id="cancelarVenta" onclick="cancelar();"  class="btn  btn-danger btn-sm" type="button" value="Cancelar Venta"  />
   </td>
 
 </tr>
   </table >
+  {% endif %} 
 {% endblock %}
 
 {% block tail_js %}
@@ -165,18 +175,17 @@
     <link href="{{url_for('static',filename='css/claseselect.css')}}"rel="stylesheet"/>
     <script src="{{url_for('static',filename='js/select2.js')}}"></script>
     <script src="{{url_for('static',filename='js/condfrenteivanegocio.js')}}"></script>
-    <script src="{{url_for('static',filename='js/venta.js')}}"></script>
+    <script src="{{url_for('static',filename='js/convertir_pedido_whatsapp.js')}}"></script>
     
     <script>
         $(document).ready(function() { $("#producto").select2(); });
-         $(document).ready(function() { $("#cliente").select2(); });
+         //$(document).ready(function() { $("#cliente").select2(); });
          $(document).ready(function() { $("#metodo").select2(); });
          $('#cantidad').mask('00000000');
          $('#comprobante').mask('0000000000000');
         $("#total").inputmask({ 'alias': 'decimal', 'autoGroup': true, 'digits': 2, 'digitsOptional': false, 'placeholder': '0.00', rightAlign : false,clearMaskOnLostFocus: !1 });
 
 
-         
     </script>
 
 {% endblock %}

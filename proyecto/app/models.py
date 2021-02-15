@@ -1,6 +1,6 @@
 
 import flask_appbuilder
-from sqlalchemy import Column, Integer, String, ForeignKey,Float,Date, Boolean, UniqueConstraint,BIGINT,DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey,Float,Date, Boolean, UniqueConstraint,BIGINT,DateTime,Sequence
 from sqlalchemy.orm import relationship
 from flask_appbuilder.models.decorators import renders
 from flask_appbuilder.models.mixins import  ImageColumn
@@ -34,7 +34,28 @@ class OfertaWhatsapp(Model):
     vendido=Column(Boolean,nullable=False,default=False)
     renglon_compra_id = Column(Integer, ForeignKey('renglon_compras.id'), nullable=False)
     renglon_compra = relationship("RenglonCompras")
+    @renders('reservado')
+    def reservadorender(self):
+        if self.reservado:
+            return "SI"
+        else:
+            return "NO"
+    @renders('vendido')
+    def vendidorender(self):
+        if self.vendido:
+            return "SI"
+        else:
+            return "NO"
+    @renders('cantidad')
+    def cantidadrender(self):
+        return Markup( '<div align=right> ' + str(format(self.cantidad, '.2f')) + '</div> ' )
 
+    @renders('fecha')
+    def formatofecha(self):
+         return Markup('<b> ' + str(self.fecha.strftime(" %d-%m-%Y %H:%M")) + '</b>')
+    @renders('expiracion')
+    def fechaexpiracion(self):
+         return Markup('<b> ' + str(self.expiracion.strftime(" %d-%m-%Y %H:%M")) + '</b>')
 
 class PedidoCliente(Model):
     __tablename__ = 'pedido_cliente'
@@ -66,6 +87,25 @@ class PedidoCliente(Model):
             return "SI"
         else:
             return "NO"
+
+class RenglonPedidoWhatsapp(Model):
+    """
+    creo clase que sera mapeada como la tabla renglon en la base de datos
+    """
+    id = Column(Integer, primary_key=True)
+    precioVenta = Column(Float)
+    cantidad = Column(Integer)
+    pedidocliente_id = Column(Integer, ForeignKey('pedido_cliente.id'), nullable=False)
+    pedidocliente = relationship("PedidoCliente", backref='renglonespedido')
+    producto_id = Column(Integer, ForeignKey('productos.id'), nullable=False)
+    producto = relationship("Productos")#,backref="renglon_venta")
+    descuento = Column(Float)
+
+    # defino como se representara al ser llamado
+    def __repr__(self):
+        return f"{self.producto} ${self.precioVenta:.2f} {self.pedidocliente} {self.producto} {self.cantidad} "
+    def subtotal(self):
+        return  format((self.precioVenta * self.cantidad) * (1 - self.descuento / 100), '.2f')
 class Pedido_Proveedor(Model):
     """
     creo clase que sera mapeada como la tabla pedido_proveedor
@@ -347,7 +387,7 @@ class FormadePago(Model):
 
 
 
-
+COMPROBANTE_SEQ= Sequence('compras_comprobante_seq')
 class Compra(Model):
     """
     creo clase que sera mapeada como la tabla Compra en la base de datos
@@ -368,7 +408,7 @@ class Compra(Model):
     datosFormaPagos_id = Column(Integer, ForeignKey('datosFormaPagosCompra.id'), nullable=True)
     datosFormaPagos = relationship("DatosFormaPagosCompra")
     percepcion = Column(Float,default=0)
-    comprobante = Column(Integer, autoincrement=True, unique=True,default=db.Sequence('compras_comprobante_seq').next_value())
+    comprobante = Column(Integer, COMPROBANTE_SEQ, unique=True,default=COMPROBANTE_SEQ.next_value())#db.Sequence('compras_comprobante_seq').next_value())
 
 
     __table_args__ = (
@@ -380,6 +420,8 @@ class Compra(Model):
 
     def condicionFrenteIva(self):
         return self.proveedor.tipoClave
+
+
     @renders('total')
     def totalrender(self):
          return Markup( '<div align=right> $' + str(format(self.total, '.2f')) + '</div> ' )
@@ -391,6 +433,21 @@ class Compra(Model):
             if self.estado:
                 return Markup('<b> Compra Realizada </b>')
             return Markup('<b> Compra Anulada </b>')
+    @renders('totaliva')
+    def totalivarender(self):
+        print(self.totaliva)
+        return format(self.totaliva, '.2f')
+
+    @renders('percepcion')
+    def percepcionrender(self):
+        return format(self.percepcion, '.2f')
+    @renders('totaliva')
+    def totalivarendercolumna(self):
+        return Markup('<div align=right> ' + str(format(self.totaliva, '.2f')) + '</div> ')
+    @renders('percepcion')
+    def percepcionrendercolumna(self):
+        return Markup('<div align=right> ' + str(format(self.percepcion, '.2f')) + '</div> ')
+
     @renders('renglones')
     def renglonesrender(self):
     # will render this columns as lista
@@ -412,7 +469,7 @@ class Compra(Model):
         renglones+="</table>"
         return Markup( renglones )
 
-
+venta_comp_seq=Sequence('ventas_comprobante_seq')
 class Venta(Model):
     """
     creo clase que sera mapeada como la tabla ventas en la base de datos
@@ -428,7 +485,7 @@ class Venta(Model):
     cliente_id = Column(Integer, ForeignKey('clientes.id'), nullable=False)
     cliente = relationship("Clientes")
     percepcion = Column(Float)
-    comprobante = Column(Integer, autoincrement=True, unique=True,default=db.Sequence('ventas_comprobante_seq').next_value())
+    comprobante = Column(Integer, venta_comp_seq, unique=True,default=venta_comp_seq.next_value())
 
     @renders('fecha')
     def formatofecha(self):
@@ -445,6 +502,19 @@ class Venta(Model):
         else:
             return str(self.formadepagos[0])
 
+
+    @renders('totaliva')
+    def totalivarender(self):
+        return format(self.totaliva, '.2f')
+    @renders('percepcion')
+    def percepcionrender(self):
+        return format(self.percepcion, '.2f')
+    @renders('totaliva')
+    def totalivarendercolumna(self):
+        return Markup('<div align=right> ' + str(format(self.totaliva, '.2f')) + '</div> ')
+    @renders('percepcion')
+    def percepcionrendercolumna(self):
+        return Markup('<div align=right> ' + str(format(self.percepcion, '.2f')) + '</div> ')
 
 
     @renders('total')
@@ -465,13 +535,13 @@ class Venta(Model):
         for i in  self.renglones:
             print(type(i))
             print(f'{redirect(url_for("RenglonVentas.edit",pk=i.id))}')
-
-            unrenglon=f"<tr><td>{i.producto}</td> <td>${i.precioVenta:.2f}</td><td>{i.cantidad}</td><td>{i.producto.iva}%</td><td>{i.descuento} %</td><td>${(i.precioVenta*i.cantidad)*(1-i.descuento/100)}</td></tr> "
+            subtotal=(i.precioVenta*i.cantidad)*(1-i.descuento/100)
+            unrenglon=f"<tr><td>{i.producto}</td> <td align='right'>${i.precioVenta:.2f}</td><td align='right'>{i.cantidad}</td><td align='right'>{i.producto.iva:.2f}%</td><td align='right'>{i.descuento:.2f} %</td><td align='right'>${subtotal:.2f}</td></tr> "
             renglones+=unrenglon+'\n'
             total+=i.precioVenta*i.cantidad
 
-        renglones += f"<tr><td></td><td></td><td></td><td></td><td>Total Neto</td> <td>${self.totalNeto:.2f}</td></tr>"
-        renglones+=f"<tr><td></td><td></td><td></td><td></td><td>Total</td> <td>${self.total:.2f}</td></tr>"
+        renglones += f"<tr><td></td><td></td><td></td><td></td><td >Total Neto</td> <td align='right'>${self.totalNeto:.2f}</td></tr>"
+        renglones+=f"<tr><td></td><td></td><td></td><td></td><td>Total</td> <td align='right'>${self.total:.2f}</td></tr>"
         print(renglones)
         renglones+="</table>"
         return Markup( renglones )
@@ -644,6 +714,8 @@ class RenglonCompras(Model):
     fecha_vencimiento = Column(Date)
     vendido=Column(Boolean, nullable=False,default=False)
     stock_lote=Column(Integer, nullable=False)
+    renglonPedidoWhatsapp_id = Column(Integer, ForeignKey('renglon_pedido_whatsapp.id'), nullable=True)
+    renglonPedidoWhatsapp = relationship("RenglonPedidoWhatsapp", backref='renglonespedidocompras')
     # defino como se representara al ser llamado
     def __repr__(self):
          return f"{self.producto} ${self.precioCompra:.2f} {self.compra} {self.cantidad} "

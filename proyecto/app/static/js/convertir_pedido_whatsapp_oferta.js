@@ -1,9 +1,32 @@
 
+
+
+
+var url = "http://"+location.host+Flask.url_for("Clienteapi.datoscliente_convertir_oferta")
+var data = { hashpedido:window.location.pathname.split("/")[window.location.pathname.split("/").length-1]};
+var cliente = {}
+	// statements
+
+ fetch(url, {
+  method: 'POST', // or 'PUT'
+  body: JSON.stringify(data), // data can be `string` or {object}!
+  headers:{
+    'Content-Type': 'application/json'
+  }
+})
+.catch(error => { console.error('Error:', error)
+	alert('Error:', error)
+	element.disabled=true
+	} ).then(res => res.json())
+			.then(response =>{ console.log('Success hashpedido:', response)
+	 cliente['value'] =  response.message
+
+	})
 var venta=true
 var compra=false
 var producto = document.getElementById('producto')
 var cantidad = document.getElementById('cantidad')
-var cliente = document.getElementById('cliente')
+//document.getElementById('cliente')
 var metododePago= document.getElementById('metodo')
 var tablafinalizar= document.getElementById('finalizar')
 var iva
@@ -45,8 +68,8 @@ var percepcion= document.getElementById('percepcion')
 tarjeta=document.getElementById('unmetodo')
 var ultimoElemento=tarjeta
 condfrenteivanego()
-var cupon= document.getElementById('numeroCupon')
-cupon.className="form-inline"
+//var cupon= document.getElementById('numeroCupon')
+//cupon.className="form-inline"
 var companiaTarjeta= document.getElementById('companiaTarjeta')
 companiaTarjeta.className="form-control"
 
@@ -58,14 +81,14 @@ if (totalneto==undefined){
 	totalneto={}
 	totalneto.value=0
 }
-var	tabla=document.createElement("table")
+var	tabla=document.getElementById('tablaproductos')  //document.createElement("table")
 
-var tebody=document.createElement("tbody")
-function agregarTd(tere,texto,alineacion){
+var tebody=document.getElementById('tbodyproductos')  //document.createElement("tbody")
+function agregarTd(tere,texto){
 	titulo =document.createTextNode(texto)
 	tede= document.createElement("td")
 	tede.appendChild(titulo)
-	tede.align=alineacion
+	tede.align="center"
 	tere.appendChild(tede)
 }
 function updateValue(e){
@@ -94,8 +117,8 @@ boton.className="btn  btn-success btn-sm"
 
 var tere=document.createElement("tr")
 
-agregarTd(tere,'Producto')
-agregarTd(tere,'Precio $')
+/*/agregarTd(tere,'Producto')
+agregarTd(tere,'Precio')
 agregarTd(tere,'Cantidad')
 agregarTd(tere,'Descuento %')
 agregarTd(tere,'IVA')
@@ -103,7 +126,7 @@ agregarTd(tere,'SubTotal')
 
 tebody.appendChild(tere)
 
-tabla.appendChild(tebody)
+tabla.appendChild(tebody)*/
 
 tabla.className="table table-bordered table-hover "
 
@@ -212,11 +235,54 @@ function borrarRenglon(element){
 }
 var contadorfilas=0
 
+var url = "http://"+location.host+Flask.url_for("Pedidoapi.datospedidooferta")
+var data = { idoferta:window.location.pathname.split("/")[window.location.pathname.split("/").length-1]};
+var cliente = {}
+	// statements
+
+ fetch(url, {
+  method: 'POST', // or 'PUT'
+  body: JSON.stringify(data), // data can be `string` or {object}!
+  headers:{
+    'Content-Type': 'application/json'
+  }
+})
+.catch(error => { console.error('Error:', error)
+	alert('Error:', error)
+	element.disabled=true
+	} ).then(res => res.json())
+			.then(response =>{ console.log('Success hashpedido:', response,response.message)
+				console.log(JSON.parse(response.message))
+	  response=JSON.parse(response.message)
+				
+				for( i in response){
+
+					totaljsonfila=response[i][2]*(parseFloat(response[i][3])*( 1-parseFloat(response[i][4])/100))
+					totalColuma +=totaljsonfila
+					jsonProductos[response[i][0]]=[JSON.stringify(response[i][1]),response[i][2],response[i][3],response[i][4],totalColuma]
+				console.log(response[i][1])
+				listaProductos.add(response[i][1]['id']);
+					addRowHandlers()
+					
+				}
+
+	 contadorfilas=response.length
+
+totalconimpuestos()
+         let montos=document.getElementById('monto')
+      if (!montos.disabled){
+      		montos.value=totalhtml.value
+      }
+
+	})
 
 function agregarRenglon(element){
 	//estafuncion sirve para agregar un renglon de producto
+	descuento.value=0
 	renglonseleccionado=NaN
 	botonborrar.disabled=true
+	percepcion.value=0
+	percepcion.disabled=true
 
 	element.disabled=true
 
@@ -239,12 +305,12 @@ function agregarRenglon(element){
 
       
 
-      agregarTd(hilera,producto[producto.selectedIndex].innerHTML,"center")
+      agregarTd(hilera,producto[producto.selectedIndex].innerHTML)
 
       
 
-var url = "http://"+location.host+Flask.url_for("VentasApi.obtenerprecio")
-var data = {p: productosel.id, venta:true, cliente_condfrenteiva:JSON.parse(cliente.value).tipoclave};
+var url = "http://"+location.host+Flask.url_for("VentasApi.obtenerprecio_pedido")
+var data = {p: productosel.id, venta:true, cliente_condfrenteiva:JSON.parse(cliente.value).tipoclave,cliente:parseInt(JSON.parse(cliente.value).id)};
 try {
 	// statements
 
@@ -262,36 +328,30 @@ try {
 .then(response =>{ console.log('Success:', response)
 	
 
-	console.log('Success:', response.message,'  ',typeof totalFila)
-	
-	totalFila=cantidadpos()*(parseFloat( response.message)*( 1-descuento.value/100))
-	agregarTd(hilera,response.message,"right")
-      agregarTd(hilera,cantidadpos(),"right")
-      agregarTd(hilera, porcentajepositivo(descuento,true),"right")
-      agregarTd(hilera, productosel['iva'],"right")
-		agregarTd(hilera, "$" + totalFila.toFixed(2) ,"right")
+	console.log('Success:', response.message,response.message,'  ',typeof totalFila)
+	response=JSON.parse(response.message)
+	descuento.value=parseFloat(response.descuento).toFixed(2)
+	totalFila=cantidadpos()*(parseFloat(response.precio)*( 1-parseFloat(descuento.value)/100))
+	agregarTd(hilera,response.precio)
+      agregarTd(hilera,cantidadpos())
+      agregarTd(hilera, porcentajepositivo(descuento,true))
+      agregarTd(hilera, productosel['iva'])
+		agregarTd(hilera, "$" + totalFila.toFixed(2) )
 	  tebody.appendChild(hilera);
       listaProductos.add(productosel.id);
       console.log(listaProductos)
       totalColuma += parseFloat(totalFila)
-      let precio=parseFloat( response.message)
+      let precio=parseFloat( response.precio)
       jsonProductos[productosel.representacion]=[producto.value, cantidadpos(),precio,parseFloat(descuento.value),totalColuma]
 
       totalconimpuestos() 
       addRowHandlers()
       //busco el monto y si no esta desabiliado lo cargo en el 
       //primer monto de froma de pago
-      let montos=document.getElementById('monto')
+         let montos=document.getElementById('monto')
       if (!montos.disabled){
       		montos.value=totalhtml.value
       }
-      
-      
-      
-
-
-
-      
 
       element.disabled=false
       
@@ -311,6 +371,7 @@ try {
 
 
 }
+
 function cancelar(){
 	  var bool=confirm("Seguro de cancelar la venta?");
   if(bool){
@@ -321,7 +382,7 @@ function cancelar(){
 
 
 function conectarVentaapi(jsonventa){
-	var url = "http://"+location.host+Flask.url_for("VentasApi.greeting2")//"http://localhost:8080/api/v1/ventasapi/realizarventa/"
+	var url = "http://"+location.host+Flask.url_for("VentasApi.convertir_pedido_venta_oferta")//"http://localhost:8080/api/v1/ventasapi/realizarventa/"
 var data = jsonventa;
 try {
 	fetch(url, {
@@ -335,11 +396,12 @@ try {
 .then(response =>{
 	console.log('Success:', response)
 	if (response.message.status== "sucess"){
-		alert("Venta Realizada Satisfactoriamente")
-		//window.location.href ="http://localhost:8080/ventaview/venta/"//"http://localhost:8080/ventaview/venta/"
-		window.location.href = "http://localhost:8080/ventareportes/show/"+response.message.idventa.toString()
+		alert("Pedido Convertido a Venta Realizadado Satisfactoriamente ")
+		//window.location.href ="http://localhost.localdomain:8080/ventaview/venta/"//"http://localhost:8080/ventaview/venta/"
+		window.location.href = "http://localhost:8080/ventareportes/show/"+response.message.id.toString()
 	}else {
-		alert(response.message)
+		console.log(response.message)
+		
 	}
 
 })
@@ -374,7 +436,8 @@ boton.disabled=true
 			jsonventa["totalneto"]=parseFloat(totalneto.value).toFixed(2);
 			jsonventa["totaliva"]=parseFloat(totaliva.value).toFixed(2);
 			jsonventa["percepcion"]=parseFloat(percepcion.value).toFixed(2);
-			// comprobante jsonventa["comprobante"]=parseFloat(comprobante.value).toFixed(2)
+			jsonventa['pk']=window.location.pathname.split("/")[window.location.pathname.split("/").length-1]
+			//jsonventa["comprobante"]=parseFloat(comprobante.value).toFixed(2)
 			//jsonventa["condicionfrenteiva"]=condicionfrenteiva.value
 
 			//validar si la suma de los pagos no supera el total del la venta
@@ -414,6 +477,7 @@ boton.disabled=true
 boton.disabled=false
 
 	}
+
 function  verificarmonto(numero){
  
 if (parseFloat(numero.value)>0){
@@ -525,7 +589,7 @@ function crearFormadePago(element){
 					else{
 						if ( cupons.value!=""  ){
 							//alert("entro1")
-								jsonMetodo["numeroCupon"]=cupons.value;
+								//jsonMetodo["numeroCupon"]=cupons.value;
 								jsonMetodo["companiaTarjeta"]=companiaTarjetas.value;
 								jsonMetodo["credito"]=creditos.checked
 								jsonMetodo["cuotas"]=parseInt(cuota.value) 
@@ -539,6 +603,8 @@ function crearFormadePago(element){
 							element.disabled=false
 							return;
 						}
+
+
 
 					}
 		}
@@ -588,14 +654,12 @@ function crearFormadePago(element){
 								jsonMetodo["cuotas"]=parseInt(cuotas1.value) 
 								jsonMetodo["monto"]=parseFloat(monto1.value) 
 
-								
 						}
 						else{
 							alert("Completar todos los datos de la Tarjeta",jsonMetodo)
 							element.disabled=false
 							return;
 						}
-
 					}
 			}
 
@@ -696,10 +760,6 @@ ultimoElemento=aclonar
 }
 
 boton.onclick= function() {console.log('largo json ',jQuery.isEmptyObject(jsonProductos))
-						/*if (comprobante.value==0){
-							alert("ingrese el numero de comprobante!!!")
-							return;
-						}*/
 						if (jQuery.isEmptyObject(jsonProductos)){
 								alert("No hay poductos asociados a esta venta!!!")
 
@@ -726,10 +786,10 @@ $("#metodo").click(function() {
 cliente.onchange= (event)=> {
 console.log(JSON.parse(event.target.value).tipoclave=="Responsable Inscripto",event.target.value)
     if(JSON.parse(event.target.value).tipoclave=="Responsable Inscripto" && responsableinscripto){
-    	    percepcion.disabled=false
+    	    percepcion.disabled=true
     	    iva=true
 	}else if (JSON.parse(event.target.value).tipoclave=="Monotributista" && responsableinscripto) {
-		percepcion.disabled=false
+		percepcion.disabled=true
 		iva=false
 	}else{
 		percepcion.disabled=true

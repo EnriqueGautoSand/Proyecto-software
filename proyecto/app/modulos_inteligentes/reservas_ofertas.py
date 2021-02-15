@@ -31,6 +31,7 @@ def mandar_oferta():
                                         where ventas.id=renglon.venta_id
                                         and ventas.estado=true
                                         and productos.estado=true
+                                        
                                         and productos.id=renglon.producto_id
                                         and ventas.cliente_id=clientes.id
                                         group by clientes.id,productos.id order by sum(renglon.cantidad) desc ;
@@ -41,6 +42,7 @@ def mandar_oferta():
                         select renglon_compras.id,productos.id from renglon_compras,productos 
                         where renglon_compras.producto_id=productos.id 
                         and productos.stock>0
+                        and renglon_compras.stock_lote>0
                         and (renglon_compras.fecha_vencimiento - :var_fecha) <=:dias
                         and renglon_compras.fecha_vencimiento >= :var_fecha group by renglon_compras.id,productos.id;
                                """, {'var_fecha': fecha.strftime("%Y-%m-%d"),'dias':ofertaconfig.fecha_vencimiento_oferta}).fetchall()
@@ -80,14 +82,15 @@ def mandar_oferta():
                         m2=f"es una oferta especial del {ofertaconfig.descuento}% de descuento solo nos quedan {rengloncompra.stock_lote} disponibles, valla al siguiente enlace"
 
                         print(var)
+                        db.session.add(oferta)
+                        db.session.commit()
                         client = Client(account_sid, auth_token)
                         message = client.messages.create(
                             body=m1 + m2+f" {var} y haga su reserva !!!",
                             from_="whatsapp:+14155238886",
                             to="whatsapp:+549"+cliente.telefono_celular
                             )
-                        db.session.add(oferta)
-                        db.session.commit()
+
                     except Exception as e:
                         print(e)
                         print(str(e))

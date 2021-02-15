@@ -43,37 +43,7 @@ def page_not_found(e):
     )
 
 
-class PedidosWhatsappView(ModelView):
-    datamodel = SQLAInterface(OfertaWhatsapp)
-    list_title = 'Lista de Ofertas por Whatsapp'
-    list_columns = ['fecha', 'expiracion','cliente','producto','cantidad','reservado','vendido']
-    base_permissions = ['can_list','can_delete']
-    @action("Confirmar_Venta","Confirmar Venta","Seguro de convertir este pedido en una venta?", "fa-backspace", single=False)
-    def Confirmar_Venta(self, item):
 
-         print(item)
-         items=item
-         for oferta in items:
-            renglonCompras=db.session.query(RenglonCompras).filter(RenglonCompras.id == oferta.renglon_compra_id).first()
-
-         self.update_redirect()
-         return redirect(self.get_redirect())
-    @expose("/delete/<pk>", methods=["GET", "POST"])
-    @has_access
-    def delete(self, pk):
-        self.update_redirect()
-        oferta = db.session.query(OfertaWhatsapp).filter(OfertaWhatsapp.id == pk).first()
-        if oferta.reservado == True:
-            oferta.reservado = False
-            oferta.vendido=False
-            oferta.renglon_compra.stock_lote += oferta.cantidad
-            oferta.renglon_compra.producto.stock += oferta.cantidad
-            db.session.commit()
-            flash('Oferta anulada','success')
-            return redirect(self.get_redirect())
-
-        flash('Oferta ya anulada', 'success')
-        return redirect(self.get_redirect())
 class ModulosInteligentesView(ModelView):
     datamodel = SQLAInterface(ModulosConfiguracion)
     label_columns = {'porcentaje_subida_precio':'Cuanto va a Subir el precio automaticamente despues de una Compra','descuento':'Porcentaje de descuento de ofertas por WhatsApp','twilio_account_sid':'SID de la cuenta de Twilio','modulo_pedidor':'Modulo de Pedidos','modulo_ofertas':'Modulo Ofertas WhatsApp'}
@@ -267,6 +237,7 @@ class PrecioMdelview(AuditedModelView):
     show_exclude_columns = ['renglon_compra']
     search_exclude_columns = ['renglon_compra']
     order_rel_fields = {'categoria': ('categoria', 'asc')}
+
 
 
 
@@ -517,9 +488,9 @@ class VentaReportes(AuditedModelView):
     list_template = "list.html"
     datamodel = SQLAInterface(Venta)
     list_title = "Listado de Ventas"
-    label_columns = {'percepcion':'Percepción',"formatofecha":"Fecha","totaliva":"Iva","totalrender":"Total",'formadepago':'Forma de Pago','renglonesrender':'','estadorender':'Estado'}
-    list_columns = ['formatofecha','comprobante','cliente','totaliva',"percepcion", "totalrender", 'estadorender',]
-    show_columns = ['cliente','comprobante','totaliva',"percepcion", 'estadorender','formatofecha','renglonesrender']
+    label_columns = {'totaliva':'Iva','totalivarendercolumna':'Iva','percepcionrendercolumna':'Percepcion','percepcionrender':'Percepción %',"formatofecha":"Fecha","totalivarender":"Iva $","totalrender":"Total",'formadepago':'Forma de Pago','renglonesrender':'','estadorender':'Estado'}
+    list_columns = ['formatofecha','comprobante','cliente','totalivarendercolumna',"percepcionrendercolumna", "totalrender", 'estadorender',]
+    show_columns = ['cliente','comprobante','totalivarender',"percepcionrender", 'estadorender','formatofecha','renglonesrender']
     edit_columns = ['estado']
     base_order = ('comprobante', 'dsc')
 
@@ -564,14 +535,15 @@ class CompraReportes(AuditedModelView):
     datamodel = SQLAInterface(Compra)
     list_widget =ListDownloadWidgetcompra
     list_title = "Listado de Compras"
-    label_columns = {'total':'Total $','formadepago':'Forma de Pago','totalrender':'Total','formadepago.Metodo':'Forma de Pago','renglonesrender':'',"totaliva":"Iva $", 'estadorender':'Estado','formatofecha':'Fecha',"percepcion":"Percepción %"}
-    list_columns = ['formatofecha','comprobante','proveedor',"totaliva", "totalrender", 'estadorender', 'formadepago',"percepcion"]
-    show_columns = ['proveedor','comprobante',"totaliva", 'total', 'estadorender','formadepago','formatofecha',"percepcion",'renglonesrender']
+    label_columns = {'totalivarender':'Iva','totalivarendercolumna':'Iva','percepcionrendercolumna':'Percepcion','percepcionrender':'Percepcion','total':'Total $','formadepago':'Forma de Pago','totalrender':'Total','formadepago.Metodo':'Forma de Pago','renglonesrender':'',"totaliva":"Iva $", 'estadorender':'Estado','formatofecha':'Fecha',"percepcion":"Percepción %"}
+    list_columns = ['formatofecha','comprobante','proveedor',"totalivarendercolumna","percepcionrendercolumna", "totalrender", 'estadorender', 'formadepago']
+    show_columns = ['proveedor','comprobante',"totalivarender", 'total', 'estadorender','formadepago','formatofecha',"percepcionrender",'renglonesrender']
     search_columns = ['proveedor',"totaliva", "total", 'estado', 'formadepago','fecha',"percepcion"]
     order_columns =  ['proveedor',"totaliva", "total", 'estado', 'formadepago','fecha',"percepcion"]
     base_order = ('id', 'dsc')
     base_permissions = ['can_show','can_list','can_delete','can_download_pdf']
     related_views = [RenglonComprasView]
+    search_exclude_columns = ['totaliva','totalneto']
 
 
 
@@ -855,13 +827,56 @@ class PedidoView(ModelView):
     show_title = 'Detalle de Pedido de Presupuesto'
     related_views = [RenglonPedidoView]
 
-#aca agrego los manejadores de las vistas al appbuilder para que sean visuales
+class OfertaWhatsappView(ModelView):
+    datamodel = SQLAInterface(OfertaWhatsapp)
+    list_title = 'Lista de Ofertas por Whatsapp'
+    label_columns = {'fechaexpiracion':'Fecha de Expiración','formatofecha':'Fecha','cantidadrender':'Cantidad','reservadorender':'Reservado','hash_activacion':'Codigo de reserva','vendidorender':'Vendido'}
+    list_columns = ['formatofecha', 'fechaexpiracion','hash_activacion','cliente','producto','cantidadrender','reservadorender','vendidorender']
+    base_order = ('id', 'dsc')
+    base_permissions = ['can_list','can_show','can_delete']
+    # @action("Confirmar_Venta","Confirmar Venta","Seguro de convertir este pedido en una venta?", "fa-backspace", single=False)
+    # def Confirmar_Venta(self, item):
+    #
+    #      print(item)
+    #      items=item
+    #      for oferta in items:
+    #         renglonCompras=db.session.query(RenglonCompras).filter(RenglonCompras.id == oferta.renglon_compra_id).first()
+    #
+    #      self.update_redirect()
+    #      return redirect(self.get_redirect())
+    @expose("/show/<pk>", methods=["GET"])
+    @has_access
+    def show(self, pk):
+        oferta = db.session.query(OfertaWhatsapp).filter(OfertaWhatsapp.id == int(pk)).first()
+        if oferta.reservado==False:
+            flash('Pedido NO reservado, no se puede convertir a venta', 'warning')
+            return redirect(self.get_redirect())
+        self.update_redirect()
+        return redirect(url_for('ConvertirVenta.convertir_pedido_oferta_venta', pk=pk))
+    @expose("/delete/<pk>", methods=["GET", "POST"])
+    @has_access
+    def delete(self, pk):
+        self.update_redirect()
+        oferta = db.session.query(OfertaWhatsapp).filter(OfertaWhatsapp.id == pk).first()
+        if oferta.reservado == True:
+            oferta.reservado = False
+            oferta.vendido=False
+            oferta.renglon_compra.stock_lote += oferta.cantidad
+            oferta.renglon_compra.producto.stock += oferta.cantidad#verificar si al convertir hace falta sumar el stock directo al producto
+            db.session.commit()
+            flash('Oferta anulada','success')
+            return redirect(self.get_redirect())
+
+        flash('Oferta ya anulada', 'success')
+        return redirect(self.get_redirect())
+
 class PediddosClientesView(ModelView):
     datamodel = SQLAInterface(PedidoCliente)
     related_views = [Venta]
     label_columns = {'reservadorender':'Reservado','fechaexpiracion':'Fecha de Expiración','formatofecha':'Fecha','vendidorender':'Vendido','hash_activacion':'Codigo de reserva','expiracion':'Fecha de expiracíon'}
     list_columns = ['formatofecha','fechaexpiracion','hash_activacion','cliente','reservadorender','vendidorender']
     base_permissions = ['can_list','can_show','can_delete']
+    base_order = ('id', 'dsc')
 
     @expose("/show/<pk>", methods=["GET"])
     @has_access
@@ -908,6 +923,19 @@ class PediddosClientesView(ModelView):
 
         flash('Pedido ya anulado', 'warning')
         return redirect(self.get_redirect())
+class RenglonPedidoWhatsappOferta():
+
+    def __init__(self,producto,cantidad,precioVenta,descuento):
+        self.cantidad=cantidad
+        self.producto=producto
+        self.precioVenta = precioVenta
+        self.descuento = descuento
+
+    # defino como se representara al ser llamado
+    def __repr__(self):
+        return f"{self.producto} ${self.precioVenta:.2f} {self.pedidocliente} {self.producto} {self.cantidad} "
+    def subtotal(self):
+        return  format((self.precioVenta * self.cantidad) * (1 - self.descuento / 100), '.2f')
 class ConvertirVenta(AuditedModelView):
     datamodel = SQLAInterface(Venta)
     related_views = [RenglonVentas]
@@ -916,8 +944,40 @@ class ConvertirVenta(AuditedModelView):
     def convertir_pedido_venta(self,pk):
 
         pedido=db.session.query(PedidoCliente).get(pk)
-        if pedido.venta!=None:
-            return render_template("convertir_pedido.html",pedido=pedido,formasdepago=pedido.venta.formadepagos,renglones=pedido.venta.renglones,venta=pedido.venta, base_template=appbuilder.base_template,
+        if pedido.reservado and not pedido.vendido:
+            #return render_template("convertir_pedido.html",pedido=pedido,formasdepago=pedido.venta.formadepagos,renglones=pedido.venta.renglones,venta=pedido.venta, base_template=appbuilder.base_template,
+            #                                       appbuilder=appbuilder)
+            from .modulos_inteligentes.modelo_whatsapp import RenglonVentapedido
+            form2 = RenglonVentapedido(request.form)
+            #form2.descuento.render_kw = {'disabled': 'false'}
+            #form2.percepcion.render_kw = {'disabled': 'false'}
+
+            # cargo las elecciones de producto
+            responsableinscripto = str(
+                db.session.query(EmpresaDatos).first().tipoClave) == "Responsable Inscripto"
+
+            form2.producto.choices = [(
+                '{"id":'+f'{p.id}'+',"iva":'+f'"{p.iva}"'+',"representacion":'+ f'"{p.__str__()}"'+'}',
+                p.__str__()) for p in
+                db.session.query(Productos).filter(Productos.estado == True,
+                                                   Productos.stock > 0)
+                    .join(Productos.categoria).join(Productos.marca).order_by(
+                    asc(Categoria.categoria), asc(Marcas.marca)).all()]
+
+            # cargo las elecciones de cliente
+            cliente = db.session.query(Clientes).filter(Clientes.estado == True,
+                                                        Clientes.id == pedido.cliente.id).first()
+            form2.clienteidentificador.data = cliente.__repr__()
+            # cargo las elecciones de metodo de pago
+            form2.metodo.choices = [(c.id, c) for c in db.session.query(FormadePago)]
+            # cargo las elecciones de las tarjetas
+
+            form2.companiaTarjeta.choices = [(c.id, c) for c in db.session.query(CompaniaTarjeta).filter(
+                CompaniaTarjeta.estado == True)]
+            cargarform = True
+            return render_template("convertir_pedido_whatsapp.html", form2=form2,pedido=pedido,
+                                   renglones=pedido.renglonespedido,cargarform=cargarform,
+                                   base_template=appbuilder.base_template,
                                                    appbuilder=appbuilder)
         else:
             flash('No se puede ver el detalle porque no esta reservado','warning')
@@ -926,15 +986,58 @@ class ConvertirVenta(AuditedModelView):
 
 
     @expose('/convertir_pedido_oferta_venta/<pk>', methods=["GET"])
-    def convertirpedidoventa(self,pk):
-        # oferta = db.session.query(OfertaWhatsapp).filter(OfertaWhatsapp.id == int(pk)).first()
+    def convertir_pedido_oferta_venta(self,pk):
+        oferta = db.session.query(OfertaWhatsapp).filter(OfertaWhatsapp.id == int(pk)).first()
         # renglonCompras = db.session.query(RenglonCompras).filter(RenglonCompras.id == oferta.renglon_compra_id).first()
         # venta=Venta(fecha=dt.now())
         #
         # db.session.add(venta)
         # db.session.add(Renglon(precioVenta=oferta.producto.precio, cantidad=p["cantidad"], venta=venta, producto=oferta.producto,
         #                        descuento=oferta.descuento))
-        return "nada"
+        #pedido=db.session.query(PedidoCliente).get(pk)
+        if oferta.reservado and not oferta.vendido:
+            #return render_template("convertir_pedido.html",pedido=pedido,formasdepago=pedido.venta.formadepagos,renglones=pedido.venta.renglones,venta=pedido.venta, base_template=appbuilder.base_template,
+            #                                       appbuilder=appbuilder)
+            from .modulos_inteligentes.modelo_whatsapp import RenglonVentapedido
+            form2 = RenglonVentapedido(request.form)
+            #form2.descuento.render_kw = {'disabled': 'false'}
+            form2.percepcion.render_kw = {'disabled': 'false'}
+
+            # cargo las elecciones de producto
+            responsableinscripto = str(
+                db.session.query(EmpresaDatos).first().tipoClave) == "Responsable Inscripto"
+
+            form2.producto.choices = [(
+                '{"id":'+f'{p.id}'+',"iva":'+f'"{p.iva}"'+',"representacion":'+ f'"{p.__str__()}"'+'}',
+                p.__str__()) for p in
+                db.session.query(Productos).filter(Productos.estado == True,
+                                                   Productos.stock > 0)
+                    .join(Productos.categoria).join(Productos.marca).order_by(
+                    asc(Categoria.categoria), asc(Marcas.marca)).all()]
+
+            # cargo las elecciones de cliente
+            cliente = db.session.query(Clientes).filter(Clientes.estado == True,
+                                                        Clientes.id == oferta.cliente.id).first()
+            form2.clienteidentificador.data = cliente.__repr__()
+            # cargo las elecciones de metodo de pago
+            form2.metodo.choices = [(c.id, c) for c in db.session.query(FormadePago)]
+            # cargo las elecciones de las tarjetas
+
+            form2.companiaTarjeta.choices = [(c.id, c) for c in db.session.query(CompaniaTarjeta).filter(
+                CompaniaTarjeta.estado == True)]
+            cargarform = True
+            from .apis import preciocalculoiva
+            data = {'p': oferta.producto.id, 'cliente_condfrenteiva': oferta.cliente.tipoClave.__repr__()}
+            precio = preciocalculoiva(data)
+            renglonespedido=[RenglonPedidoWhatsappOferta(precioVenta=float(precio),cantidad=oferta.cantidad,producto=oferta.producto,descuento=oferta.descuento)]
+
+            return render_template("convertir_pedido_whatsapp_oferta.html", form2=form2,
+                                   renglones=renglonespedido,cargarform=cargarform,
+                                   base_template=appbuilder.base_template,
+                                                   appbuilder=appbuilder)
+        else:
+            flash('No se puede ver el detalle porque no esta reservado','warning')
+            return redirect(self.get_redirect())
 
 
 
@@ -946,7 +1049,7 @@ class ConvertirVenta(AuditedModelView):
 
 
 from flask_appbuilder.charts.views import TimeChartView
-
+#aca agrego los manejadores de las vistas al appbuilder para que sean visuales
 
 class VentaTimeChartView(TimeChartView):
     search_columns = ['fecha','cliente']
@@ -973,7 +1076,7 @@ appbuilder.add_view_no_menu(CategoriaModelview)
 appbuilder.add_view_no_menu(ReportesView)
 appbuilder.add_view_no_menu(MetododepagoVentas)
 appbuilder.add_view(VentaReportes, "Reporte Ventas",icon="fa-save", category='Ventas' )
-appbuilder.add_view(PedidosWhatsappView,"Ofertas de Ventas Whtasapp", category='Ventas' )
+appbuilder.add_view(OfertaWhatsappView,"Ofertas de Ventas Whtasapp", category='Ventas' )
 appbuilder.add_view(PediddosClientesView,"Pedidos de Ventas Whtasapp", category='Ventas' )
 appbuilder.add_view(CompraReportes, "Reporte Compras",icon="fa-save", category='Compras' )
 
@@ -985,7 +1088,7 @@ appbuilder.add_view_no_menu(CompaniaTarjetaview)
 appbuilder.add_view_no_menu(RenglonVentas)
 appbuilder.add_view_no_menu(RenglonComprasView)
 appbuilder.add_view(RenglonComprasVencidos,'Vencidos',category='Productos')
-appbuilder.add_view(ProductoxVencer,'Por Vencer',category='Productos')
+appbuilder.add_view(ProductoxVencer,'Lotes',category='Productos')
 appbuilder.add_view_no_menu(RenglonComprasxVencer)
 from .whatsapp.whastsapp import smsreply
 from .modulos_inteligentes.modelo_whatsapp import ModeloWhatsapp,ModeloWhatsappPedido

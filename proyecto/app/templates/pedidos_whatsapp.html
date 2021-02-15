@@ -40,8 +40,8 @@
 <form class="form-group ">
 <table class="table table-bordered" id="agregar">
 <tr>
-              <td>{{ form2.cliente.label }}   </td>
- <td>    {{ form2.cliente}}       </td>  
+              <td>{{ form2.clienteidentificador.label }}   </td>
+ <td>    {{ form2.clienteidentificador}}       </td>  
                  <td>{{ form2.producto.label }}</td>
         <td> {{ form2.producto}}        </td>   
 
@@ -54,18 +54,19 @@
         
 
 
-        <td> {{ form2.descuento.label }} </td>
+       <!-- <td> {{ form2.descuento.label }} </td>
 
-
-        <td>{{ form2.descuento}}</td >
-         </tr>
+        <td>{{ form2.descuento}}</td >-->
+        <td></td>
+       <td>  <input id="agregar" class="btn  btn-info btn-sm" type="button" value="Agregar Renglon" onclick="agregarRenglon(this);" align="right" />
+        <input id="borrar" class="btn  btn-danger btn-sm" type="button" value="Borrar Renglon" disabled="true" onclick="borrarRenglon(this);" align="right" />
+        </td >
+         <!--</tr>
          <tr>
           <td > {{ form2.percepcion.label }} </td >
           <td> {{ form2.percepcion}} </td> 
-            <td></td>
-       <td>  <input id="agregar" class="btn  btn-info btn-sm" type="button" value="Agregar Renglon" onclick="agregarRenglon(this);" align="right" />
-        <input id="borrar" class="btn  btn-danger btn-sm" type="button" value="Borrar Renglon" disabled="true" onclick="borrarRenglon(this);" align="right" />
-       </td >
+            <td></td>-->
+
     </tr>
 </table>
 </form >
@@ -89,7 +90,7 @@
 </table>
 {% endif %}
 
-
+<!--
 <div id="unmetodo" >
 <table class="table table-bordered" id="finalizar">
 
@@ -106,7 +107,7 @@
         
 </table>
 
-<div class = "panel-heading">
+<div class = "panel-heading"> -->
   <h4 class="panel-title" >
 <a id="expancionT" class="accordion-toggle" data-toggle="collapse" parent="#divtarjeta" data-target="#divtarjeta" href="#divtarjeta" data-original-title="" title="" aria-expanded="true"></a>
     
@@ -143,7 +144,7 @@
   <td align="right" >
          {{ form2.total.label }}
             {{ form2.total}}
-    <input id="finalizarVenta" class="btn  btn-info btn-sm" type="button" value="Finalizar Venta"  />
+    <input id="finalizarVenta" class="btn  btn-info btn-sm" type="button" value="Realizar Pedido"  />
 <input id="cancelarVenta" onclick="cancelar();"  class="btn  btn-danger btn-sm" type="button" value="Cancelar Venta"  />
   </td>
 
@@ -159,12 +160,12 @@
     <link href="{{url_for('static',filename='appbuilder/select2/select2.css')}}"rel="stylesheet"/>
     <link href="{{url_for('static',filename='css/claseselect.css')}}"rel="stylesheet"/>
     <script src="{{url_for('static',filename='js/select2.js')}}"></script>
-    <script src="{{url_for('static',filename='js/condfrenteivanegocio.js')}}"></script>
+    <script src="{{url_for('static',filename='js/condfrenteivanegocio_reserva.js')}}"></script>
     <script src="{{url_for('static',filename='js/pedidos_whatsapp.js')}}"></script>
     
     <script>
         $(document).ready(function() { $("#producto").select2(); });
-         $(document).ready(function() { $("#cliente").select2(); });
+         //$(document).ready(function() { $("#cliente").select2(); });
          $(document).ready(function() { $("#metodo").select2(); });
          $('#cantidad').mask('00000000');
          $('#comprobante').mask('0000000000000');

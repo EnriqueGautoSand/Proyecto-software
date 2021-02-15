@@ -1,9 +1,32 @@
 
+
+
+
+var url = "http://"+location.host+Flask.url_for("Clienteapi.datoscliente")
+var data = { hashpedido:window.location.pathname.split("/")[window.location.pathname.split("/").length-1]};
+var cliente = {}
+	// statements
+
+ fetch(url, {
+  method: 'POST', // or 'PUT'
+  body: JSON.stringify(data), // data can be `string` or {object}!
+  headers:{
+    'Content-Type': 'application/json'
+  }
+})
+.catch(error => { console.error('Error:', error)
+	alert('Error:', error)
+	element.disabled=true
+	} ).then(res => res.json())
+			.then(response =>{ console.log('Success hashpedido:', response)
+	 cliente['value'] =  response.message
+
+	})
 var venta=true
 var compra=false
 var producto = document.getElementById('producto')
 var cantidad = document.getElementById('cantidad')
-var cliente = document.getElementById('cliente')
+//document.getElementById('cliente')
 var metododePago= document.getElementById('metodo')
 var tablafinalizar= document.getElementById('finalizar')
 var iva
@@ -61,11 +84,11 @@ if (totalneto==undefined){
 var	tabla=document.createElement("table")
 
 var tebody=document.createElement("tbody")
-function agregarTd(tere,texto){
+function agregarTd(tere,texto,alineacion){
 	titulo =document.createTextNode(texto)
 	tede= document.createElement("td")
 	tede.appendChild(titulo)
-	tede.align="center"
+	tede.align=alineacion
 	tere.appendChild(tede)
 }
 function updateValue(e){
@@ -79,8 +102,8 @@ function updateValue(e){
 		totalhtml.value=parseFloat(totalColuma) + parseFloat((totalColuma/100.0)*porcentajepositivo(percepcion,true))
 	}
 	}
-percepcion.addEventListener('change', updateValue);
-descuento.addEventListener('change', updateValue);
+//percepcion.addEventListener('change', updateValue);
+//descuento.addEventListener('change', updateValue);
 
 var fila =document.getElementById('agregar')
 parentNodes=fila.parentNode
@@ -95,7 +118,7 @@ boton.className="btn  btn-success btn-sm"
 var tere=document.createElement("tr")
 
 agregarTd(tere,'Producto')
-agregarTd(tere,'Precio')
+agregarTd(tere,'Precio $')
 agregarTd(tere,'Cantidad')
 agregarTd(tere,'Descuento %')
 agregarTd(tere,'IVA')
@@ -136,7 +159,7 @@ function addRowHandlers() {
         var textoProducto = cellProducto.innerHTML;
  		$("#producto").select2().val(jsonProductos[textoProducto][0]).trigger("change");
 		var cellCantidad= row.getElementsByTagName("td")[2];
-		descuento.value= row.getElementsByTagName("td")[3].innerHTML;
+		//descuento.value= row.getElementsByTagName("td")[3].innerHTML;
         cantidad.value=cellCantidad.innerHTML;
         renglonseleccionado=row
         botonborrar.disabled=false
@@ -215,11 +238,11 @@ var contadorfilas=0
 
 function agregarRenglon(element){
 	//estafuncion sirve para agregar un renglon de producto
-	descuento.value=0
+	//descuento.value=0
 	renglonseleccionado=NaN
 	botonborrar.disabled=true
-	percepcion.value=0
-	percepcion.disabled=true
+	//percepcion.value=0
+	//percepcion.disabled=true
 
 	element.disabled=true
 
@@ -228,9 +251,9 @@ function agregarRenglon(element){
 	console.log(cantidad.value)
 	productosel=JSON.parse(producto.value)
 
-	if (! listaProductos.has(productosel.id)  && cantidadpos() && porcentajepositivo(valor=descuento)){
+	if (! listaProductos.has(productosel.id)  && cantidadpos() ){
 		//jsonproductos guarda el producto y su cantidad basicamente guarda los renglones de la venta
-		jsonProductos[productosel.representacion]=[producto.value, cantidadpos(),parseFloat(descuento.value)]
+		jsonProductos[productosel.representacion]=[producto.value, cantidadpos(),parseFloat('0.00')]
 
 		var hilera = document.createElement("tr");
 		//configuro id de la fila
@@ -246,7 +269,7 @@ function agregarRenglon(element){
 
       
 
-var url = "http://"+location.host+Flask.url_for("VentasApi.obtenerprecio")
+var url = "http://"+location.host+Flask.url_for("VentasApi.obtenerprecio_pedido")
 var data = {p: productosel.id, venta:true, cliente_condfrenteiva:JSON.parse(cliente.value).tipoclave,cliente:parseInt(JSON.parse(cliente.value).id)};
 try {
 	// statements
@@ -266,29 +289,32 @@ try {
 	
 
 	console.log('Success:', response.message,response.message,'  ',typeof totalFila)
-	
-	descuento.value=0
-	totalFila=cantidadpos()*(parseFloat(response.message)*( 1-descuento.value/100))
-	agregarTd(hilera,response.message)
-      agregarTd(hilera,cantidadpos())
-      agregarTd(hilera, porcentajepositivo(descuento,true))
-      agregarTd(hilera, productosel['iva'])
-		agregarTd(hilera, "$" + totalFila.toFixed(2) )
+	response=JSON.parse(response.message)
+	//descuento.value=parseFloat(response.descuento).toFixed(2)
+	totalFila=cantidadpos()*(parseFloat(response.precio))
+
+
+
+			agregarTd(hilera,response.precio,"right")
+      agregarTd(hilera,cantidadpos(),"right")
+      agregarTd(hilera, '0.00',"right")
+      agregarTd(hilera, productosel['iva'],"right")
+		agregarTd(hilera, "$" + totalFila.toFixed(2) ,"right")
 	  tebody.appendChild(hilera);
       listaProductos.add(productosel.id);
       console.log(listaProductos)
       totalColuma += parseFloat(totalFila)
-      let precio=parseFloat( response.message)
-      jsonProductos[productosel.representacion]=[producto.value, cantidadpos(),precio,parseFloat(descuento.value),totalColuma]
+      let precio=parseFloat( response.precio)
+      jsonProductos[productosel.representacion]=[producto.value, cantidadpos(),precio,parseFloat('0.00'),totalColuma]
 
       totalconimpuestos() 
       addRowHandlers()
       //busco el monto y si no esta desabiliado lo cargo en el 
       //primer monto de froma de pago
-         let montos=document.getElementById('monto')
+      /*   let montos=document.getElementById('monto')
       if (!montos.disabled){
       		montos.value=totalhtml.value
-      }
+      }*/
 
       element.disabled=false
       
@@ -333,9 +359,12 @@ try {
 .then(response =>{
 	console.log('Success:', response)
 	if (response.message.status== "sucess"){
-		alert("Pedido Realizadado Satisfactoriamente ")
-		window.location.href ="http://localhost.localdomain:8080/ventaview/venta/"//"http://localhost:8080/ventaview/venta/"
-		//window.location.href = "http://localhost:8080/ventareportes/show/"+response.message.idventa.toString()
+		hashpedido=window.location.pathname.split("/")[window.location.pathname.split("/").length-1]
+		alert('Pedido Realizadado Satisfactoriamente \n Este es su codigo de reserva  "'+ hashpedido+'" ,uselo para retirar su pedido en nuestro negocio.')
+
+		//window.location.href ="http://localhost:8080/ventaview/venta/"//"http://localhost:8080/ventaview/venta/"
+
+		window.location.href = "http://localhost:8080/"
 	}else {
 		alert(response.message)
 	}
@@ -351,7 +380,7 @@ try {
 
 function realizarventa(){
 boton.disabled=true
-		console.log(metododePago.value);
+		//console.log(metododePago.value);
 		jsonventa={};
 		jsonventa["productos"]=[]
 		jsonventa["metodos"]=arrayMetodos
@@ -371,7 +400,7 @@ boton.disabled=true
 			jsonventa["total"]=parseFloat(total.value).toFixed(2);
 			jsonventa["totalneto"]=parseFloat(totalneto.value).toFixed(2);
 			jsonventa["totaliva"]=parseFloat(totaliva.value).toFixed(2);
-			jsonventa["percepcion"]=parseFloat(percepcion.value).toFixed(2);
+			//jsonventa["percepcion"]=parseFloat(percepcion.value).toFixed(2);
 			jsonventa['activation_hash']=window.location.pathname.split("/")[window.location.pathname.split("/").length-1]
 			//jsonventa["comprobante"]=parseFloat(comprobante.value).toFixed(2)
 			//jsonventa["condicionfrenteiva"]=condicionfrenteiva.value
@@ -379,7 +408,8 @@ boton.disabled=true
 			//validar si la suma de los pagos no supera el total del la venta
 			//validar si el total de los pagos no es inferior al total de la venta
 			
-
+			conectarVentaapi(jsonventa)
+			/*
 			if (arrayMetodos.length>0 ){
 				motototal=0
 				for( i in arrayMetodos){
@@ -405,7 +435,7 @@ boton.disabled=true
 			}
 			else{
 				alert("No se pudeo realizar la venta!!! \n Agregue al menos una Forma de Pago")
-			}
+			}*/
 
 
 

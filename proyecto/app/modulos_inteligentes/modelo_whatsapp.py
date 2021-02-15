@@ -13,21 +13,40 @@ from datetime import datetime as dt
 from wtforms.validators import DataRequired,InputRequired
 from flask_babelpkg import lazy_gettext
 from sqlalchemy import desc,asc
-from ..views import RenglonVenta
+#from ..views import RenglonVenta
 import json
+class RenglonVentapedido(Form):
+    clienteidentificador=StringField('Cliente', render_kw={'disabled':''})
+    Fecha = DateField('Fecha', format='%d-%m-%Y %H:%M:%S', default=dt.now(), render_kw={'disabled': ''},
+                      validators=[DataRequired()])
+    producto = SelectField('Producto', coerce=str, choices=[(p.id, p) for p in db.session.query(Productos)])
+    cantidad = IntegerField('Cantidad', widget=BS3TextFieldWidget(), render_kw={'type': "number"})
+    metodo = SelectField('Forma de Pago', coerce=str, choices=[(p.id, p) for p in db.session.query(FormadePago)])
+    #condicionfrenteiva= SelectField('Condicion Frente Iva', coerce=TipoClaves.coerce, choices=TipoClaves.choices() )
+    total = FloatField('Total $', render_kw={'disabled': '','align':'right'},
+                       validators=[DataRequired()], default=0)
+    numeroCupon = IntegerField('Numero de cupon', render_kw={'type':'number'}, widget=BS3TextFieldWidget())
+    companiaTarjeta = SelectField('Compania de la Tarjeta', coerce=str, choices=[(p.id, p) for p in db.session.query(CompaniaTarjeta)] )
+    credito = BooleanField("Credito", default=False)
+    descuento = FloatField("Descuento %",  default=0)
+    percepcion = FloatField("Percepcion %", render_kw={'disabled':''}, default=0)
+    cuotas = FloatField("Cuotas", render_kw={ 'type':"number"}, default=0)
+    totalneto = FloatField("Total Neto $", render_kw={'disabled': '','align':'right'},default=0)
+    totaliva= FloatField("Total IVA $", render_kw={ 'disabled': '','type':"number",'align':'right'}, default=0)
+    comprobante = FloatField("Comprobante", render_kw={'type': "number"}, default=0)
 class Formulariooferta(FlaskForm):
+    cliente = StringField('Cliente', render_kw={'readonly': "true"})
     producto = SelectField('Producto', render_kw={'readonly': "true"})
+    descuento=FloatField('Descuento %', render_kw={'readonly': 'true'},
+                       validators=[DataRequired()], default=0)
+    precio = FloatField('Precio $', render_kw={'readonly': 'true'},
+                       validators=[DataRequired()], default=0)
     cantidad_oferta=IntegerField('Cantidad disponible para la oferta', render_kw={'readonly': 'true'},
                        validators=[DataRequired()], widget=BS3TextFieldWidget())
     cantidad = IntegerField('Cantidad', render_kw={'type': "number"},
                        validators=[DataRequired()], widget=BS3TextFieldWidget())
-    descuento=FloatField('Descuento %', render_kw={'readonly': 'true'},
-                       validators=[DataRequired()], default=0)
     total = FloatField('Total $', render_kw={'readonly': 'true'},
-                       validators=[DataRequired()], default=0,description=lazy_gettext("""Total """))
-    precio = FloatField('Precio $', render_kw={'readonly': 'true'},
-                       validators=[DataRequired()], default=0)
-    cliente= StringField('Cliente', render_kw={'readonly': "true"})
+                       validators=[DataRequired()], default=0,description=lazy_gettext("""Total Previo Impuestos"""))
     submit = SubmitField("Realizar Pedido", render_kw={"onclick": "confirmacion(event)"})
 class ModeloWhatsappPedido(BaseView):
     default_view = 'activation'
@@ -37,7 +56,7 @@ class ModeloWhatsappPedido(BaseView):
             try:
                 pedido = db.session.query(PedidoCliente).filter(PedidoCliente.hash_activacion == hash).first()
                 if pedido.expiracion<=dt.now():
-                    form2 = RenglonVenta(request.form)
+                    form2 = RenglonVentapedido(request.form)
                     responsableinscripto = False
 
 
@@ -49,7 +68,7 @@ class ModeloWhatsappPedido(BaseView):
                 if pedido != None:
                     if not pedido.reservado:
 
-                        form2 = RenglonVenta(request.form)
+                        form2 = RenglonVentapedido(request.form)
                         form2.descuento.render_kw = {'disabled': 'true'}
                         form2.percepcion.render_kw = {'disabled': 'true'}
 
@@ -66,10 +85,9 @@ class ModeloWhatsappPedido(BaseView):
                                 asc(Categoria.categoria), asc(Marcas.marca)).all()]
 
                         # cargo las elecciones de cliente
-                        form2.cliente.choices = [
-                            ('{"id": ' + f'{c.id}' + ', "tipoclave":' + f'"{c.tipoClave}"' + '}', c) for c
-                            in db.session.query(Clientes).filter(Clientes.estado == True,
-                                                                 Clientes.id == pedido.cliente.id).all()]
+                        cliente=db.session.query(Clientes).filter(Clientes.estado == True,
+                                                                 Clientes.id == pedido.cliente.id).first()
+                        form2.clienteidentificador.data = cliente.__repr__()
                         # cargo las elecciones de metodo de pago
                         form2.metodo.choices = [(c.id, c) for c in db.session.query(FormadePago)]
                         # cargo las elecciones de las tarjetas
@@ -86,7 +104,7 @@ class ModeloWhatsappPedido(BaseView):
                                                appbuilder=appbuilder,
                                                form2=form2, responsableinscripto=responsableinscripto)
                     else:
-                        form2 = RenglonVenta(request.form)
+                        form2 = RenglonVentapedido(request.form)
                         responsableinscripto = False
 
                         form = Formulariooferta(request.form)
@@ -98,7 +116,7 @@ class ModeloWhatsappPedido(BaseView):
             except Exception as e:
                 print(e)
                 print(str(e))
-                form2 = RenglonVenta(request.form)
+                form2 = RenglonVentapedido(request.form)
                 cargarform = False
                 flash("Pedido Invalido, por favor copie correctamente el enlace de oferta", "warning")
                 return render_template('pedidos_whatsapp.html', base_template=appbuilder.base_template,cargarform=cargarform,
