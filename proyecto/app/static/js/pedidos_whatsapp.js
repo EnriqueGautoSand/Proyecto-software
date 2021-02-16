@@ -212,6 +212,7 @@ function totalconimpuestos(){
 			totalhtml.value=parseFloat(totalColuma)
 			totaliva.value=0
 		}
+		totalhtml.value=parseFloat(totalhtml.value).toFixed(2)
 		totalneto.value= parseFloat(totalColuma).toFixed(2)
 }
 function borrarRenglon(element){

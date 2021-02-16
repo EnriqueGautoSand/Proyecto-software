@@ -75,7 +75,7 @@
 {% for renglon in renglones %}
 <tr id='fila{{renglones.index(renglon)+1}}'><td align='center'>{{renglon.producto}}</td><td align="right">{{renglon.precioVenta}}</td><td align="right">{{renglon.cantidad}}</td><td align="right">{{renglon.descuento}}</td><td align="right">{{renglon.producto.iva}}</td><td align="right"> 
 
-  ${{(renglon.precioVenta*renglon.cantidad)*(1-renglon.descuento/100)}} </td></tr>
+  ${{renglon.subtotal()}} </td></tr>
 {% endfor %}
 </tbody>
 </table>
@@ -154,11 +154,14 @@
     <input id="faltante" title="Faltante" disabled=true type="entry" value=""  />
 <input id="nuevaFormadePago" class="btn  btn-info btn-sm" type="button" onclick="agregarFormadePago();" value="Nueva Forma de Pago"  />
   </td>
-
+    <td align="right" >
+         {{ form2.comprobante.label }}
+            {{ form2.comprobante}}
+  </td >
   <td align="right" >
          {{ form2.total.label }}
             {{ form2.total}}
-    <input id="finalizarVenta" class="btn  btn-info btn-sm" type="button" value="Convertir Pedidoa a Venta"  />
+    <input id="finalizarVenta" class="btn  btn-info btn-sm" type="button" value="Convertir Pedido a Venta"  />
 <input id="cancelarVenta" onclick="cancelar();"  class="btn  btn-danger btn-sm" type="button" value="Cancelar Venta"  />
   </td>
 

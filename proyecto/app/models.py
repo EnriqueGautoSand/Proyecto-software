@@ -32,8 +32,15 @@ class OfertaWhatsapp(Model):
     hash_activacion=Column(String(255),nullable=False)
     reservado=Column(Boolean,nullable=False,default=False)
     vendido=Column(Boolean,nullable=False,default=False)
+    cancelado = Column(Boolean, nullable=False, default=False)
     renglon_compra_id = Column(Integer, ForeignKey('renglon_compras.id'), nullable=False)
     renglon_compra = relationship("RenglonCompras")
+    @renders('cancelado')
+    def canceladorender(self):
+        if self.cancelado:
+            return "SI"
+        else:
+            return "NO"
     @renders('reservado')
     def reservadorender(self):
         if self.reservado:
@@ -69,6 +76,7 @@ class PedidoCliente(Model):
     reservado = Column(Boolean, nullable=False, default=False)
     venta_id = Column(Integer, ForeignKey('ventas.id'), nullable=True)
     venta = relationship("Venta")
+    cancelado = Column(Boolean, nullable=False, default=False)
     @renders('fecha')
     def formatofecha(self):
          return Markup('<b> ' + str(self.fecha.strftime(" %d-%m-%Y %H:%M")) + '</b>')
@@ -78,6 +86,13 @@ class PedidoCliente(Model):
     @renders('reservado')
     def reservadorender(self):
         if self.reservado:
+            return "SI"
+        else:
+            return "NO"
+
+    @renders('cancelado')
+    def canceladorender(self):
+        if self.cancelado==True:
             return "SI"
         else:
             return "NO"
@@ -105,7 +120,8 @@ class RenglonPedidoWhatsapp(Model):
     def __repr__(self):
         return f"{self.producto} ${self.precioVenta:.2f} {self.pedidocliente} {self.producto} {self.cantidad} "
     def subtotal(self):
-        return  format((self.precioVenta * self.cantidad) * (1 - self.descuento / 100), '.2f')
+        subpretotal=(self.precioVenta * self.cantidad) * (1 - self.descuento / 100)
+        return  format(subpretotal, '.2f')
 class Pedido_Proveedor(Model):
     """
     creo clase que sera mapeada como la tabla pedido_proveedor
@@ -694,11 +710,24 @@ class Productos(Model):
                     respuesta += f"{self.renglon_compra[i].normal()} "
             else:
                 if not self.renglon_compra[i].vendido:
-                    respuesta += f"{self.renglon_compra[i].normal()} ,"
+                    respuesta += f"{self.renglon_compra[i].normal()} ;"
         if respuesta=='':
             return '0'
         return respuesta
+    def rengloneslotescolumna(self):
+        respuesta=""
 
+        for i in range(0,len(self.renglon_compra)):
+
+
+            if not self.renglon_compra[i].vendido and len(self.renglon_compra)-1==i:
+                    respuesta += f"<p>STOCK {self.renglon_compra[i].normal()} </p> "
+            else:
+                if not self.renglon_compra[i].vendido:
+                    respuesta += f"<p>STOCK {self.renglon_compra[i].normal()} </p> "
+        if respuesta=='':
+            return '0'
+        return Markup(respuesta)
 class RenglonCompras(Model):
     """
     creo clase que sera mapeada como la tabla renglon en la base de datos
@@ -723,8 +752,8 @@ class RenglonCompras(Model):
         return f"STOCK {self.stock_lote} VENCE {self.formatofecha()} "
     def normal(self):
         if self.formatofecha()!="":
-            return f"STOCK {self.stock_lote} VENCE {self.formatofecha()} "
-        return f"STOCK {self.stock_lote}"
+            return f" {self.stock_lote} VENCE {self.formatofecha()} "
+        return f" {self.stock_lote}"
     @renders('fecha_vencimiento')
     def formatofecha(self):
         if self.fecha_vencimiento == None:

@@ -68,8 +68,8 @@ var percepcion= document.getElementById('percepcion')
 tarjeta=document.getElementById('unmetodo')
 var ultimoElemento=tarjeta
 condfrenteivanego()
-//var cupon= document.getElementById('numeroCupon')
-//cupon.className="form-inline"
+var cupon= document.getElementById('numeroCupon')
+cupon.className="form-inline"
 var companiaTarjeta= document.getElementById('companiaTarjeta')
 companiaTarjeta.className="form-control"
 
@@ -212,6 +212,7 @@ function totalconimpuestos(){
 			totalhtml.value=parseFloat(totalColuma)
 			totaliva.value=0
 		}
+		totalhtml.value=parseFloat(totalhtml.value).toFixed(2)
 		totalneto.value= parseFloat(totalColuma).toFixed(2)
 }
 function borrarRenglon(element){
@@ -268,7 +269,7 @@ var cliente = {}
 
 	 contadorfilas=response.length
 
-totalconimpuestos()
+		totalconimpuestos()
          let montos=document.getElementById('monto')
       if (!montos.disabled){
       		montos.value=totalhtml.value
@@ -400,6 +401,7 @@ try {
 		//window.location.href ="http://localhost.localdomain:8080/ventaview/venta/"//"http://localhost:8080/ventaview/venta/"
 		window.location.href = "http://localhost:8080/ventareportes/show/"+response.message.id.toString()
 	}else {
+		alert(response.message)
 		console.log(response.message)
 		
 	}
@@ -437,7 +439,7 @@ boton.disabled=true
 			jsonventa["totaliva"]=parseFloat(totaliva.value).toFixed(2);
 			jsonventa["percepcion"]=parseFloat(percepcion.value).toFixed(2);
 			jsonventa['pk']=window.location.pathname.split("/")[window.location.pathname.split("/").length-1]
-			//jsonventa["comprobante"]=parseFloat(comprobante.value).toFixed(2)
+			jsonventa["comprobante"]=parseFloat(comprobante.value).toFixed(2)
 			//jsonventa["condicionfrenteiva"]=condicionfrenteiva.value
 
 			//validar si la suma de los pagos no supera el total del la venta
@@ -589,7 +591,7 @@ function crearFormadePago(element){
 					else{
 						if ( cupons.value!=""  ){
 							//alert("entro1")
-								//jsonMetodo["numeroCupon"]=cupons.value;
+								jsonMetodo["numeroCupon"]=cupons.value;
 								jsonMetodo["companiaTarjeta"]=companiaTarjetas.value;
 								jsonMetodo["credito"]=creditos.checked
 								jsonMetodo["cuotas"]=parseInt(cuota.value) 
@@ -736,7 +738,9 @@ let divtarjeta=aclonar.querySelector("#divtarjeta")
 divtarjeta.id=divtarjeta.id+numerodepago.toString()
 let monto=aclonar.querySelector("#monto")
 monto.id=monto.id+numerodepago.toString()
-monto.value=parseFloat(total.value)-motototal
+
+monto.value=parseFloat(parseFloat(total.value)-motototal).toFixed(2)
+$("#"+ monto.id ).inputmask({ 'alias': 'decimal', 'autoGroup': true, 'digits': 2, 'digitsOptional': false, 'placeholder': '0.00', rightAlign : false,clearMaskOnLostFocus: !1 });
 faltante.value=monto.value
 $('#'+ aclonar.id +' *').prop('disabled',false);
 $(document).ready(function() { $("#"+ collapse.id).select2(); });
@@ -760,6 +764,10 @@ ultimoElemento=aclonar
 }
 
 boton.onclick= function() {console.log('largo json ',jQuery.isEmptyObject(jsonProductos))
+						if (comprobante.value==0){
+							alert("ingrese el numero de comprobante!!!")
+							return;
+						}
 						if (jQuery.isEmptyObject(jsonProductos)){
 								alert("No hay poductos asociados a esta venta!!!")
 
@@ -783,10 +791,24 @@ $("#metodo").click(function() {
 						}
 
 						})
+setTimeout(  function(){     
+ if(JSON.parse(cliente.value).tipoclave=="Responsable Inscripto" && responsableinscripto){
+    	    percepcion.disabled=false
+    	    iva=true
+	}else if (JSON.parse(cliente.value).tipoclave=="Monotributista" && responsableinscripto) {
+		percepcion.disabled=true
+		iva=false
+	}else{
+		percepcion.disabled=true
+		iva=false
+		percepcion.value=0
+	}
+		}, 1000)
+
 cliente.onchange= (event)=> {
 console.log(JSON.parse(event.target.value).tipoclave=="Responsable Inscripto",event.target.value)
     if(JSON.parse(event.target.value).tipoclave=="Responsable Inscripto" && responsableinscripto){
-    	    percepcion.disabled=true
+    	    percepcion.disabled=false
     	    iva=true
 	}else if (JSON.parse(event.target.value).tipoclave=="Monotributista" && responsableinscripto) {
 		percepcion.disabled=true
@@ -798,5 +820,5 @@ console.log(JSON.parse(event.target.value).tipoclave=="Responsable Inscripto",ev
 	}
 	totalconimpuestos()
 	
-
 }
+

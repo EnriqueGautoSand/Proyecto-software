@@ -154,7 +154,10 @@
     <input id="faltante" title="Faltante" disabled=true type="entry" value=""  />
 <input id="nuevaFormadePago" class="btn  btn-info btn-sm" type="button" onclick="agregarFormadePago();" value="Nueva Forma de Pago"  />
   </td>
-
+    <td align="right" >
+         {{ form2.comprobante.label }}
+            {{ form2.comprobante}}
+  </td >
   <td align="right" >
          {{ form2.total.label }}
             {{ form2.total}}
@@ -184,6 +187,7 @@
          $('#cantidad').mask('00000000');
          $('#comprobante').mask('0000000000000');
         $("#total").inputmask({ 'alias': 'decimal', 'autoGroup': true, 'digits': 2, 'digitsOptional': false, 'placeholder': '0.00', rightAlign : false,clearMaskOnLostFocus: !1 });
+        $("#monto").inputmask({ 'alias': 'decimal', 'autoGroup': true, 'digits': 2, 'digitsOptional': false, 'placeholder': '0.00', rightAlign : false,clearMaskOnLostFocus: !1 });
 
 
     </script>

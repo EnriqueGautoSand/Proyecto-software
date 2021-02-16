@@ -146,12 +146,12 @@ class ComprasApi(BaseApi,AuditedModelView):
                 if "metododePago" in data and "proveedor" in data and "total" in data:
                     print(data["total"])
                     # creo la compra y agrego forma de pago
-                    # compracomprobacion = db.session.query(Compra).filter(Compra.comprobante == float(data["comprobante"])).first()
-                    # if compracomprobacion != None:
-                    #     return self.response(400, message="Error el Nro de comprobante es incorrecto o repetido")
+                    compracomprobacion = db.session.query(Compra).filter(Compra.comprobante == float(data["comprobante"])).first()
+                    if compracomprobacion != None:
+                         return self.response(400, message="Error el Nro de comprobante es incorrecto o repetido")
                     if int(data["metododePago"]) == 1:
-                        #comprobante = float(data["comprobante"])
-                        compra=Compra(fecha=dt.now(),percepcion=float(data["percepcion"]),totaliva=float(data["totaliva"]),totalNeto=float(data["totalneto"]),estado=True,total=float(data["total"]),proveedor_id=data["proveedor"],formadepago_id=data["metododePago"])
+                        comprobante = float(data["comprobante"])
+                        compra=Compra(comprobante=comprobante,fecha=dt.now(),percepcion=float(data["percepcion"]),totaliva=float(data["totaliva"]),totalNeto=float(data["totalneto"]),estado=True,total=float(data["total"]),proveedor_id=data["proveedor"],formadepago_id=data["metododePago"])
                     else:
                         #en caso de que se hay apagado con tarjeta asocio los datos de la tarjeta a la compra
                         datosFormaPagos=DatosFormaPagosCompra(numeroCupon=data["numeroCupon"],
@@ -198,7 +198,7 @@ class ComprasApi(BaseApi,AuditedModelView):
                         db.session.commit()
                         self.post_add(compra)
                         page_history = Stack(session.get("page_history", []))
-                        page_history.push("http://localhost.localdomain:8080"+url_for("CompraView.compra"))
+                        page_history.push("http://localhost:8080"+url_for("CompraView.compra"))
                         session["page_history"] = page_history.to_json()
 
                         print("compra Guardada")
@@ -365,13 +365,13 @@ class VentasApi(BaseApi,AuditedModelView):
                 if  "cliente" in data and "total" in data:
                     print(data["total"])
                     # creo la venta
-                    # ventacomp=db.session.query(Venta).filter(Venta.comprobante==float(data["comprobante"])).first()
+                    ventacomp=db.session.query(Venta).filter(Venta.comprobante==float(data["comprobante"])).first()
                     # print(ventacomp)
-                    # if ventacomp!= None:
-                    #     return self.response(400, message="Error el Nro de comprobante es incorrecto o repetido")
-                    #comprobante=float(data["comprobante"]),
+                    if ventacomp!= None:
+                         return self.response(400, message="Error el Nro de comprobante es incorrecto o repetido")
+                    comprobante=float(data["comprobante"])
                     venta=Venta(estado=True,percepcion=float(data["percepcion"]),totaliva=float(data["totaliva"]),totalNeto=float(data["totalneto"]), total=float(data["total"])
-                               ,cliente_id=int(data["cliente"]),fecha=dt.now())
+                               ,cliente_id=int(data["cliente"]),fecha=dt.now(),comprobante=comprobante)
                     db.session.add(venta)
                     db.session.flush()
                     #creo los metodos de pagos
@@ -586,8 +586,7 @@ class VentasApi(BaseApi,AuditedModelView):
                     print(data["total"])
                     # creo la venta
 
-                    comprobante_alto=db.session.query(func.max(Venta.comprobante)).first()
-                    print(comprobante_alto, 'comprobante altos')
+
                     #verifico si hay productos
                     pedido = db.session.query(PedidoCliente).filter(PedidoCliente.hash_activacion == data["activation_hash"]).first()
                     db.session.flush()
@@ -675,10 +674,14 @@ class VentasApi(BaseApi,AuditedModelView):
             data = request.json
             print(data)
             pedido = db.session.query(PedidoCliente).get(int(data['pk']))
-
+            ventacomp = db.session.query(Venta).filter(Venta.comprobante == float(data["comprobante"])).first()
+            # print(ventacomp)
+            if ventacomp != None:
+                return self.response(400, message="Error el Nro de comprobante es incorrecto o repetido")
+            comprobante = float(data["comprobante"])
             venta = Venta(estado=True, percepcion=float(data["percepcion"]), totaliva=float(data["totaliva"]),
                           totalNeto=float(data["totalneto"]), total=float(data["total"])
-                          , cliente_id=pedido.cliente_id, fecha=dt.now())
+                          , cliente_id=pedido.cliente_id, fecha=dt.now(),comprobante=comprobante)
             db.session.add(venta)
             db.session.flush()
             # creo los metodos de pagos
@@ -835,6 +838,11 @@ class VentasApi(BaseApi,AuditedModelView):
             db.session.commit()
             print("venta Guardada")
             self.post_add(venta)
+        except psycopg2.Error as e:
+            # get error code
+            error = e.pgcode
+            if error == 23505:
+                return self.response(400, message="Error el comprobante es repetido")
         except Exception as e:
             import sys, os
             exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -862,9 +870,13 @@ class VentasApi(BaseApi,AuditedModelView):
             print(data)
             #pedido = db.session.query(PedidoCliente).get(int(data['pk']))
             oferta = db.session.query(OfertaWhatsapp).get(int(data['pk']))
+            ventacomp = db.session.query(Venta).filter(Venta.comprobante == float(data["comprobante"])).first()
+            if ventacomp != None:
+                return self.response(400, message="Error el Nro de comprobante es incorrecto o repetido")
+            comprobante = float(data["comprobante"])
             venta = Venta(estado=True, percepcion=float(data["percepcion"]), totaliva=float(data["totaliva"]),
                           totalNeto=float(data["totalneto"]), total=float(data["total"])
-                          , cliente_id=oferta.cliente_id, fecha=dt.now())
+                          , cliente_id=oferta.cliente_id, fecha=dt.now(),comprobante=comprobante)
             db.session.add(venta)
             db.session.flush()
             # creo los metodos de pagos
@@ -901,12 +913,15 @@ class VentasApi(BaseApi,AuditedModelView):
 
                     if oferta.producto_id==producto.id:
                         #for renglonpedido in oferta.renglonespedido:
-
+                        print(producto.stock,oferta.cantidad,venta.id)
+                        producto.stock += oferta.cantidad
+                        print(producto.stock, oferta.cantidad)
                         if oferta.cantidad==p["cantidad"]:
                             db.session.add(
-                                Renglon(precioVenta=precio, cantidad=p["cantidad"], venta=venta,
+                                Renglon(precioVenta=precio, cantidad=p["cantidad"], venta_id=venta.id,
                                         producto=producto,
                                         descuento=p["descuento"]))
+
                         else:
                             if oferta.cantidad < p["cantidad"]:
                                 numeroactual=p["cantidad"]
@@ -920,6 +935,7 @@ class VentasApi(BaseApi,AuditedModelView):
                                 revisar a la manana !!!
                                 '''
                                 if producto.stock >=numeroactual:
+
                                     renglones = db.session.query(RenglonCompras).join(Compra).filter(
                                         Compra.id == RenglonCompras.compra_id, RenglonCompras.vendido == False,
                                         producto.id == RenglonCompras.producto_id).order_by(Compra.fecha).all()
@@ -937,8 +953,8 @@ class VentasApi(BaseApi,AuditedModelView):
                                     '''
                                     revisar precio de venta
                                     '''
-                                    db.session.add(
-                                        Renglon(precioVenta=precio, cantidad=p["cantidad"], venta=venta, producto=producto,
+
+                                    db.session.add(Renglon(precioVenta=precio, cantidad=p["cantidad"], venta_id=venta.id, producto=producto,
                                                 descuento=p["descuento"]))
                                 else:
                                     db.session.rollback()
@@ -946,28 +962,30 @@ class VentasApi(BaseApi,AuditedModelView):
                                                          message=f"error {producto} stock insuficiente posee {producto.stock+oferta.cantidad} y trata de vender {p['cantidad']}")
                             # Guardamos
                             if oferta.cantidad > p["cantidad"]:
-                                cantiadad=oferta.cantidad
-                                cantiadad-=  p["cantidad"]
+                                renglon1=Renglon(precioVenta=precio, cantidad=p["cantidad"],venta_id=venta.id,
+                                        producto=producto,
+                                        descuento=p["descuento"])
+                                db.session.add(renglon1)
+                                print('renglon',renglon1)
 
+                                print(oferta.cantidad , ' ',p["cantidad"])
+                                cantiadad=oferta.cantidad
+                                cantiadad= cantiadad- p["cantidad"]
+                                print(cantiadad, ' ',oferta.cantidad)
                                 # crea el renglon en la venta sino cancela transaccion y manda error
 
 
-                                if oferta.renglon_compra.producto_id==p["producto"]:
-                                    if oferta.renglon_compra.stock_lote+cantiadad < oferta.renglon_compra.cantidad:
-                                            oferta.renglon_compra.stock_lote+=cantiadad
-                                            oferta.renglon_compra.vendido = False
-                                            break
-                                    else:
+
+                                if oferta.renglon_compra.stock_lote+cantiadad < oferta.renglon_compra.cantidad:
+                                        oferta.renglon_compra.stock_lote+=cantiadad
                                         oferta.renglon_compra.vendido = False
-                                        cantiadad = cantiadad - (oferta.renglon_compra.stock_lote-oferta.renglon_compra.stock_lote)
-                                        oferta.renglon_compra+=(oferta.renglon_compra.cantidad-oferta.renglon_compra.stock_lote)
+                                        break
+                                else:
+                                    oferta.renglon_compra.vendido = False
+                                    cantiadad = cantiadad - (oferta.renglon_compra.cantidad-oferta.renglon_compra.stock_lote)
+                                    oferta.renglon_compra.stock_lote=oferta.renglon_compra.cantidad
 
 
-
-                                db.session.add(
-                                    Renglon(precioVenta=precio, cantidad=p["cantidad"], venta=venta,
-                                            producto=producto,
-                                            descuento=p["descuento"]))
                                     # else:
                                     #         db.session.rollback()
                                     #         return self.response(400,message=f"error {producto} stock insuficiente posee {producto.stock} y trata de vender {    p['cantidad']}")
@@ -991,7 +1009,7 @@ class VentasApi(BaseApi,AuditedModelView):
                                     i.vendido = True
 
                             db.session.add(
-                                Renglon(precioVenta=precio, cantidad=p["cantidad"], venta=venta,
+                                Renglon(precioVenta=precio, cantidad=p["cantidad"], venta_id=venta.id,
                                         producto=producto,
                                         descuento=p["descuento"]))
 
@@ -1020,6 +1038,11 @@ class VentasApi(BaseApi,AuditedModelView):
             db.session.commit()
             print("venta Guardada")
             self.post_add(venta)
+        except psycopg2.Error as e:
+            # get error code
+            error = e.pgcode
+            if error==23505:
+                return self.response(400, message="Error el comprobante es repetido")
         except Exception as e:
             import sys, os
             exc_type, exc_obj, exc_tb = sys.exc_info()

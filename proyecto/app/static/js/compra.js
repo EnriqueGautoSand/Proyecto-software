@@ -332,7 +332,7 @@ boton.disabled=true
 			jsonventa["total"]=parseFloat(totalhtml.value);
 			jsonventa["totaliva"]=parseFloat(totaliva.value);
 			jsonventa["percepcion"]=parseFloat(percepcion.value);
-			//comprobante jsonventa["comprobante"]=parseFloat(comprobante.value).toFixed(2);
+			jsonventa["comprobante"]=parseFloat(comprobante.value).toFixed(2);
 			//jsonventa["condicionfrenteiva"]=condicionfrenteiva.value
 	if (metododePago.value==1){
 			jsonventa["metododePago"]=metododePago.value;
@@ -366,10 +366,10 @@ boton.disabled=false
 }
 
 boton.onclick= function() {console.log('largo json ',jQuery.isEmptyObject(jsonProductos))
-						/*if (comprobante.value==0){
+						if (comprobante.value==0){
 							alert("ingrese el numero de comprobante!!!")
 							return;
-						}*/
+						}
 
 						if (jQuery.isEmptyObject(jsonProductos)){
 								alert("No hay poductos asociados a esta venta!!!")
@@ -398,7 +398,7 @@ console.log(JSON.parse(event.target.value).tipoclave=="Responsable Inscripto",ev
     	    percepcion.disabled=false
     	    iva=true
 	}else if (JSON.parse(event.target.value).tipoclave=="Responsable Inscripto" && monotributista) {
-		percepcion.disabled=false
+		percepcion.disabled=true
 		iva=false
 	}else{
 		percepcion.disabled=true
@@ -408,3 +408,16 @@ console.log(JSON.parse(event.target.value).tipoclave=="Responsable Inscripto",ev
 	
 
 }
+
+setTimeout(  function(){  if(JSON.parse(proveedor.value).tipoclave=="Responsable Inscripto" && responsableinscripto){
+    	    percepcion.disabled=false
+    	    iva=true
+	}else if (JSON.parse(proveedor.value).tipoclave=="Responsable Inscripto" && monotributista) {
+		percepcion.disabled=true
+		iva=false
+	}else{
+		percepcion.disabled=true
+		iva=false
+		percepcion.value=0
+	}
+		}, 3000)

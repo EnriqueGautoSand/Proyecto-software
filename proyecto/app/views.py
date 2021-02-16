@@ -358,8 +358,8 @@ def query_producto_por_Vencer():
 class ProductoxVencer(ModelView):
     datamodel = SQLAInterface(Productos)
     list_title = "Listado de Lotes del Producto"
-    label_columns = {'detaller': 'Producto','rengloneslotes':'Lote'}
-    list_columns = ['detaller','rengloneslotes']
+    label_columns = {'detaller': 'Producto','rengloneslotescolumna':'Lote'}
+    list_columns = ['detaller','rengloneslotescolumna']
     base_permissions = ['can_list','can_show']
     base_filters = [["id", FilterInFunction, query_producto_por_Vencer], ]
     show_exclude_columns = ['renglon_compra']
@@ -460,15 +460,63 @@ def repre(self,labels=None,tabla=None,db=None):
                 value=getattr(self.db.session.query(self.tabla).filter(getattr(self.tabla, flt.column_name) == value).all()[0], flt.column_name)
             """
             from dateutil.parser import parse
+            from flask_appbuilder.models.sqla.filters import FilterRelationOneToManyEqual
 
 
             try:
+                if flt.name=='Relación':
+                    from sqlalchemy import inspect
+                    from inspect import ismethod, getmembers
+
+                    i = inspect(self.datamodel.obj)
+                    thing_relations = inspect(self.datamodel.obj).relationships.items()
+                    # for i in self.get_relation_cols():
+                    #     if i==self.labels[flt.column_name]:
+                    #         print(db.session.query(getattr(self, self.labels[flt.column_name])).get(value))
+                    print(self.datamodel.obj.__table__.columns.keys(),self.datamodel.obj().__class__)
+                    #valor=getattr(self.datamodel.obj.__table__.columns, self.labels[flt.column_name])
+                    #print(type(getattr(self.datamodel.obj.__table__.columns, self.labels[flt.column_name])))
+                    #objeto = db.session.query(self.datamodel.obj()).get(1)
+                    print(self.datamodel.obj())
+                    print(self.datamodel.obj().__table__)
+                    print(self.datamodel.obj().__class__)
+                    #print(self.datamodel.obj().__table__.columns)
+                    #print(getattr(objeto.__table__.columns, self.labels[flt.column_name]))
+                    for atributes in self.datamodel.obj.__table__.columns.keys():
+                        # print()
+                        # if callable(getattr(self.datamodel.obj,atributes)):
+                        try:
+                            print(self.datamodel.obj().__class__)
+                            print(getattr(self.datamodel.obj().__class__,atributes),getattr(self.datamodel.obj().__class__.__table__.columns,atributes).__class__.__name__)
+                            if getattr(self.datamodel.obj(),atributes).__class__.__name__==self.labels[flt.column_name]:
+                                print('Encontro: ')
+                                value=db.session.query(getattr(self.datamodel.obj,atributes).__class__).get(value)
+                                print('Encontro: ',value.__str__())
+                        except Exception as e:
+                            import sys, os
+                            exc_type, exc_obj, exc_tb = sys.exc_info()
+                            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                            print(exc_type, fname, exc_tb.tb_lineno)
+                            print(str(e))
+                            print(e.__str__())
+                    #print(db.session.query(valor).get(value))
+                    #value=db.session.query(valor).get(value).__str__()
+
+
                 if flt.column_name == "estado" and value == "y":
                     value = self.tabla().__class__.__name__ + " Realizada"
                 elif type(parse(value))==type(dt.now()) and flt.column_name=="fecha":
                     value=parse(value).strftime("%d/%m/%Y-%H:%M")
+
+
             except Exception as e:
+                import sys, os
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                print(exc_type, fname, exc_tb.tb_lineno)
+                print(str(e))
                 print(e.__str__())
+
 
             retstr = retstr + "%s %s %s\n" % (
                 str(self.labels[flt.column_name]).capitalize(),flt.name,
@@ -622,7 +670,14 @@ class VentaView(BaseView):
         # cargo las elecciones de metodo de pago
         form2.metodo.choices = [(c.id, c) for c in db.session.query(FormadePago)]
         # cargo las elecciones de las tarjetas
-
+        from sqlalchemy import Sequence
+        #COMPROBANTE_SEQ = Sequence('ventas_comprobante_seq')
+        #print(COMPROBANTE_SEQ.next_value())
+        comprobante_alto = db.session.query(func.max(Venta.comprobante)).first()
+        if comprobante_alto[0] ==None:
+            comprobante_alto=[]
+            comprobante_alto.append(0)
+        form2.comprobante.data=int(comprobante_alto[0]+1)
         form2.companiaTarjeta.choices = [(c.id, c) for c in db.session.query(CompaniaTarjeta).filter(CompaniaTarjeta.estado==True)]
         # le digo que guarde la url actual en el historial
         #esto sirve para cuando creas un cliente que te redirija despues a la venta
@@ -681,6 +736,12 @@ class CompraView(BaseView):
         form2.companiaTarjeta.choices = [(c.id, c) for c in db.session.query(CompaniaTarjeta).filter(CompaniaTarjeta.estado==True)]
         # le digo que guarde la url actual en el historial
         #esto sirve para cuando creas un cliente que te redirija despues a la venta
+        comprobante_alto = db.session.query(func.max(Compra.comprobante)).first()
+        if comprobante_alto[0] ==None:
+            comprobante_alto=[]
+            comprobante_alto.append(0)
+        form2.comprobante.data = int(comprobante_alto[0] + 1)
+
         self.update_redirect()
         #renderizo el html y le paso el formulario
         self.update_redirect()
@@ -830,8 +891,8 @@ class PedidoView(ModelView):
 class OfertaWhatsappView(ModelView):
     datamodel = SQLAInterface(OfertaWhatsapp)
     list_title = 'Lista de Ofertas por Whatsapp'
-    label_columns = {'fechaexpiracion':'Fecha de Expiración','formatofecha':'Fecha','cantidadrender':'Cantidad','reservadorender':'Reservado','hash_activacion':'Codigo de reserva','vendidorender':'Vendido'}
-    list_columns = ['formatofecha', 'fechaexpiracion','hash_activacion','cliente','producto','cantidadrender','reservadorender','vendidorender']
+    label_columns = {'canceladorender':'Cancelado','fechaexpiracion':'Fecha de Expiración','formatofecha':'Fecha','cantidadrender':'Cantidad','reservadorender':'Reservado','hash_activacion':'Codigo de reserva','vendidorender':'Vendido'}
+    list_columns = ['formatofecha', 'fechaexpiracion','hash_activacion','cliente','producto','cantidadrender','reservadorender','vendidorender','canceladorender']
     base_order = ('id', 'dsc')
     base_permissions = ['can_list','can_show','can_delete']
     # @action("Confirmar_Venta","Confirmar Venta","Seguro de convertir este pedido en una venta?", "fa-backspace", single=False)
@@ -858,23 +919,31 @@ class OfertaWhatsappView(ModelView):
     def delete(self, pk):
         self.update_redirect()
         oferta = db.session.query(OfertaWhatsapp).filter(OfertaWhatsapp.id == pk).first()
-        if oferta.reservado == True:
+        if oferta.reservado == True and oferta.cancelado == False and oferta.vendido==False:
             oferta.reservado = False
             oferta.vendido=False
+            oferta.cancelado = True
             oferta.renglon_compra.stock_lote += oferta.cantidad
             oferta.renglon_compra.producto.stock += oferta.cantidad#verificar si al convertir hace falta sumar el stock directo al producto
             db.session.commit()
-            flash('Oferta anulada','success')
+            flash('Oferta cancelada','success')
             return redirect(self.get_redirect())
+        else:
+            if oferta.cancelado == True:
+                flash('Oferta ya Cancelada no se puede volver a cancelar', 'success')
+                return redirect(self.get_redirect())
+            elif oferta.vendido==True:
+                flash('Oferta ya Vendida no se puede cancelar', 'success')
+                return redirect(self.get_redirect())
 
-        flash('Oferta ya anulada', 'success')
+        flash('Oferta ya cancelada', 'success')
         return redirect(self.get_redirect())
 
 class PediddosClientesView(ModelView):
     datamodel = SQLAInterface(PedidoCliente)
     related_views = [Venta]
-    label_columns = {'reservadorender':'Reservado','fechaexpiracion':'Fecha de Expiración','formatofecha':'Fecha','vendidorender':'Vendido','hash_activacion':'Codigo de reserva','expiracion':'Fecha de expiracíon'}
-    list_columns = ['formatofecha','fechaexpiracion','hash_activacion','cliente','reservadorender','vendidorender']
+    label_columns = {'canceladorender':'Cancelado','reservadorender':'Reservado','fechaexpiracion':'Fecha de Expiración','formatofecha':'Fecha','vendidorender':'Vendido','hash_activacion':'Codigo de reserva','expiracion':'Fecha de expiracíon'}
+    list_columns = ['formatofecha','fechaexpiracion','hash_activacion','cliente','reservadorender','vendidorender','canceladorender']
     base_permissions = ['can_list','can_show','can_delete']
     base_order = ('id', 'dsc')
 
@@ -892,36 +961,55 @@ class PediddosClientesView(ModelView):
     def delete(self, pk):
         self.update_redirect()
         pedido = db.session.query(PedidoCliente).filter(PedidoCliente.id == pk).first()
-        if pedido.reservado == True:
-            if pedido.venta !=None:
-                if pedido.venta.estado==True and pedido.vendido==True:
-                    flash('Pedido ya convertido a venta y realizado Para anular tendra que ir a a anular la venta directamente', 'warning')
+        if pedido.reservado == True and pedido.cancelado==False and pedido.vendido==False:
+            #if pedido.venta !=None:
+            if pedido.vendido==True and pedido.cancelado==False:
+                flash('Pedido ya convertido a venta y realizado Para anular tendra que ir a a anular la venta directamente', 'warning')
+                return redirect(self.get_redirect())
+            # elif pedido.vendido==True:
+            #     flash('A Ocurrido un error sobre el pedido que queria anular por favor contacte con los tecnicos para solucionar esto', 'warning')
+            #     return redirect(self.get_redirect())
+            else:
+                try:
+                    pedido.reservado = False
+                    #venta=pedido.venta
+                    #venta.estado==False
+                    pedido.cancelado = True
+                    for renglon in pedido.renglonespedido:
+                        asumar=renglon.cantidad
+                        for rengloncompra in renglon.renglonespedidocompras:
+                            if rengloncompra.stock_lote + asumar < rengloncompra.cantidad:
+                                rengloncompra.stock_lote += asumar
+                                rengloncompra.vendido = False
+                                print(rengloncompra.producto, rengloncompra.stock_lote, asumar)
+                                break
+                            else:
+                                rengloncompra.vendido = False
+                                asumar = asumar - (rengloncompra.cantidad - rengloncompra.stock_lote)
+                                rengloncompra.stock_lote = rengloncompra.cantidad
+
+                        renglon.producto.stock+=renglon.cantidad
+                    db.session.commit()
+                except Exception as e:
+                    print(e)
+                    print(str(e))
+                    print(repr(e))
+                    db.session.rollback()
+                    flash('Pedido NO anulado, algo a sucedido mientras se intentaba anular.', 'warning')
                     return redirect(self.get_redirect())
-                elif pedido.venta.estado==False and pedido.vendido==True:
-                    flash('A Ocurrido un error sobre el pedido que queriaanular por favor contacte con los tecnicos para solucionar esto', 'warning')
-                    return redirect(self.get_redirect())
-                else:
-                    try:
-                        pedido.reservado = False
-                        venta=pedido.venta
-                        venta.estado==False
-                        for renglon in venta.renglones:
-                            renglon.producto.stock+=renglon.cantidad
-                        db.session.commit()
-                    except Exception as e:
-                        print(e)
-                        print(str(e))
-                        print(repr(e))
-                        db.session.rollback()
-                        flash('Pedido NO anulado, algo a sucedido mientras se intentaba anular.', 'warning')
-                        return redirect(self.get_redirect())
-                    flash('Pedido anulado,los productos del pedido se sumaron al stock general','success')
-                    return redirect(self.get_redirect())
+                flash('Pedido Cancelado,los productos del pedido se sumaron al stock general','success')
+                return redirect(self.get_redirect())
         else:
+            if pedido.cancelado == True:
+                flash('Pedido ya Cancelado no se puede volver a cancelar', 'success')
+                return redirect(self.get_redirect())
+            elif pedido.vendido == True:
+                flash('Pedido ya Vendido no se puede cancelar', 'success')
+                return redirect(self.get_redirect())
             flash('Pedido no reservado no hay nada que anular', 'warning')
             return redirect(self.get_redirect())
 
-        flash('Pedido ya anulado', 'warning')
+        flash('Pedido ya Cancelado', 'warning')
         return redirect(self.get_redirect())
 class RenglonPedidoWhatsappOferta():
 
@@ -955,7 +1043,8 @@ class ConvertirVenta(AuditedModelView):
             # cargo las elecciones de producto
             responsableinscripto = str(
                 db.session.query(EmpresaDatos).first().tipoClave) == "Responsable Inscripto"
-
+            comprobante_alto = db.session.query(func.max(Venta.comprobante)).first()
+            form2.comprobante.data = int(comprobante_alto[0] + 1)
             form2.producto.choices = [(
                 '{"id":'+f'{p.id}'+',"iva":'+f'"{p.iva}"'+',"representacion":'+ f'"{p.__str__()}"'+'}',
                 p.__str__()) for p in
@@ -999,7 +1088,10 @@ class ConvertirVenta(AuditedModelView):
             #return render_template("convertir_pedido.html",pedido=pedido,formasdepago=pedido.venta.formadepagos,renglones=pedido.venta.renglones,venta=pedido.venta, base_template=appbuilder.base_template,
             #                                       appbuilder=appbuilder)
             from .modulos_inteligentes.modelo_whatsapp import RenglonVentapedido
+
             form2 = RenglonVentapedido(request.form)
+            comprobante_alto = db.session.query(func.max(Venta.comprobante)).first()
+            form2.comprobante.data = int(comprobante_alto[0] + 1)
             #form2.descuento.render_kw = {'disabled': 'false'}
             form2.percepcion.render_kw = {'disabled': 'false'}
 

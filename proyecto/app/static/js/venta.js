@@ -189,6 +189,7 @@ function totalconimpuestos(){
 			totalhtml.value=parseFloat(totalColuma)
 			totaliva.value=0
 		}
+		totalhtml.value=parseFloat(totalhtml.value).toFixed(2)
 		totalneto.value= parseFloat(totalColuma).toFixed(2)
 }
 function borrarRenglon(element){
@@ -374,7 +375,7 @@ boton.disabled=true
 			jsonventa["totalneto"]=parseFloat(totalneto.value).toFixed(2);
 			jsonventa["totaliva"]=parseFloat(totaliva.value).toFixed(2);
 			jsonventa["percepcion"]=parseFloat(percepcion.value).toFixed(2);
-			// comprobante jsonventa["comprobante"]=parseFloat(comprobante.value).toFixed(2)
+			jsonventa["comprobante"]=parseFloat(comprobante.value).toFixed(2)
 			//jsonventa["condicionfrenteiva"]=condicionfrenteiva.value
 
 			//validar si la suma de los pagos no supera el total del la venta
@@ -672,7 +673,8 @@ let divtarjeta=aclonar.querySelector("#divtarjeta")
 divtarjeta.id=divtarjeta.id+numerodepago.toString()
 let monto=aclonar.querySelector("#monto")
 monto.id=monto.id+numerodepago.toString()
-monto.value=parseFloat(total.value)-motototal
+monto.value=parseFloat(parseFloat(total.value)-motototal).toFixed(2)
+$("#"+ monto.id ).inputmask({ 'alias': 'decimal', 'autoGroup': true, 'digits': 2, 'digitsOptional': false, 'placeholder': '0.00', rightAlign : false,clearMaskOnLostFocus: !1 });
 faltante.value=monto.value
 $('#'+ aclonar.id +' *').prop('disabled',false);
 $(document).ready(function() { $("#"+ collapse.id).select2(); });
@@ -696,10 +698,10 @@ ultimoElemento=aclonar
 }
 
 boton.onclick= function() {console.log('largo json ',jQuery.isEmptyObject(jsonProductos))
-						/*if (comprobante.value==0){
+						if (comprobante.value==0){
 							alert("ingrese el numero de comprobante!!!")
 							return;
-						}*/
+						}
 						if (jQuery.isEmptyObject(jsonProductos)){
 								alert("No hay poductos asociados a esta venta!!!")
 
@@ -729,7 +731,7 @@ console.log(JSON.parse(event.target.value).tipoclave=="Responsable Inscripto",ev
     	    percepcion.disabled=false
     	    iva=true
 	}else if (JSON.parse(event.target.value).tipoclave=="Monotributista" && responsableinscripto) {
-		percepcion.disabled=false
+		percepcion.disabled=true
 		iva=false
 	}else{
 		percepcion.disabled=true
@@ -740,3 +742,16 @@ console.log(JSON.parse(event.target.value).tipoclave=="Responsable Inscripto",ev
 	
 
 }
+setTimeout(  function(){     
+ if(JSON.parse(cliente.value).tipoclave=="Responsable Inscripto" && responsableinscripto){
+    	    percepcion.disabled=false
+    	    iva=true
+	}else if (JSON.parse(cliente.value).tipoclave=="Monotributista" && responsableinscripto) {
+		percepcion.disabled=true
+		iva=false
+	}else{
+		percepcion.disabled=true
+		iva=false
+		percepcion.value=0
+	}
+		}, 1000)
