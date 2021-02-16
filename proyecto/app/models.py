@@ -403,7 +403,7 @@ class FormadePago(Model):
 
 
 
-COMPROBANTE_SEQ= Sequence('compras_comprobante_seq')
+#COMPROBANTE_SEQ= Sequence('compras_comprobante_seq')
 class Compra(Model):
     """
     creo clase que sera mapeada como la tabla Compra en la base de datos
@@ -424,7 +424,7 @@ class Compra(Model):
     datosFormaPagos_id = Column(Integer, ForeignKey('datosFormaPagosCompra.id'), nullable=True)
     datosFormaPagos = relationship("DatosFormaPagosCompra")
     percepcion = Column(Float,default=0)
-    comprobante = Column(Integer, COMPROBANTE_SEQ, unique=True,default=COMPROBANTE_SEQ.next_value())#db.Sequence('compras_comprobante_seq').next_value())
+    comprobante = Column(Integer,  unique=True)#,default=COMPROBANTE_SEQ.next_value())#db.Sequence('compras_comprobante_seq').next_value())
 
 
     __table_args__ = (
@@ -669,16 +669,29 @@ class Productos(Model):
     __table_args__ = (
         UniqueConstraint("categoria_id","marcas_id","unidad_id","medida","detalle"),
     )
-
+    @renders('precio')
+    def preciorendercolumna(self):
+        return Markup('<div align=right> ' + str(format(self.precio, '.2f')) + '</div> ')
+    @renders('iva')
+    def ivarendercolumna(self):
+        return Markup('<div align=right> ' + str(format(self.iva, '.2f')) + '</div> ')
+    @renders('stock')
+    def stockarendercolumna(self):
+        return Markup('<div align=right> ' + str(int(self.stock ))+ '</div> ')
+    @renders('medida')
+    def medidarendercolumna(self):
+        return Markup('<div align=right> ' + str(format(self.medida, '.2f')) + '</div> ')
     # defino como se representara al ser llamado
     def __repr__(self):
         return f"{self.categoria} ${self.precio:.2f} {self.marca} {self.medida} {self.unidad}"
 
+    @renders('categoria')
     def detaller(self):
             return f"{self.categoria} ${self.precio:.2f} {self.marca} {self.medida} {self.unidad} {self.detalle}"
 
     def __str__(self):
         return f"{self.categoria} {self.marca} {self.medida} {self.unidad} {self.detalle}"
+
     @renders('estado')
     def estadorender(self):
             if self.estado:
@@ -710,7 +723,7 @@ class Productos(Model):
                     respuesta += f"{self.renglon_compra[i].normal()} "
             else:
                 if not self.renglon_compra[i].vendido:
-                    respuesta += f"{self.renglon_compra[i].normal()} ;"
+                    respuesta += f"{self.renglon_compra[i].normal()} <br />"
         if respuesta=='':
             return '0'
         return respuesta

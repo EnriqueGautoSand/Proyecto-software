@@ -229,14 +229,19 @@ class PrecioMdelview(AuditedModelView):
     datamodel = SQLAInterface(Productos)
     #configuro vistas de crear, listar y editar
     list_widget = ListWidgetProducto
-    label_columns = {'estadorender': 'Estado','categoria':'Categoría','categoria.categoria':'categoria'}
+    label_columns = {'medidarendercolumna':'medida','preciorendercolumna':'precio','stockarendercolumna':'stock','ivarendercolumna':'iva',
+                     'estadorender': 'Estado','categoria':'Categoría','categoria.categoria':'categoria'}
     list_title = "Listado de Productos"
     add_columns = ['categoria', 'marca','unidad', 'medida', 'precio','iva', 'detalle']
-    list_columns = ['categoria', 'marca', 'medida','unidad', 'precio', 'stock','iva','estadorender', 'detalle']
+    list_columns = ['categoria', 'marca', 'medidarendercolumna','unidad', 'preciorendercolumna', 'stockarendercolumna','ivarendercolumna','estadorender', 'detalle']
+    show_columns = ['categoria', 'marca', 'medidarendercolumna','unidad', 'preciorendercolumna', 'stockarendercolumna','ivarendercolumna','estadorender', 'detalle']
     edit_columns = ['categoria','medida','unidad','marca','precio','iva','estado','detalle']
     show_exclude_columns = ['renglon_compra']
     search_exclude_columns = ['renglon_compra']
-    order_rel_fields = {'categoria': ('categoria', 'asc')}
+
+    order_rel_fields = {'categoria': ('categoria', 'asc'),'marca': ('marca', 'asc')}
+
+
 
 
 
@@ -342,6 +347,7 @@ class RenglonComprasxVencer(ModelView):
     base_permissions = ['can_list']
     base_filters = [["id", FilterInFunction, query_ComprasxProucto_Vencer], ]
     list_title = "Detalle de Lotes por Producto"
+
     #list_template = 'productos_vencidos.html'
     @expose("/delete/<pk>", methods=["GET", "POST"])
     @has_access
@@ -354,19 +360,32 @@ class RenglonComprasxVencer(ModelView):
 def query_producto_por_Vencer():
     #return[i.id for i in db.session.query(Productos).join(RenglonCompras).filter(RenglonCompras.fecha_vencimiento>=dt.now().date() ,RenglonCompras.vendido==False).all()]
 
-    return[i.id for i in db.session.query(Productos).join(RenglonCompras).filter(RenglonCompras.vendido==False).all()]
+    return[i.id for i in db.session.query(Productos).join(RenglonCompras).join(Productos.marca).join(Productos.categoria).filter(RenglonCompras.vendido==False).order_by(asc(Productos.categoria),asc(Productos.marca)).all()]
+def query_producto_ordencategoria():
+    #return[i.id for i in db.session.query(Productos).join(RenglonCompras).filter(RenglonCompras.fecha_vencimiento>=dt.now().date() ,RenglonCompras.vendido==False).all()]
+
+    return[i.id for i in db.session.query(Categoria).order_by(asc(Categoria.categoria)).all()]
+
 class ProductoxVencer(ModelView):
     datamodel = SQLAInterface(Productos)
     list_title = "Listado de Lotes del Producto"
-    label_columns = {'detaller': 'Producto','rengloneslotescolumna':'Lote'}
-    list_columns = ['detaller','rengloneslotescolumna']
+    label_columns = {'medidarendercolumna':'medida','preciorendercolumna':'precio','stockarendercolumna':'stock','ivarendercolumna':'iva',
+                     'estadorender': 'Estado','categoria':'Categoría','categoria.categoria':'categoria','detaller': 'Producto','rengloneslotescolumna':'Lote','stock':'Total'}
+    list_columns = ['detaller','rengloneslotescolumna','stock']
+    show_columns = ['categoria', 'marca', 'medidarendercolumna','unidad', 'preciorendercolumna', 'stockarendercolumna','ivarendercolumna','estadorender', 'detalle']
+
     base_permissions = ['can_list','can_show']
     base_filters = [["id", FilterInFunction, query_producto_por_Vencer], ]
     show_exclude_columns = ['renglon_compra']
+    #search_form_query_rel_fields = {'categoria':[["id", FilterInFunction, query_producto_ordencategoria]]}
+    #order_columns = ['categoria']
+    base_order = ('stock','asc')
     list_widget = ListDownloadWidgetstock
     search_exclude_columns = ['renglon_compra']
-    order_columns = ['categoria']
+    order_rel_fields = {'categoria': ('categoria', 'asc'), 'marca': ('marca', 'asc')}
+    order_columns = ['detaller']
     related_views = [RenglonComprasxVencer]
+
 
     @expose('/csv', methods=['GET'])
     def download_csv(self):
@@ -387,7 +406,7 @@ class ProductoxVencer(ModelView):
         filtros.__str__ = types.MethodType(repre, filtros)
         filtros.__repr__(self.label_columns,ProductoxVencer,db=db)
         cabecera = (
-            ("detaller", "Producto"),("rengloneslotesimprimir", "Lote"),
+            ("detaller", "Producto"),("rengloneslotesimprimir", "Lote"),("stock", "Total")
         )
         from .reportestock import  generarReporteStock
         generarReporteStock(titulo="Listado de Stock",cabecera=cabecera,buscar=Productos,nombre="Listado de Stock",datos=lst,filtros=self._filters,no_registros=count)
@@ -543,7 +562,7 @@ class VentaReportes(AuditedModelView):
     base_order = ('comprobante', 'dsc')
 
     #base_filters = [["id",FilterInFunction,tipoClave_queryventa],]
-    base_permissions = ['can_show','can_list', 'can_edit','can_delete']
+    base_permissions = ['can_show','can_list','can_delete']
     #list_template = "reportes.html"
     #related_views = [RenglonVentas,MetododepagoVentas]
 
@@ -887,6 +906,7 @@ class PedidoView(ModelView):
     list_title = 'Lista de Pedidos de Presupesto'
     show_title = 'Detalle de Pedido de Presupuesto'
     related_views = [RenglonPedidoView]
+    base_order = ('id','desc')
 
 class OfertaWhatsappView(ModelView):
     datamodel = SQLAInterface(OfertaWhatsapp)

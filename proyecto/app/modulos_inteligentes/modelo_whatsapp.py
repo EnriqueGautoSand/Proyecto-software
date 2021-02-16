@@ -137,6 +137,12 @@ class ModeloWhatsapp(BaseView):
                         flash("Ofertaa Invalida, ya finalizo el tiempo de la oferta", "error")
                         return render_template('reservas_whatsapp.html', form=form, mensaje=mensaje,
                                                base_template=appbuilder.base_template, appbuilder=appbuilder)
+                    if oferta.producto.stock <= 0:
+                        form = Formulariooferta(request.form)
+                        mensaje = True
+                        flash("Pedido Invalido !!!  Ya se vendieron los productos  de esta oferta", "error")
+                        return render_template('reservas_whatsapp.html', form=form, mensaje=mensaje,
+                                               base_template=appbuilder.base_template, appbuilder=appbuilder)
                     if oferta!=None:
                         if not oferta.reservado:
                             mensaje=False
@@ -171,7 +177,7 @@ class ModeloWhatsapp(BaseView):
                 try:
                     oferta = db.session.query(OfertaWhatsapp).filter(OfertaWhatsapp.hash_activacion == hash).first()
                     print(request.json)
-                    if oferta != None:
+                    if oferta != None and oferta.producto.stock>0:
                         request.form['cantidad']
                         request.form['total']
                         productoid=json.loads(request.form['producto'])['id']
@@ -201,6 +207,13 @@ class ModeloWhatsapp(BaseView):
                         mensaje = True
                         return render_template('reservas_whatsapp.html', form=form, base_template=appbuilder.base_template,mensaje=mensaje,
                                                appbuilder=appbuilder)
+                    else:
+                        import sys, os
+                        form = Formulariooferta(request.form)
+                        mensaje = True
+                        flash("Pedido Invalido !!!  Ya se vendieron los productos  de esta oferta", "error")
+                        return render_template('reservas_whatsapp.html', form=form, mensaje=mensaje,
+                                               base_template=appbuilder.base_template, appbuilder=appbuilder)
                 except Exception as e:
                     import sys, os
                     form = Formulariooferta(request.form)

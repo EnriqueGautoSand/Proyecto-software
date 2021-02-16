@@ -28,7 +28,7 @@
 				document.querySelector("label[for='nombre']").innerText="Nombre"
 				for (i in tipoClave.options){
 						tipoClave.remove(i)}
-				fetch("http://localhost.localdomain:8080/api/v1/clienteapi/proveedorfisico/")
+				fetch("http://localhost:8080/api/v1/clienteapi/proveedorfisico/")
 						    .then(data=>data.json())
 						    .then(response =>{ console.log('Success:', JSON.parse(response.message))
 						    dictmes=JSON.parse(response.message)
@@ -50,7 +50,7 @@
 			document.querySelector("label[for='nombre']").innerText="Denominacion"
 				for (i in tipoClave.options){
 						tipoClave.remove(i)}
-				fetch("http://localhost.localdomain:8080/api/v1/clienteapi/condjuridicacliente/")
+				fetch("http://localhost:8080/api/v1/clienteapi/condjuridicacliente/")
 						    .then(data=>data.json())
 						    .then(response =>{ console.log('Success:', JSON.parse(response.message))
 						    dictmes=JSON.parse(response.message)

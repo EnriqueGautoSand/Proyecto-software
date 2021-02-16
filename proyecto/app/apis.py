@@ -159,8 +159,8 @@ class ComprasApi(BaseApi,AuditedModelView):
                                               credito=data["credito"],
                                               cuotas=data["cuotas"],formadepago_id=data["metododePago"]
                                               )
-
-                        compra = Compra(estado=True,totalNeto=float(data["totalneto"]),totaliva=float(data["totaliva"]),
+                        comprobante = float(data["comprobante"])
+                        compra = Compra(comprobante=comprobante,estado=True,totalNeto=float(data["totalneto"]),totaliva=float(data["totaliva"]),
                                       total=float(data["total"]), proveedor_id=data["proveedor"],formadepago_id=data["metododePago"],
                                       datosFormaPagos=datosFormaPagos,percepcion=float(data["percepcion"]),fecha=dt.now())
 
@@ -277,10 +277,10 @@ class VentasApi(BaseApi,AuditedModelView):
             monotributista = tipoclave == "Monotributista"
             # paso los datos de la peticion a json
             data = request.json
+            print(data)
             # Solicito a ala base de datos el producto
             #cliente= db.session.query(Clientes).filter(Clientes.id==int(data['cliente'])).first()
-            cliente = db.session.query(Clientes).join(OfertaWhatsapp).filter(
-                Clientes.id==OfertaWhatsapp.cliente_id,OfertaWhatsapp.hash_activacion==data['hashoferta']).first()
+            cliente = db.session.query(Clientes).join(OfertaWhatsapp).filter( Clientes.id==OfertaWhatsapp.cliente_id,OfertaWhatsapp.hash_activacion==data['hashoferta']).first()
             p  =db.session.query(Productos).join(OfertaWhatsapp.producto).join(Clientes,Clientes.id==OfertaWhatsapp.cliente_id).\
                                             filter(Clientes.id==cliente.id).\
                                             filter(Productos.id==int(json.loads(data['p'])['id'])).first()
