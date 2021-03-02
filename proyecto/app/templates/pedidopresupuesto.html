@@ -2,7 +2,7 @@
  <p>Se le solicita un presupusto, y ofertas disponibles de productos </p>
 <table align="center" border="1" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse;">
 <th>Numero de Pedido </th><th>Fecha </th>
- <tr><td>{{ pedido_proveedor.id }} </td><td>{{ pedido_proveedor.formatofecha() }} </td>  </tr>
+ <tr><td><div align="right"> {{ pedido_proveedor.id }}</div>  </td><td>{{ pedido_proveedor.formatofecha() }} </td>  </tr>
  </table>
 <table align="center" border="1" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse;">
 <br>
@@ -11,7 +11,7 @@
  {% for p in pedido %}
 
 
- <tr><td>{{ p.producto.__str__() }} </td><td>{{ p.cantidad }} </td>  </tr>
+ <tr><td>{{ p.producto.__str__() }} </td><td><div align="right"> {{ p.cantidad }}</div>   </td>  </tr>
 
 
 {% endfor %}

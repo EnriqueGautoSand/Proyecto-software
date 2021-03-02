@@ -159,8 +159,6 @@ def start_scheduler():
     pedidoconfig = db.session.query(ModulosConfiguracion).first()
     scheduler = BackgroundScheduler(timezone=utc)
 
-    # define your job trigger
-    #hourse_keeping_trigger = CronTrigger(minute='*/1',second='2')
 
 
     # add your job

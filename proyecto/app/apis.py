@@ -184,7 +184,11 @@ class ComprasApi(BaseApi,AuditedModelView):
                             db.session.add(RenglonCompras(precioCompra=p["precio"] , descuento=p["descuento"], cantidad=p["cantidad"],compra=compra,  producto=producto,stock_lote=p["cantidad"]))
                             porcentaje_subida=db.session.query(ModulosConfiguracion).first().porcentaje_subida_precio
                             productoanterior=copy.copy(producto)
-                            producto.precio=format(float(p["precio"])+((float(p["precio"])/100) * float(porcentaje_subida)), '.2f')
+                            #aca debe ser opcional
+                            if db.session.query(ModulosConfiguracion).first().subir_precio_automatico:
+                                producto.precio=format(float(p["precio"])+((float(p["precio"])/100) * float(porcentaje_subida)), '.2f')
+
+
 
                             # auditacion=Auditar(Productos)
                             # auditacion.list_columns=ProductoModelview.list_columns

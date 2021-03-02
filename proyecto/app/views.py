@@ -84,18 +84,28 @@ class ModulosInteligentesView(ModelView):
 
 
 
+def condf_iva():
 
+    return [(t.__str__(),t.__str__()) for t in db.session.query(TipoClaves).filter(TipoClaves.tipoClave  != "Consumidor Final" ).all()]
 class Empresaview(ModelView):
     datamodel = SQLAInterface(EmpresaDatos)
     label_columns ={'photo_img':'logo', 'photo_img_thumbnail':'logo','tipoClave':'Cond Frente Iva'}
     list_title = "Datos de La Empresa"
     list_columns = ['compania','tipoClave','cuit','direccion','localidad','photo_img_thumbnail']
     show_columns = ['compania','tipoClave','cuit','direccion','localidad','photo_img']
-    base_permissions = ['can_show', 'can_list', 'can_edit']
-    edit_template = "editarempresa.html"
+
     validators_columns ={
         'cuit':[InputRequired(),cuitvalidatorProveedores]
     }
+    from flask_appbuilder.fieldwidgets import Select2ManyWidget, BS3PasswordFieldWidget, BS3TextFieldWidget
+    # from wtforms.ext.sqlalchemy.fields import QuerySelectMultipleField
+    # edit_form_extra_fields ={'tipoClave':  QuerySelectMultipleField(
+    #                         'Cond Frente Iva',
+    #                         query_factory=condf_iva,
+    #                         widget=Select2ManyWidget()
+    #                    ),}
+    base_permissions = ['can_show', 'can_list', 'can_edit']
+    edit_template = "editarempresa.html"
 
 
 class CompaniaTarjetaview(ModelView):
@@ -124,6 +134,7 @@ class CompaniaTarjetaview(ModelView):
 class Sistemaview(MultipleView):
     views =[Empresaview,CompaniaTarjetaview]
     class_permission_name = "crudempresa"
+
     method_permission_name = {
         'add': 'access',
         'delete': 'access',
@@ -229,19 +240,20 @@ class PrecioMdelview(AuditedModelView):
     datamodel = SQLAInterface(Productos)
     #configuro vistas de crear, listar y editar
     list_widget = ListWidgetProducto
-    label_columns = {'medidarendercolumna':'medida','preciorendercolumna':'precio','stockarendercolumna':'stock','ivarendercolumna':'iva',
+    label_columns = {'medidarendercolumna':'Medida','preciorendercolumna':'Precio $','stockarendercolumna':'Stock','ivarendercolumna':'Iva',
                      'estadorender': 'Estado','categoria':'Categoría','categoria.categoria':'categoria'}
     list_title = "Listado de Productos"
     add_columns = ['categoria', 'marca','unidad', 'medida', 'precio','iva', 'detalle']
     list_columns = ['categoria', 'marca', 'medidarendercolumna','unidad', 'preciorendercolumna', 'stockarendercolumna','ivarendercolumna','estadorender', 'detalle']
     show_columns = ['categoria', 'marca', 'medidarendercolumna','unidad', 'preciorendercolumna', 'stockarendercolumna','ivarendercolumna','estadorender', 'detalle']
-    edit_columns = ['categoria','medida','unidad','marca','precio','iva','estado','detalle']
+    edit_columns = ['categoria','medida','unidad','marca','precio','iva','estado','detalle','stock']
     show_exclude_columns = ['renglon_compra']
     search_exclude_columns = ['renglon_compra']
 
     order_rel_fields = {'categoria': ('categoria', 'asc'),'marca': ('marca', 'asc')}
 
-
+    edit_form_extra_fields = { 'Stock': IntegerField('Stock del producto, si lo cambia recuerde cambiar los lotes tambien',
+                              render_kw={'type': "number"}, validators=[InputRequired()])}
 
 
 
@@ -342,9 +354,11 @@ def query_ComprasxProucto_Vencer():
     return[i.id for i in db.session.query(RenglonCompras).filter( RenglonCompras.vendido ==False).all()]
 class RenglonComprasxVencer(ModelView):
     datamodel = SQLAInterface(RenglonCompras)
-    label_columns = {'vendidor':'vendido','formatofecha': 'Fecha de Vencimiento','precioCompra':'Precio de Compra','stock_lote':'Stock','fechacompra':'Fecha de Compra'}
+    label_columns = {'fecha_vencimiento':'Fecha de Vencimiento','vendidor':'vendido','formatofecha': 'Fecha de Vencimiento','precioCompra':'Precio de Compra','stock_lote':'Stock','fechacompra':'Fecha de Compra'}
     list_columns = ['producto', 'precioCompra', 'cantidad', 'descuento', 'formatofecha','fechacompra','vendidor','stock_lote']
-    base_permissions = ['can_list']
+    edit_columns = ['fecha_vencimiento','stock_lote']
+    base_permissions = ['can_list','can_edit']
+
     base_filters = [["id", FilterInFunction, query_ComprasxProucto_Vencer], ]
     list_title = "Detalle de Lotes por Producto"
 
@@ -375,6 +389,7 @@ class ProductoxVencer(ModelView):
     show_columns = ['categoria', 'marca', 'medidarendercolumna','unidad', 'preciorendercolumna', 'stockarendercolumna','ivarendercolumna','estadorender', 'detalle']
 
     base_permissions = ['can_list','can_show']
+
     base_filters = [["id", FilterInFunction, query_producto_por_Vencer], ]
     show_exclude_columns = ['renglon_compra']
     #search_form_query_rel_fields = {'categoria':[["id", FilterInFunction, query_producto_ordencategoria]]}
@@ -383,7 +398,7 @@ class ProductoxVencer(ModelView):
     list_widget = ListDownloadWidgetstock
     search_exclude_columns = ['renglon_compra']
     order_rel_fields = {'categoria': ('categoria', 'asc'), 'marca': ('marca', 'asc')}
-    order_columns = ['detaller']
+    #order_columns = ['detaller']
     related_views = [RenglonComprasxVencer]
 
 
@@ -897,8 +912,8 @@ class RenglonPedidoView(ModelView):
     base_permissions = ['can_list']
 class PedidoView(ModelView):
     datamodel = SQLAInterface(Pedido_Proveedor)
-    label_columns = {'id':'Numero de Pedido','proveedor.representacion':'Proveedor','formatofecha':'Fecha'}
-    list_columns = ["id","formatofecha",'proveedor.representacion']
+    label_columns = {'idrender':'Numero de Pedido','id':'Numero de Pedido','proveedor.representacion':'Proveedor','formatofecha':'Fecha'}
+    list_columns = ["idrender","formatofecha",'proveedor.representacion']
     show_columns = ['proveedor',"id","formatofecha"]
     base_permissions = ['can_show','can_list']
     order_columns =['id','fecha']
@@ -1151,26 +1166,37 @@ class ConvertirVenta(AuditedModelView):
             flash('No se puede ver el detalle porque no esta reservado','warning')
             return redirect(self.get_redirect())
 
-
-
-
-
-
-
+    class_permission_name = "ventawhatsappclass"
+    method_permission_name = {
+        'convertir_pedido_oferta_venta': 'access',
+        'convertir_pedido_venta': 'access'
+    }
 
 
 
 from flask_appbuilder.charts.views import TimeChartView
-#aca agrego los manejadores de las vistas al appbuilder para que sean visuales
 
+#creo manejadores de graficos
 class VentaTimeChartView(TimeChartView):
     search_columns = ['fecha','cliente']
-    chart_title = 'Agrupado por ventas'
+    chart_title = 'Agrupado por Ventas'
     label_columns = VentaReportes.label_columns
     group_by_columns = ['fecha']
     datamodel = SQLAInterface(Venta)
 
-appbuilder.add_view(VentaTimeChartView, "Grafico de ventas", icon="fa-envelope", category="Estadistica")
+class CompraTimeChartView(TimeChartView):
+    search_columns = ['fecha','proveedor']
+    chart_title = 'Agrupado por Compras'
+    label_columns = CompraReportes.label_columns
+    group_by_columns = ['fecha']
+
+    datamodel = SQLAInterface(Compra)
+
+#aca agrego los manejadores de las vistas al appbuilder para que sean visuales
+appbuilder.add_view(VentaTimeChartView, "Gráfico de ventas", icon="fa-signal", category="Estadística")
+
+appbuilder.add_view(CompraTimeChartView, "Gráfico de compras", icon="fa-signal", category="Estadística")
+
 appbuilder.add_view(VentaView, "Realizar Ventas", category='Ventas', category_icon='fa-tag' )
 appbuilder.add_view( PrecioMdelview,"Producto" ,icon="fa-archive", category='Productos', category_icon='fa-archive' )
 
@@ -1193,7 +1219,7 @@ appbuilder.add_view(PediddosClientesView,"Pedidos de Ventas Whtasapp", category=
 appbuilder.add_view(CompraReportes, "Reporte Compras",icon="fa-save", category='Compras' )
 
 appbuilder.add_view(Sistemaview,'Datos Empresa',category='Security')
-appbuilder.add_view(ModulosInteligentesView,'Modulos Inteligentes',category='Security')
+appbuilder.add_view(ModulosInteligentesView,'Modulos Configuracion',category='Security')
 
 appbuilder.add_view_no_menu(Empresaview)
 appbuilder.add_view_no_menu(CompaniaTarjetaview)

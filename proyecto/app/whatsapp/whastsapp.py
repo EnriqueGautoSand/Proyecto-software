@@ -22,6 +22,7 @@ class smsreply(BaseView):
         """Respond to incoming calls with a simple text message."""
         # Fetch the message
         try:
+            configpedido = db.session.query(ModulosConfiguracion).first()
             sender_phone_number = request.form.get('From')
             msg = request.form.get('Body')
             print(request.form.get('Head'))
@@ -32,7 +33,7 @@ class smsreply(BaseView):
                 resp.message('Su numero no se encuentra registrado como cliente, por favor vaya al negocio y registrese')
             else:
                 hash = get_random_string(15)
-                pedido=PedidoCliente(cliente=cliente,fecha=dt.now(),expiracion=(dt.now()+timedelta(hours=1)),hash_activacion=hash)
+                pedido=PedidoCliente(cliente=cliente,fecha=dt.now(),expiracion=(dt.now()+timedelta(hours=configpedido.tiempo_expiracion)),hash_activacion=hash)
                 db.session.add(pedido)
                 # Create reply
                 resp = MessagingResponse()

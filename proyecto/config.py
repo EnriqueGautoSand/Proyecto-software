@@ -96,7 +96,18 @@ FAB_ROLES = {
 ["AuditLogView",'can_list'],
 ["ReportesView" ,"can_show_static_pdf"],
 ["PrecioMdelviewip",'can_access'],
+["Producto" ,'menu_access'],
+["ProductoxVencer",'can_show'],
+["ProductoxVencer",'can_list'],
+['Lotes',"menu_access"],
+["RenglonComprasVencidos",'can_delete'],
+["RenglonComprasVencidos",'can_list'],
+['Vencidos',"menu_access"],
+
+["RenglonComprasxVencer",'can_edit'],
+["RenglonComprasxVencer",'can_list'],
 ["Control de Precios","menu_access"],
+
 ["MyUserDBModelView","can_userinfo"],
 ["MyUserDBModelView","can_userinfoedit "],
 ["MyUserDBModelView","can_this_form_post "],
@@ -127,7 +138,8 @@ FAB_ROLES = {
 ['Modulos Inteligentes',"menu_access"],
  ["ModulosInteligentesView",'can_list'],
 ["ModulosInteligentesView",'can_show'],
-["ModulosInteligentesView",'can_edit']
+["ModulosInteligentesView",'can_edit'],
+['Modulos Configuracion',"menu_access"]
 
     ],
 "Vendedor": [
@@ -156,11 +168,15 @@ FAB_ROLES = {
 ["VentaReportes",'can_list'],
 ["VentaReportes",'can_show'],
 
+["OfertaWhatsappView",'can_list'],
+["OfertaWhatsappView",'can_delete'],
+["OfertaWhatsappView",'can_show'],
+["Pedidos de Ventas Whtasapp","menu_access"],
 
-
-
-
-
+["PediddosClientesView",'can_show'],
+["PediddosClientesView",'can_delete'],
+["Ofertas de Ventas Whtasapp","menu_access"],
+["PediddosClientesView",'can_list']
 ]
 
 

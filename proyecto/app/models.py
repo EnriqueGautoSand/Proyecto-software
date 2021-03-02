@@ -33,6 +33,7 @@ class OfertaWhatsapp(Model):
     reservado=Column(Boolean,nullable=False,default=False)
     vendido=Column(Boolean,nullable=False,default=False)
     cancelado = Column(Boolean, nullable=False, default=False)
+
     renglon_compra_id = Column(Integer, ForeignKey('renglon_compras.id'), nullable=False)
     renglon_compra = relationship("RenglonCompras")
     @renders('cancelado')
@@ -134,6 +135,9 @@ class Pedido_Proveedor(Model):
     @renders('fecha')
     def formatofecha(self):
          return str(self.fecha.strftime(" %d-%m-%Y %H:%M "))
+    @renders('id')
+    def idrender(self):
+         return Markup( '<div align=right> ' + str(self.id) + '</div> ' )
 class RenglonPedido(Model):
     """
     creo clase que sera mapeada como la tabla renglon_pedido
@@ -161,10 +165,15 @@ class ModulosConfiguracion(Model):
     modulo_ofertas_whatsapp = Column(Boolean, default=False)
     dias_oferta= Column(Integer, default=7)
     fecha_vencimiento_oferta = Column(Integer, default=7)
-    porcentaje_subida_precio=Column(Integer, default=30)
+
     twilio_account_sid=Column(String(50))
     twilio_auth_token=Column(String(50))
     descuento=Column(Float, default=30)
+    tiempo_expiracion = Column(Integer, nullable=False, default=0)
+    subir_precio_automatico=Column(Boolean, default=False)
+    porcentaje_subida_precio = Column(Integer, default=30)
+
+
     @renders('modulo_pedido')
     def modulo_pedidor(self):
         if self.modulo_pedido==True:

@@ -64,9 +64,10 @@ def mandar_oferta():
                         password = cliente.__repr__()+dt.now().strftime(" %d-%m-%Y %H:%M ")
                         hash=get_random_string(8)
                         h = hashlib.md5(password.encode())
+
                         oferta=OfertaWhatsapp(
                                     fecha=dt.now(),
-                                    expiracion=dt.now()+timedelta(hours=1),
+                                    expiracion=dt.now()+timedelta(hours=ofertaconfig.tiempo_expiracion),
                                     producto_id=producto.id,
                                     cliente_id=cliente.id,
                                     descuento=ofertaconfig.descuento,
@@ -101,8 +102,7 @@ def start_scheduler_ofertas():
     ofertaconfig = db.session.query(ModulosConfiguracion).first()
     scheduler = BackgroundScheduler(timezone=utc)
 
-    # define your job trigger
-    #hourse_keeping_trigger = CronTrigger(minute='*/1',second='2')
+
 
 
     # add your job
