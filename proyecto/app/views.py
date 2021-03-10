@@ -848,7 +848,7 @@ class ClientesView(AuditedModelView):
     message="cliente creado"
 
     #presonalizando las etiquetas de las columnas
-    label_columns = {'telefono':'Celular','nombre':'Nombre/Denominacion','apellido':'Apellido/Razon Social','tipoDocumento':'Tipo de Documento' ,'tipoClave':'Tipo de Clave',"tipoPersona":"Tipo de Persona",'estadorender': 'Estado'}
+    label_columns = {'telefono':'Celular','nombre':'Nombre/Denominacion','apellido':'Apellido/Razon Social','tipoDocumento':'Tipo de Documento' ,'tipoClave':'Cond. Frente Iva',"tipoPersona":"Tipo de Persona",'estadorender': 'Estado'}
     #filtrando los valores
     #base_filters = [['estado', FilterEqual, True]]#descomentar para que filtre solo los activos
 

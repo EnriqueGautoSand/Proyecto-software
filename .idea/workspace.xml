@@ -3,16 +3,14 @@
   <component name="ChangeListManager">
     <list default="true" id="e6f9fc09-d089-4896-be04-4879e7efe7f0" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/apis.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/apis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/modulos_inteligentes/pedido_presupuesto.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/modulos_inteligentes/pedido_presupuesto.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/modulos_inteligentes/reservas_ofertas.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/modulos_inteligentes/reservas_ofertas.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proyecto/app/sec.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/sec.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proyecto/app/sec_models.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/sec_models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proyecto/app/sec_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/sec_view.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proyecto/app/static/docs/Listado de Compras.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/static/docs/Listado de Compras.pdf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proyecto/app/static/docs/Listado de Stock.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/static/docs/Listado de Stock.pdf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proyecto/app/static/docs/Listado de ventas.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/static/docs/Listado de ventas.pdf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proyecto/app/templates/pedidopresupuesto.html" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/templates/pedidopresupuesto.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proyecto/app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/whatsapp/whastsapp.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/whatsapp/whastsapp.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proyecto/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proyecto/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/run.py" afterDir="false" />
     </list>
@@ -27,8 +25,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/proyecto/app/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2703">
-              <caret line="171" column="21" selection-start-line="171" selection-start-column="4" selection-end-line="171" selection-end-column="21" />
+            <state relative-caret-position="170">
+              <caret line="38" column="4" selection-start-line="38" selection-start-column="4" selection-end-line="38" selection-end-column="25" />
               <folding>
                 <element signature="e#1#24#0" expanded="true" />
               </folding>
@@ -39,8 +37,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/proyecto/app/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="1180" column="39" selection-start-line="1180" selection-start-column="39" selection-end-line="1180" selection-end-column="39" />
+            <state relative-caret-position="505">
+              <caret line="236" column="5" lean-forward="true" selection-start-line="236" selection-start-column="5" selection-end-line="236" selection-end-column="5" />
               <folding>
                 <element signature="e#0#95#0" expanded="true" />
               </folding>
@@ -49,12 +47,12 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/proyecto/app/whatsapp/whastsapp.py">
+        <entry file="file://$PROJECT_DIR$/proyecto/config.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="24" column="64" selection-start-line="24" selection-start-column="44" selection-end-line="24" selection-end-column="64" />
+            <state relative-caret-position="-25">
+              <caret line="178" column="25" selection-start-line="178" selection-start-column="25" selection-end-line="178" selection-end-column="25" />
               <folding>
-                <element signature="e#1#33#0" expanded="true" />
+                <element signature="e#0#9#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -64,18 +62,18 @@
         <entry file="file://$PROJECT_DIR$/proyecto/run.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="34">
-              <caret line="2" column="48" selection-start-line="2" selection-start-column="48" selection-end-line="2" selection-end-column="48" />
+              <caret line="2" column="47" selection-start-line="2" selection-start-column="47" selection-end-line="2" selection-end-column="47" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/proyecto/app/apis.py">
+        <entry file="file://$PROJECT_DIR$/proyecto/app/modulos_inteligentes/pedido_presupuesto.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2992">
-              <caret line="189" selection-start-line="189" selection-end-line="189" />
+            <state relative-caret-position="77">
+              <caret line="164" column="61" selection-start-line="164" selection-start-column="61" selection-end-line="164" selection-end-column="65" />
               <folding>
-                <element signature="e#0#48#0" expanded="true" />
+                <element signature="e#1#50#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -84,46 +82,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/proyecto/app/modulos_inteligentes/reservas_ofertas.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-684">
-              <caret line="51" column="45" lean-forward="true" selection-start-line="51" selection-start-column="45" selection-end-line="51" selection-end-column="45" />
+            <state relative-caret-position="68">
+              <caret line="108" column="52" selection-start-line="108" selection-start-column="48" selection-end-line="108" selection-end-column="52" />
               <folding>
                 <element signature="e#0#30#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/proyecto/app/modulos_inteligentes/pedido_presupuesto.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="322">
-              <caret line="164" column="65" selection-start-line="164" selection-start-column="61" selection-end-line="164" selection-end-column="65" />
-              <folding>
-                <element signature="e#1#50#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/proyecto/config.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2295">
-              <caret line="142" selection-start-line="142" selection-end-line="142" />
-              <folding>
-                <element signature="e#0#9#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/proyecto/app/modulos_inteligentes/modelo_whatsapp.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2176">
-              <caret line="142" column="97" selection-start-line="142" selection-start-column="97" selection-end-line="142" selection-end-column="97" />
-              <folding>
-                <element signature="e#2#66#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -141,11 +103,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>rengloneslotescolumna</find>
-      <find>cate</find>
-      <find>lotes</find>
-      <find>categ</find>
-      <find>productoview</find>
       <find>producto</find>
       <find>proveedor</find>
       <find>venta</find>
@@ -171,6 +128,11 @@
       <find>expi</find>
       <find>pedidowhatsapp</find>
       <find>ModulosConfiguracion</find>
+      <find>render</find>
+      <find>user</find>
+      <find>useri</find>
+      <find>user_view</find>
+      <find>clientesview</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -184,7 +146,6 @@
         <option value="$PROJECT_DIR$/proyecto/app/templates/addproveedor.html" />
         <option value="$PROJECT_DIR$/proyecto/app/validadores" />
         <option value="$PROJECT_DIR$/proyecto/app/templates/agregarcliente.html" />
-        <option value="$PROJECT_DIR$/proyecto/app/sec_models.py" />
         <option value="$PROJECT_DIR$/proyecto/app/security.py" />
         <option value="K:/Users/USUARIO/Anaconda3/Lib/site-packages/fab_addon_audit/models.py" />
         <option value="K:/Users/USUARIO/Anaconda3/Lib/site-packages/fab_addon_audit/manager.py" />
@@ -199,7 +160,6 @@
         <option value="$PROJECT_DIR$/proyecto/app/widgets/datetimepicker.py" />
         <option value="K:/Users/USUARIO/Anaconda3/Lib/site-packages/flask_appbuilder/models/sqla/interface.py" />
         <option value="K:/Users/USUARIO/Anaconda3/Lib/site-packages/fab_addon_audit-0.0.1-py3.7.egg/fab_addon_audit/views.py" />
-        <option value="$PROJECT_DIR$/proyecto/app/sec.py" />
         <option value="$PROJECT_DIR$/proyecto/app/index.py" />
         <option value="$PROJECT_DIR$/proyecto/app/modelo/ModelView.py" />
         <option value="$PROJECT_DIR$/proyecto/app/testdata.py" />
@@ -215,19 +175,21 @@
         <option value="$PROJECT_DIR$/proyecto/app/templates/productoshtml.html" />
         <option value="$PROJECT_DIR$/proyecto/app/reportestock.py" />
         <option value="$PROJECT_DIR$/proyecto/app/validadores/__init__.py" />
-        <option value="$PROJECT_DIR$/proyecto/app/sec_view.py" />
         <option value="$PROJECT_DIR$/proyecto/app/validadores/validadores.py" />
         <option value="$PROJECT_DIR$/proyecto/app/validadores/validadortelefono.py" />
         <option value="$USER_HOME$/Anaconda3/Lib/site-packages/fab_addon_audit-0.0.1-py3.7.egg/fab_addon_audit/views.py" />
         <option value="$PROJECT_DIR$/proyecto/app/modulos_inteligentes/modelo_whatsapp.py" />
         <option value="$PROJECT_DIR$/proyecto/app/apis.py" />
-        <option value="$PROJECT_DIR$/proyecto/config.py" />
-        <option value="$PROJECT_DIR$/proyecto/run.py" />
-        <option value="$PROJECT_DIR$/proyecto/app/modulos_inteligentes/pedido_presupuesto.py" />
         <option value="$PROJECT_DIR$/proyecto/app/models.py" />
-        <option value="$PROJECT_DIR$/proyecto/app/modulos_inteligentes/reservas_ofertas.py" />
         <option value="$PROJECT_DIR$/proyecto/app/whatsapp/whastsapp.py" />
+        <option value="$PROJECT_DIR$/proyecto/run.py" />
+        <option value="$PROJECT_DIR$/proyecto/app/sec_models.py" />
+        <option value="$PROJECT_DIR$/proyecto/app/sec_view.py" />
+        <option value="$PROJECT_DIR$/proyecto/app/sec.py" />
         <option value="$PROJECT_DIR$/proyecto/app/views.py" />
+        <option value="$PROJECT_DIR$/proyecto/config.py" />
+        <option value="$PROJECT_DIR$/proyecto/app/modulos_inteligentes/pedido_presupuesto.py" />
+        <option value="$PROJECT_DIR$/proyecto/app/modulos_inteligentes/reservas_ofertas.py" />
       </list>
     </option>
   </component>
@@ -456,7 +418,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3289689" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49702382" visible="true" weight="0.11620294" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49702382" visible="true" weight="0.5531915" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.30605564" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -490,33 +452,6 @@
     </layout-to-restore>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/flask_appbuilder/baseviews.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-9">
-          <caret line="310" column="28" selection-start-line="310" selection-start-column="23" selection-end-line="310" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/fab_addon_audit/manager.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="629">
-          <caret line="37" selection-start-line="37" selection-end-line="37" />
-          <folding>
-            <element signature="e#0#14#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/fab_addon_audit/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="26" column="20" selection-start-line="26" selection-start-column="8" selection-end-line="26" selection-end-column="20" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/proyecto/app/auditoria/fab_addon_audit-master/fab_addon_audit/version.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -592,15 +527,6 @@
         <state relative-caret-position="-119" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/sec_models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#54#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/proyecto/app/templates/venta.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-697">
@@ -642,13 +568,6 @@
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/proyecto/app/validadores/validadortelefono" />
-    <entry file="file://$PROJECT_DIR$/proyecto/app/sec.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" selection-start-line="4" selection-end-line="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/proyecto/app/validadores/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -768,16 +687,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/sec_view.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="269">
-          <caret line="113" column="52" selection-start-line="113" selection-start-column="42" selection-end-line="113" selection-end-column="52" />
-          <folding>
-            <element signature="e#0#59#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/proyecto/app/reportestock.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="291">
@@ -788,22 +697,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/fab_addon_audit-0.0.1-py3.7.egg/fab_addon_audit/views.py">
+    <entry file="file://$PROJECT_DIR$/proyecto/app/apis.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="816">
-          <caret line="48" column="21" selection-start-line="48" selection-start-column="17" selection-end-line="48" selection-end-column="21" />
+        <state relative-caret-position="2992">
+          <caret line="189" selection-start-line="189" selection-end-line="189" />
           <folding>
-            <element signature="e#0#11#0" expanded="true" />
+            <element signature="e#0#48#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/models.py">
+    <entry file="file://$PROJECT_DIR$/proyecto/app/modulos_inteligentes/modelo_whatsapp.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2703">
-          <caret line="171" column="21" selection-start-line="171" selection-start-column="4" selection-end-line="171" selection-end-column="21" />
+        <state relative-caret-position="2176">
+          <caret line="142" column="97" selection-start-line="142" selection-start-column="97" selection-end-line="142" selection-end-column="97" />
           <folding>
-            <element signature="e#1#24#0" expanded="true" />
+            <element signature="e#2#66#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -821,54 +730,105 @@
     <entry file="file://$PROJECT_DIR$/proyecto/run.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
-          <caret line="2" column="48" selection-start-line="2" selection-start-column="48" selection-end-line="2" selection-end-column="48" />
+          <caret line="2" column="47" selection-start-line="2" selection-start-column="47" selection-end-line="2" selection-end-column="47" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/apis.py">
+    <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/fab_addon_audit-0.0.1-py3.7.egg/fab_addon_audit/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2992">
-          <caret line="189" selection-start-line="189" selection-end-line="189" />
+        <state relative-caret-position="2244">
+          <caret line="195" column="18" selection-start-line="195" selection-start-column="6" selection-end-line="195" selection-end-column="18" />
           <folding>
-            <element signature="e#0#48#0" expanded="true" />
+            <element signature="e#0#11#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/config.py">
+    <entry file="file://$PROJECT_DIR$/proyecto/app/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2295">
-          <caret line="142" selection-start-line="142" selection-end-line="142" />
+        <state relative-caret-position="170">
+          <caret line="38" column="4" selection-start-line="38" selection-start-column="4" selection-end-line="38" selection-end-column="25" />
           <folding>
-            <element signature="e#0#9#0" expanded="true" />
+            <element signature="e#1#24#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/modulos_inteligentes/modelo_whatsapp.py">
+    <entry file="file://$PROJECT_DIR$/proyecto/app/sec.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2176">
-          <caret line="142" column="97" selection-start-line="142" selection-start-column="97" selection-end-line="142" selection-end-column="97" />
+        <state relative-caret-position="272">
+          <caret line="16" selection-start-line="16" selection-end-line="16" />
           <folding>
-            <element signature="e#2#66#0" expanded="true" />
+            <element signature="e#0#66#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/sec_models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="16" column="23" selection-start-line="16" selection-start-column="23" selection-end-line="16" selection-end-column="23" />
+          <folding>
+            <element signature="e#0#54#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/flask_appbuilder/security/manager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-108">
+          <caret line="127" column="13" selection-start-line="127" selection-start-column="4" selection-end-line="127" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/flask_appbuilder/security/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="561">
+          <caret line="123" lean-forward="true" selection-start-line="123" selection-end-line="123" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/sec_view.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="646">
+          <caret line="38" column="69" selection-start-line="38" selection-start-column="69" selection-end-line="38" selection-end-column="69" />
+          <folding>
+            <element signature="e#0#59#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/flask_appbuilder/security/sqla/manager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="26" column="26" selection-start-line="26" selection-start-column="26" selection-end-line="26" selection-end-column="26" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/proyecto/app/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="1180" column="39" selection-start-line="1180" selection-start-column="39" selection-end-line="1180" selection-end-column="39" />
+        <state relative-caret-position="505">
+          <caret line="236" column="5" lean-forward="true" selection-start-line="236" selection-start-column="5" selection-end-line="236" selection-end-column="5" />
           <folding>
             <element signature="e#0#95#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-25">
+          <caret line="178" column="25" selection-start-line="178" selection-start-column="25" selection-end-line="178" selection-end-column="25" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/proyecto/app/modulos_inteligentes/pedido_presupuesto.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="322">
-          <caret line="164" column="65" selection-start-line="164" selection-start-column="61" selection-end-line="164" selection-end-column="65" />
+        <state relative-caret-position="77">
+          <caret line="164" column="61" selection-start-line="164" selection-start-column="61" selection-end-line="164" selection-end-column="65" />
           <folding>
             <element signature="e#1#50#0" expanded="true" />
           </folding>
@@ -877,8 +837,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/proyecto/app/modulos_inteligentes/reservas_ofertas.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-684">
-          <caret line="51" column="45" lean-forward="true" selection-start-line="51" selection-start-column="45" selection-end-line="51" selection-end-column="45" />
+        <state relative-caret-position="68">
+          <caret line="108" column="52" selection-start-line="108" selection-start-column="48" selection-end-line="108" selection-end-column="52" />
           <folding>
             <element signature="e#0#30#0" expanded="true" />
           </folding>

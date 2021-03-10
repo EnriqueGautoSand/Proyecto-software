@@ -36,6 +36,7 @@ class MyUserDBModelView(UserDBModelView):
         Then override userdbmodelview property on SecurityManager
     """
     login_template = 'login.html'
+    label_columns = {'activeformat':'Está activo?','cuilformat':'Cuil'}
     show_fieldsets = [
         (lazy_gettext('User info'),
          {'fields': ['username', 'active', 'roles', 'login_count', 'cuil']}),
@@ -67,8 +68,8 @@ class MyUserDBModelView(UserDBModelView):
         'last_name',
         'username',
         'email',
-        'cuil',
-        'active',
+        'cuilformat',
+        'activeformat',
         'roles'
     ]
     edit_columns = [

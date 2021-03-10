@@ -139,8 +139,25 @@ FAB_ROLES = {
  ["ModulosInteligentesView",'can_list'],
 ["ModulosInteligentesView",'can_show'],
 ["ModulosInteligentesView",'can_edit'],
-['Modulos Configuracion',"menu_access"]
-
+['Modulos Configuracion',"menu_access"],
+    #Estadistica
+["Estadística","menu_access"],
+["Gráfico de ventas","menu_access"],
+["Gráfico de compras","menu_access"],
+["CompraTimeChartView","can_chart"],
+["VentaTimeChartView","can_chart"],
+    #pedidos de presupuesto
+["Pedidos de Presupesto","menu_access"],
+["PedidoView","can_show"],
+["PedidoView","can_list"],
+    #auditoria
+["Auditoría","menu_access"],
+["AuditLogView","can_show"],
+["AuditLogView","can_list"],
+#categoria marca
+["Categoria Marca Unidad" ,"menu_access"],
+["productocrud" ,"can_access"],
+["productocrud" ,"can_add"]
     ],
 "Vendedor": [
 ["MyUserDBModelView","can_userinfo"],
@@ -159,6 +176,7 @@ FAB_ROLES = {
 ["ClientesView",'can_list'],
 ["ClientesView",'can_add'],
 ["ClientesView",'can_show'],
+["ClientesView",'can_edit'],
 #permisos para vender
 ["Realizar Ventas","menu_access"],
 ["Reporte Ventas","menu_access"],
