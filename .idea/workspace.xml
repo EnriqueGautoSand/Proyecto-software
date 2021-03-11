@@ -2,18 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e6f9fc09-d089-4896-be04-4879e7efe7f0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Elevator Spich.mp4" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/sec.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/sec.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/sec_models.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/sec_models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/sec_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/sec_view.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/static/docs/Listado de Compras.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/static/docs/Listado de Compras.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/static/docs/Listado de Stock.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/static/docs/Listado de Stock.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/static/docs/Listado de ventas.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/static/docs/Listado de ventas.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/templates/pedidopresupuesto.html" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/templates/pedidopresupuesto.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/app/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proyecto/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto/run.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -26,7 +15,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/proyecto/app/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
+            <state relative-caret-position="442">
               <caret line="38" column="4" selection-start-line="38" selection-start-column="4" selection-end-line="38" selection-end-column="25" />
               <folding>
                 <element signature="e#1#24#0" expanded="true" />
@@ -38,7 +27,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/proyecto/app/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="505">
+            <state relative-caret-position="3502">
               <caret line="236" column="5" selection-start-line="236" selection-start-column="5" selection-end-line="236" selection-end-column="5" />
               <folding>
                 <element signature="e#0#95#0" expanded="true" />
@@ -50,7 +39,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/proyecto/config.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-25">
+            <state relative-caret-position="2907">
               <caret line="178" column="25" selection-start-line="178" selection-start-column="25" selection-end-line="178" selection-end-column="25" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
@@ -71,7 +60,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/proyecto/app/modulos_inteligentes/pedido_presupuesto.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="77">
+            <state relative-caret-position="526">
               <caret line="164" column="61" selection-start-line="164" selection-start-column="61" selection-end-line="164" selection-end-column="65" />
               <folding>
                 <element signature="e#1#50#0" expanded="true" />
@@ -80,13 +69,25 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/proyecto/app/modulos_inteligentes/reservas_ofertas.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="68">
+            <state relative-caret-position="342">
               <caret line="108" column="52" selection-start-line="108" selection-start-column="48" selection-end-line="108" selection-end-column="52" />
               <folding>
                 <element signature="e#0#30#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/proyecto/app/apis.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-2227">
+              <caret line="218" column="24" selection-start-line="218" selection-start-column="24" selection-end-line="218" selection-end-column="24" />
+              <folding>
+                <element signature="e#0#48#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -205,7 +206,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -242,6 +242,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -375,9 +376,9 @@
     </configuration>
     <list>
       <item itemvalue="Python.ModelView" />
-      <item itemvalue="Python.run git" />
       <item itemvalue="Python.pedido_presupuesto" />
       <item itemvalue="Python.reservas_ofertas" />
+      <item itemvalue="Python.run git" />
       <item itemvalue="Python.validadores" />
     </list>
     <recent_temporary>
@@ -414,12 +415,12 @@
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49756098" visible="true" weight="0.2313988" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49756098" visible="true" weight="0.2313988" />
       <window_info id="Structure" order="1" sideWeight="0.502439" side_tool="true" weight="0.18229167" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3289689" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49702382" visible="true" weight="0.5531915" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49702382" weight="0.5531915" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.30605564" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -698,16 +699,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/apis.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2992">
-          <caret line="189" selection-start-line="189" selection-end-line="189" />
-          <folding>
-            <element signature="e#0#48#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/proyecto/app/modulos_inteligentes/modelo_whatsapp.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2176">
@@ -728,29 +719,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/run.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="47" selection-start-line="2" selection-start-column="47" selection-end-line="2" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/fab_addon_audit-0.0.1-py3.7.egg/fab_addon_audit/views.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2244">
           <caret line="195" column="18" selection-start-line="195" selection-start-column="6" selection-end-line="195" selection-end-column="18" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="38" column="4" selection-start-line="38" selection-start-column="4" selection-end-line="38" selection-end-column="25" />
-          <folding>
-            <element signature="e#1#24#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -806,9 +780,19 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="442">
+          <caret line="38" column="4" selection-start-line="38" selection-start-column="4" selection-end-line="38" selection-end-column="25" />
+          <folding>
+            <element signature="e#1#24#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/proyecto/app/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="505">
+        <state relative-caret-position="3502">
           <caret line="236" column="5" selection-start-line="236" selection-start-column="5" selection-end-line="236" selection-end-column="5" />
           <folding>
             <element signature="e#0#95#0" expanded="true" />
@@ -818,7 +802,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/proyecto/config.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-25">
+        <state relative-caret-position="2907">
           <caret line="178" column="25" selection-start-line="178" selection-start-column="25" selection-end-line="178" selection-end-column="25" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
@@ -826,9 +810,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/run.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="47" selection-start-line="2" selection-start-column="47" selection-end-line="2" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/proyecto/app/modulos_inteligentes/reservas_ofertas.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="108" column="52" selection-start-line="108" selection-start-column="48" selection-end-line="108" selection-end-column="52" />
+          <folding>
+            <element signature="e#0#30#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/proyecto/app/modulos_inteligentes/pedido_presupuesto.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="77">
+        <state relative-caret-position="526">
           <caret line="164" column="61" selection-start-line="164" selection-start-column="61" selection-end-line="164" selection-end-column="65" />
           <folding>
             <element signature="e#1#50#0" expanded="true" />
@@ -836,12 +837,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/proyecto/app/modulos_inteligentes/reservas_ofertas.py">
+    <entry file="file://$PROJECT_DIR$/proyecto/app/apis.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="108" column="52" selection-start-line="108" selection-start-column="48" selection-end-line="108" selection-end-column="52" />
+        <state relative-caret-position="-2227">
+          <caret line="218" column="24" selection-start-line="218" selection-start-column="24" selection-end-line="218" selection-end-column="24" />
           <folding>
-            <element signature="e#0#30#0" expanded="true" />
+            <element signature="e#0#48#0" expanded="true" />
           </folding>
         </state>
       </provider>
